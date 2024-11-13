@@ -47,7 +47,7 @@ const style = StyleSheet.create({
   },
   allowAccessText: {
     color: COLOR.white,
-    fontWeight: 'bold',
+    fontFamily: FONT.Bold,
     fontSize: 14,
   },
   checkInButton: {
@@ -68,10 +68,9 @@ const style = StyleSheet.create({
   },
   empdetails: {
     fontSize: 16,
-    fontWeight: '400',
     marginLeft: 0,
     fontFamily: FONT.Regular,
-    color: 'black',
+    color: COLOR.black,
     marginTop: 5,
   },
   checkinbutton: {
@@ -84,33 +83,33 @@ const style = StyleSheet.create({
     marginTop: 40,
   },
   checkinbuttonText: {
-    color: '#fff',
+    color: COLOR.white,
     fontSize: 16,
     paddingTop: 8,
   },
   dropdown: {
     height: 40,
-    borderColor: 'gray',
-    color: 'black',
+    borderColor: COLOR.gray,
+    color: COLOR.black,
     borderWidth: 0, // Removes the border
     borderRadius: 8,
     paddingHorizontal: 8,
   },
   dropdowncontainer: {
-    backgroundColor: 'white', // Button color
+    backgroundColor: COLOR.white, // Button color
     marginTop: 20,
     justifyContent: 'center',
     borderRadius: 10,
   },
   placeholderStyle: {
-    color: 'black', // Placeholder text color
+    color: COLOR.black, // Placeholder text color
   },
   selectedTextStyle: {
-    color: 'black', // Selected item text color
+    color: COLOR.black, // Selected item text color
     fontSize: 16,
   },
   itemTextStyle: {
-    color: 'black', // Dropdown list item text color
+    color: COLOR.black, // Dropdown list item text color
     fontSize: 16,
   },
   successImg: {
@@ -118,7 +117,7 @@ const style = StyleSheet.create({
     height: 110,
   },
   successText: {
-    color: '#0F172A',
+    color: COLOR.green,
     fontFamily: FONT.Medium,
     fontSize: 16,
   },
