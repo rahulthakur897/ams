@@ -13,6 +13,10 @@ export const COLOR = {
   darkGray: '#D9D9D9',
   red: '#FF2500',
   green: '#3A9800',
+  hexgray:'#ccc',
+  darkcharcoal:'#333',
+  sadeofgray:'#777',
+  orange:'#FF5722',
 };
 
 export const FONT = {

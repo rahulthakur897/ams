@@ -2,6 +2,8 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import MarkAttendance from './MarkAttendance';
 import PhotoAndLocation from './PhotoAndLocation';
+import AddTasks from './tasks';
+import SelectTask from './SelectTask';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +24,24 @@ const AttendanceStack = () => {
         }}
         component={PhotoAndLocation}
       />
+ <Stack.Screen
+        name="AddTasks"
+        options={{
+          title: 'Add Tasks/Sub Tasks',
+        }}
+        component={AddTasks}
+      />
+<Stack.Screen
+        name="SelectTask"
+        options={{
+          title: 'Add Tasks/Sub Tasks',
+        }}
+        component={SelectTask}
+      />
+
+
+
+
     </Stack.Navigator>
   );
 };
