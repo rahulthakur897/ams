@@ -2,8 +2,10 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import MarkAttendance from './MarkAttendance';
 import PhotoAndLocation from './PhotoAndLocation';
-import AddTasks from './AddTasks';
 import SelectTask from './SelectTask';
+import TaskListHeader from './TaskList/TaskListHeader';
+import TaskList from './TaskList';
+import AddTasks from './AddTasks';
 
 const Stack = createStackNavigator();
 
@@ -24,20 +26,30 @@ const AttendanceStack = () => {
         }}
         component={PhotoAndLocation}
       />
-      <Stack.Screen
+ <Stack.Screen
         name="AddTasks"
         options={{
           title: 'Add Tasks/Sub Tasks',
         }}
         component={AddTasks}
       />
-      <Stack.Screen
+<Stack.Screen
         name="SelectTask"
         options={{
           title: 'Add Tasks/Sub Tasks',
         }}
         component={SelectTask}
       />
+  <Stack.Screen
+        name="TaskList"
+        options={{
+          headerTitle: () => <TaskListHeader />, // Set the custom header component 
+        }} 
+        component={TaskList}
+      />
+
+
+
     </Stack.Navigator>
   );
 };

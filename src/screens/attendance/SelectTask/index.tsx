@@ -1,15 +1,16 @@
 import React, {useEffect} from 'react';
-import {View, Text, ImageBackground, ScrollView} from 'react-native';
+import {View, Text, ImageBackground, ScrollView, Pressable} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {APP_IMAGE, BASEURL} from '../../../constants';
-import {Storage} from '../../../utils';
+import { useNavigation } from '@react-navigation/native';
 import {fetchTaskNameList, selectTaskAndFilterSubTask, selectSubTask, renderDynamicForm} from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
 import styles from './style';
+import {APP_IMAGE, BASEURL} from '../../../constants';
+import {Storage} from '../../../utils';
 
 export default function SelectTask() {
   const dispatch = useDispatch();
-
+  const navigation = useNavigation();
   const {parentTaskList, selectedParentTask, childTaskList, selectedChildTask} =
     useSelector(state => state.attendanceReducer);
 
@@ -49,7 +50,11 @@ export default function SelectTask() {
     dispatch(selectSubTask(item));
     callRenderFormData();
   };
-
+  const taskListNavigation = () => {
+    
+    // You can add your authentication logic here
+    navigation.navigate('TaskList');
+  };
   return (
     <ScrollView>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
@@ -74,6 +79,10 @@ export default function SelectTask() {
                 callback={updateChildDropdownValue}
               />
             </View>
+
+            <Pressable style={styles.allowAccessButton}>
+            <Text onPress={taskListNavigation}  style={styles.allowAccessText}>Add Tasks</Text>
+          </Pressable>
           </View>
         </View>
       </ImageBackground>

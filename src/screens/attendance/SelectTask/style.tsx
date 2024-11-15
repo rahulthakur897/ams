@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { ALIGN, COLOR, DIMENSIONS } from '../../../constants';
+import { ALIGN, COLOR, DIMENSIONS, FONT } from '../../../constants';
 
 const style = StyleSheet.create({
   bgImg: {
@@ -14,6 +14,17 @@ const style = StyleSheet.create({
     color: COLOR.black,
     fontSize: 16,
     paddingBottom:5,
+  },allowAccessButton: {
+    backgroundColor: COLOR.orange,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    
+  },
+  allowAccessText: {
+    color: COLOR.white, 
+    fontFamily: FONT.Bold,
+    fontSize: 14,
   },
   choosetask:{
     marginTop: 20,

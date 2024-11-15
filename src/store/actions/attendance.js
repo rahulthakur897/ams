@@ -5,6 +5,8 @@ import {
     FILTER_SUBTASK_FOR_TASK,
     SELECTED_SUBTASK,
     RENDER_DYNAMIC_FORM,
+    REMOVE_USER_TASK,
+    FETCH_USER_TASK,
 } from "../Constant";
 
 export function markAttn(configData){
@@ -48,3 +50,16 @@ export function renderDynamicForm(configData){
         payload: configData,
     }
 }
+export function removeTask(configData){
+    return {
+        type: REMOVE_USER_TASK,
+        payload: configData,
+    }
+}
+export function fetchUserTask(configData){
+    return {
+        type: FETCH_USER_TASK,
+        payload: configData,
+    }
+}
+
