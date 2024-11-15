@@ -3,6 +3,7 @@ import {
     GET_BILLER_LIST,
     UPDATE_USER_LOCATION,
     FETCH_TASK_LIST,
+    UPDATE_BILLER,
 } from "../Constant";
 
 export function doLogin(configData){
@@ -23,6 +24,13 @@ export function updateUserLatLong(jsonData){
     return {
         type: UPDATE_USER_LOCATION,
         payload: jsonData,
+    }
+}
+
+export function updateBiller(biller){
+    return {
+        type: UPDATE_BILLER,
+        payload: biller,
     }
 }
 

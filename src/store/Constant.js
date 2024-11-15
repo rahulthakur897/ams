@@ -8,7 +8,7 @@ export const FETCH_TASK_LIST_SUCCESS = 'fetch_task_list_success';
 
 export const GET_BILLER_LIST = 'get_biller_list';
 export const GET_BILLER_LIST_SUCCESS = 'get_biller_list_success';
-export const UPDATE_SELECTED_BILLER = 'update_selected_biller';
+export const UPDATE_BILLER = 'update_biller';
 export const UPDATE_USER_LOCATION = 'update_user_location';
 
 export const MARK_ATTENDANCE = 'mark_attendance';

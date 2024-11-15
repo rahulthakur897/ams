@@ -1,48 +1,32 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
-import {Storage} from '../utils';
-import {BASEURL, COLOR} from '../constants';
-import {getBillerList} from '../store/actions/user';
+import {COLOR} from '../constants';
+const _ = require('lodash');
 
-export function BillerDropdown() {
-  const dispatch = useDispatch();
-  const {billerList, selectedBiller} = useSelector(state => state.userReducer);
-
-  const getBiller = async () => {
-    const userData = await Storage.getAsyncItem('userData');
-    const config = {
-      method: 'GET',
-      url: `${BASEURL}/api/Employee/Employees?OrganizationID=${userData.OrganizationID}&EmployeeID=${userData.EmployeeID}`,
-      headers: {
-        Authorization: `Bearer ${userData.Token}`,
-      },
-    };
-    dispatch(getBillerList(config));
+export const MyDropdown = React.memo(({dropdownList, selectedItem, callback}) => {
+  
+  const updateSelection = (item) => {
+    callback(item);
   };
-
-  useEffect(() => {
-    //getBiller();
-  }, []);
 
   return (
     <View style={styles.dropdowncontainer}>
       <Dropdown
         style={styles.dropdown}
-        data={billerList}
-        labelField="DealerName"
-        valueField="DealerID"
+        data={dropdownList}
+        labelField="label"
+        valueField="value"
         placeholder="Choose Dealer"
-        value={selectedBiller.DealerID}
-        onChange={item => console.log('itemmmm', item)}
+        value={selectedItem.value}
+        onChange={item => updateSelection(item)}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         itemTextStyle={styles.itemTextStyle}
       />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   dropdowncontainer: {

@@ -14,7 +14,6 @@ export const Screen = {
     PHOTOANDLOCATION: 'PhotoAndLocation',
     ADDTASKS: 'AddTasks',
     SELECTTASK: 'SelectTask',
-    FITLLTASK: 'FillTask',
     TASKLIST: 'TaskList',
 }
 Object.freeze(Screen);

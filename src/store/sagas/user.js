@@ -23,8 +23,8 @@ function* doLogin(configData) {
 
 function* getBillerList(configData) {
   const response = yield makeApiCall(configData.payload);
-  if (response !== undefined) {
-    yield put({type: GET_BILLER_LIST_SUCCESS, response});
+  if (response?.Data) {
+    yield put({type: GET_BILLER_LIST_SUCCESS, response: response.Data[0]});
   } else {
     yield put({type: API_FAILURE});
   }

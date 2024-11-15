@@ -6,7 +6,7 @@ import moment from 'moment';
 import {updateUserLatLong} from '../store/actions/user';
 import {DIMENSIONS, COLOR} from '../constants';
 
-export function GetUserCurrentLocation() {
+export const GetUserCurrentLocation = React.memo(() => {
   const dispatch = useDispatch();
   const {latitude, longitude} = useSelector(state => state.userReducer);
 
@@ -47,7 +47,7 @@ export function GetUserCurrentLocation() {
       </Text>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

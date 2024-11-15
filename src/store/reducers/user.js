@@ -3,7 +3,7 @@ import {
   API_FAILURE,
   USER_LOGIN_SUCCESS,
   GET_BILLER_LIST_SUCCESS,
-  UPDATE_SELECTED_BILLER,
+  UPDATE_BILLER,
   UPDATE_USER_LOCATION,
   FETCH_TASK_LIST_SUCCESS,
 } from '../Constant';
@@ -38,13 +38,13 @@ export const userReducer = (state = initialState, action) => {
       };
     }
     case GET_BILLER_LIST_SUCCESS: {
-      const {Data} = action.response;
+      const {Dealers} = action.response;
       return {
         ...state,
-        billerList: Data.Dealers,
+        billerList: Dealers,
       };
     }
-    case UPDATE_SELECTED_BILLER: {
+    case UPDATE_BILLER: {
       const selectedBiller = action.payload;
       return {
         ...state,
