@@ -2,7 +2,7 @@ import axios from 'axios';
 import { errorHandler } from './ExceptionHandler';
 const _ = require("lodash");
 
-export const makeApiCall = async (config, isLoginApi) => {
+export const makeApiCall = async (config) => {
   try{
     console.log("url -> ", config.url);
     const response = await axios(config);

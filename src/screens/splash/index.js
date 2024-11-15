@@ -11,12 +11,9 @@ export default function Splash() {
 
   const checkLoginAndNavigate = async () => {
     const userData = await Storage.getAsyncItem('userData');
-    console.log("-->", userData);
     if (_.size(userData)) {
-      console.log("--> in if");
       navigation.navigate(Screen.DASHBOARD);
     } else {
-      console.log("--> in else");
       navigation.navigate(Screen.LOGIN);
     }
   };

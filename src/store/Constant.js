@@ -13,3 +13,6 @@ export const PUNCH_IN_ATTENDANCE = 'punch_in_attendance';
 export const PUNCH_IN_ATTENDANCE_SUCCESS = 'punch_in_attendance_success';
 export const PUNCH_OUT_ATTENDANCE = 'punch_out_attendance';
 export const PUNCH_OUT_ATTENDANCE_SUCCESS = 'punch_out_attendance_success';
+
+export const CHECK_ATTENDANCE_STATUS = 'check_attendance_status';
+export const CHECK_ATTENDANCE_STATUS_SUCCESS = 'check_attendance_status_success';

@@ -7,22 +7,22 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
 import {APP_IMAGE, BASEURL, COLOR} from '../../constants';
 import { Storage } from '../../utils';
-import {doCheckIn} from '../../store/actions/attendance';
+import {doCheckIn, checkAttendanceStatus} from '../../store/actions/attendance';
 import {BillerDropdown} from '../../components/BillerDropdown';
 import {GetUserCurrentLocation} from '../../components/GetLocation';
 import styles from './style';
 
-export default function MarkIn() {
+export default function MarkAttendance() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const refRBSheet = useRef();
-  const {selectedBiller, latitude, longitude} = useSelector(state => state.userReducer);
+  const {selectedBiller, latitude, longitude, attendanceData} = useSelector(state => state.userReducer);
 
   const closeDialog = () => {
     refRBSheet.current.close();
   };
 
-  const punchInAttendance = async () => {
+  const punchAttendance = async () => {
     const userData = await Storage.getAsyncItem('userData');
     const base64Credentials = btoa(`${userData.username}:${userData.password}`);
     const config = {
@@ -54,8 +54,23 @@ export default function MarkIn() {
     refRBSheet.current.open();
   };
 
+  console.log('attendanceData', attendanceData);
+
+  const getAttendanceRecord = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    const config = {
+      method: 'GET',
+      url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${userData.EmployeeID}&AppliedOn=${moment().format('MM-DD-YYYY')}`,
+      headers: {
+        'Authorization': `Bearer ${userData.Token}`,
+      },
+    };
+    console.log("getAttendanceRecord", config);
+    dispatch(checkAttendanceStatus(config));
+  };
+
   useEffect(() => {
-    checkAttendanceStatus();
+    getAttendanceRecord();
   }, []);
 
   return (
@@ -90,7 +105,7 @@ export default function MarkIn() {
         <Pressable
           style={styles.checkInButton}
           // disabled={true}
-          onPress={() => punchInAttendance()}>
+          onPress={() => punchAttendance()}>
           <Text style={styles.checkInText}>Check In</Text>
         </Pressable>
       </View>

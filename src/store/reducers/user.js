@@ -15,6 +15,7 @@ const initialState = {
   selectedBiller: {},
   latitude: null,
   longitude: null,
+  empAttID: null,
 };
 
 export const userReducer = (state = initialState, action) => {
