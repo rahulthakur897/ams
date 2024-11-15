@@ -1,25 +1,16 @@
 import {
-    PUNCH_IN_ATTENDANCE,
-    PUNCH_OUT_ATTENDANCE,
+    MARK_ATTENDANCE,
     CHECK_ATTENDANCE_STATUS,
 } from "../Constant";
 
-export function doCheckIn(configData){
+export function markAttn(configData){
     return {
-        type: PUNCH_IN_ATTENDANCE,
+        type: MARK_ATTENDANCE,
         payload: configData,
     }
 }
 
-export function doCheckOut(configData){
-    return {
-        type: PUNCH_OUT_ATTENDANCE,
-        payload: configData,
-    }
-}
-
-export function checkAttendanceStatus(configData){
-    console.log("in action");
+export function checkAttnStatus(configData){
     return {
         type: CHECK_ATTENDANCE_STATUS,
         payload: configData,

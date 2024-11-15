@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
 import {APP_IMAGE, BASEURL, COLOR} from '../../constants';
 import { Storage } from '../../utils';
-import {doCheckIn, checkAttendanceStatus} from '../../store/actions/attendance';
+import {markAttn, checkAttnStatus} from '../../store/actions/attendance';
 import {BillerDropdown} from '../../components/BillerDropdown';
 import {GetUserCurrentLocation} from '../../components/GetLocation';
 import styles from './style';
@@ -50,7 +50,7 @@ export default function MarkAttendance() {
       },
     };
     console.log(config);
-    dispatch(doCheckIn(config));
+    dispatch(markAttn(config));
     refRBSheet.current.open();
   };
 
@@ -66,7 +66,7 @@ export default function MarkAttendance() {
       },
     };
     console.log("getAttendanceRecord", config);
-    dispatch(checkAttendanceStatus(config));
+    dispatch(checkAttnStatus(config));
   };
 
   useEffect(() => {
