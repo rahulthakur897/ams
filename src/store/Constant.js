@@ -15,3 +15,6 @@ export const MARK_ATTENDANCE = 'mark_attendance';
 export const MARK_ATTENDANCE_SUCCESS = 'mark_attendance_success';
 export const CHECK_ATTENDANCE_STATUS = 'check_attendance_status';
 export const CHECK_ATTENDANCE_STATUS_SUCCESS = 'check_attendance_status_success';
+export const FETCH_TASK_NAME = 'fetch_task_name';
+export const FETCH_TASK_NAME_SUCCESS = 'fetch_task_name_sucess';
+

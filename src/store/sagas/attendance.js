@@ -5,8 +5,10 @@ import {
   MARK_ATTENDANCE_SUCCESS,
   CHECK_ATTENDANCE_STATUS,
   CHECK_ATTENDANCE_STATUS_SUCCESS,
+  FETCH_TASK_NAME,
+  FETCH_TASK_NAME_SUCCESS,
 } from '../Constant';
-import {makeApiCall} from '../../utils';
+import {makeApiCall} from '../../utils'; 
 
 function* markYourAttn(configData) {
   const response = yield makeApiCall(configData.payload);
@@ -26,7 +28,20 @@ function* checkAttnStatus(configData) {
   }
 }
 
+function* fetchTaskNameList(configData) {
+  const response = yield makeApiCall(configData.payload);
+  console.log("gettting response : ",response);
+  if (response !== undefined) {
+    yield put({type: FETCH_TASK_NAME_SUCCESS, response});
+  } else {
+    yield put({type: API_FAILURE});
+  }
+}
+
 export function* getAttendanceSaga() {
   yield takeLatest(MARK_ATTENDANCE, markYourAttn);
   yield takeLatest(CHECK_ATTENDANCE_STATUS, checkAttnStatus);
+  yield takeLatest(FETCH_TASK_NAME, fetchTaskNameList);
 }
+
+
