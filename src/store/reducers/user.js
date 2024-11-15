@@ -5,6 +5,7 @@ import {
   GET_BILLER_LIST_SUCCESS,
   UPDATE_SELECTED_BILLER,
   UPDATE_USER_LOCATION,
+  FETCH_TASK_LIST_SUCCESS,
 } from '../Constant';
 import {Storage} from '../../utils';
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   latitude: null,
   longitude: null,
   empAttID: null,
+  taskList: [],
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -55,6 +57,13 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         latitude,
         longitude,
+      };
+    }
+    case FETCH_TASK_LIST_SUCCESS: {
+      const {Data} = action.response;
+      return {
+        ...state,
+        taskList: Data,
       };
     }
     case API_FAILURE: {

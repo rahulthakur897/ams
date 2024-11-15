@@ -5,18 +5,23 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
-import {APP_IMAGE, BASEURL, COLOR} from '../../constants';
-import { Storage } from '../../utils';
+import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../constants';
+import {Storage} from '../../utils';
+import {fetchTaskList} from '../../store/actions/user';
 import {markAttn, checkAttnStatus} from '../../store/actions/attendance';
 import {BillerDropdown} from '../../components/BillerDropdown';
 import {GetUserCurrentLocation} from '../../components/GetLocation';
 import styles from './style';
+const _ = require('lodash');
 
 export default function MarkAttendance() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const refRBSheet = useRef();
-  const {selectedBiller, latitude, longitude, attendanceData} = useSelector(state => state.userReducer);
+  const {selectedBiller, taskList, latitude, longitude} = useSelector(
+    state => state.userReducer,
+  );
+  const {attendanceData} = useSelector(state => state.attendanceReducer);
 
   const closeDialog = () => {
     refRBSheet.current.close();
@@ -46,32 +51,56 @@ export default function MarkAttendance() {
         IsImageBase64: true,
       },
       headers: {
-        'Authorization': `Basic ${base64Credentials}`,
+        Authorization: `Basic ${base64Credentials}`,
       },
     };
-    console.log(config);
     dispatch(markAttn(config));
     refRBSheet.current.open();
   };
-
-  console.log('attendanceData', attendanceData);
 
   const getAttendanceRecord = async () => {
     const userData = await Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
-      url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${userData.EmployeeID}&AppliedOn=${moment().format('MM-DD-YYYY')}`,
+      url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${
+        userData.EmployeeID
+      }&AppliedOn=${moment().format('MM-DD-YYYY')}`,
       headers: {
-        'Authorization': `Bearer ${userData.Token}`,
+        Authorization: `Bearer ${userData.Token}`,
       },
     };
-    console.log("getAttendanceRecord", config);
     dispatch(checkAttnStatus(config));
   };
 
   useEffect(() => {
     getAttendanceRecord();
   }, []);
+
+  const getTaskList = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    const config = {
+      method: 'GET',
+      url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${userData.EmployeeID}`,
+      headers: {
+        Authorization: `Bearer ${userData.Token}`,
+      },
+    };
+    dispatch(fetchTaskList(config));
+  };
+
+  useEffect(() => {
+    if (_.size(attendanceData)) {
+      getTaskList();
+    }
+  }, [attendanceData]);
+
+  const getTaskListCount = () => {
+    if (_.size(taskList)) {
+      navigation.navigate(Screen.TASKLIST);
+    } else {
+      navigation.navigate(Screen.ADDTASKS);
+    }
+  };
 
   return (
     <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
@@ -105,8 +134,10 @@ export default function MarkAttendance() {
         <Pressable
           style={styles.checkInButton}
           // disabled={true}
-          onPress={() => punchAttendance()}>
-          <Text style={styles.checkInText}>Check In</Text>
+          onPress={() => getTaskListCount()}>
+          <Text style={styles.checkInText}>
+            {_.size(attendanceData) ? 'Proceed Next for Check Out' : 'Check In'}
+          </Text>
         </Pressable>
       </View>
       {/* success msg bottom sheet */}

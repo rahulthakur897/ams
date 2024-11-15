@@ -18,9 +18,7 @@ function* markYourAttn(configData) {
 }
 
 function* checkAttnStatus(configData) {
-  console.log("in attn saga");
   const response = yield makeApiCall(configData.payload);
-  console.log("saga", response)
   if (response !== undefined) {
     yield put({type: CHECK_ATTENDANCE_STATUS_SUCCESS, response});
   } else {

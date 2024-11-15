@@ -10,7 +10,11 @@ export const Screen = {
     LOGIN: 'Login',
 
     DASHBOARD: 'Dashboard',
-    ATTENDANCE: 'Attendance',
+    MARKATTENDANCE: 'MarkAttendance',
     PHOTOANDLOCATION: 'PhotoAndLocation',
+    ADDTASKS: 'AddTasks',
+    SELECTTASK: 'SelectTask',
+    FITLLTASK: 'FillTask',
+    TASKLIST: 'TaskList',
 }
 Object.freeze(Screen);

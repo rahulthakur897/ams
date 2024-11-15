@@ -1,4 +1,4 @@
-import {API_LOADING, CHECK_ATTENDANCE_STATUS} from '../Constant';
+import {API_LOADING, CHECK_ATTENDANCE_STATUS_SUCCESS} from '../Constant';
 
 const initialState = {
   isLoading: false,
@@ -13,12 +13,11 @@ export const attendanceReducer = (state = initialState, action) => {
         isLoading: true,
       };
     }
-    case CHECK_ATTENDANCE_STATUS: {
-      const { Data } = action.response;
+    case CHECK_ATTENDANCE_STATUS_SUCCESS: {
+      const apiResp = action?.response;
       return {
         ...state,
-        isLoading: true,
-        attendanceData: [...Data],
+        attendanceData: apiResp?.Data,
       };
     }
     default:
