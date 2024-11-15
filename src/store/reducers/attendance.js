@@ -1,10 +1,18 @@
-import {API_LOADING, CHECK_ATTENDANCE_STATUS_SUCCESS, FETCH_TASK_NAME_SUCCESS} from '../Constant';
+import {
+  API_LOADING,
+  CHECK_ATTENDANCE_STATUS_SUCCESS,
+  FETCH_TASK_NAME_SUCCESS,
+  FILTER_SUBTASK_FOR_TASK,
+  SELECTED_SUBTASK,
+} from '../Constant';
+import {transformTaskListData} from '../../utils';
+const _ = require("lodash");
 
 const initialState = {
   isLoading: false,
   attendanceData: [],
   allTaskList: [],
-  parentTaskList:[],
+  parentTaskList: [],
   selectedParentTask: {},
   childTaskList: [],
   selectedChildTask: {},
@@ -26,12 +34,31 @@ export const attendanceReducer = (state = initialState, action) => {
       };
     }
     case FETCH_TASK_NAME_SUCCESS: {
-      const apiResp = action?.response;
-      const parentList = filterParentTasks(apiResp);
+      const {Data} = action?.response;
+      const parentTaskList = filterParentTasks(Data);
       return {
         ...state,
-        allTaskList: apiResp?.Data,
-        parentTaskList: parentList,
+        allTaskList: Data,
+        parentTaskList,
+      };
+    }
+    case FILTER_SUBTASK_FOR_TASK: {
+      const selectedTask = action?.payload;
+      const filteredChildTaskList = state.allTaskList.filter(
+        task => task.ParentTaskID === selectedTask.AirtelTaskID,
+      );
+      const formatDDRecords = transformTaskListData(filteredChildTaskList);
+      const childTaskList = _.sortBy(formatDDRecords, 'DisplayOrder');
+      return {
+        ...state,
+        childTaskList,
+      };
+    }
+    case SELECTED_SUBTASK: {
+      const selectedSubTask = action?.payload;
+      return {
+        ...state,
+        selectedChildTask: selectedSubTask,
       };
     }
     default:
@@ -39,8 +66,8 @@ export const attendanceReducer = (state = initialState, action) => {
   }
 };
 
-function filterParentTasks(arr){
+function filterParentTasks(arr) {
   const result = arr.filter(item => item.ParentTaskID === 0);
   const formatted = transformTaskListData(result);
-  return formatted;
+  return _.sortBy(formatted, 'DisplayOrder');
 }

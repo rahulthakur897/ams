@@ -142,6 +142,7 @@ export default function MarkAttendance() {
           <MyDropdown
             dropdownList={transformBillerData(billerList)}
             selectedItem={selectedBiller}
+            placeholder="Select Biller"
             callback={updateDropdownValue}
           />
           {/* Card with Camera & Location Permissions */}
@@ -170,21 +171,22 @@ export default function MarkAttendance() {
           {/* show location */}
           <GetUserCurrentLocation />
           {/* Check-In Button */}
-          {_.size(attendanceData) ? (
+          {!_.size(attendanceData) ? (
             <Pressable
               style={styles.checkInButton}
               // disabled={true}
               onPress={() => getTaskListCount()}>
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
-          ) : (
+          ) : null}
+          {_.size(attendanceData) ? (
             <Pressable
               style={styles.checkInButton}
               // disabled={true}
               onPress={() => punchAttendance()}>
               <Text style={styles.checkInText}>Check In</Text>
             </Pressable>
-          )}
+          ) : null}
         </View>
         {/* success msg bottom sheet */}
         <RBSheet

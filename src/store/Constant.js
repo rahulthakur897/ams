@@ -17,4 +17,7 @@ export const CHECK_ATTENDANCE_STATUS = 'check_attendance_status';
 export const CHECK_ATTENDANCE_STATUS_SUCCESS = 'check_attendance_status_success';
 export const FETCH_TASK_NAME = 'fetch_task_name';
 export const FETCH_TASK_NAME_SUCCESS = 'fetch_task_name_sucess';
-
+export const FILTER_SUBTASK_FOR_TASK = 'filter_subtask_for_task';
+export const SELECTED_SUBTASK = 'selected_subtask';
+export const RENDER_DYNAMIC_FORM = 'render_dynamic_form';
+export const RENDER_DYNAMIC_FORM_SUCCESS = 'render_dynamic_form_success';
