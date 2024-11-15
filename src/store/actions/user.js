@@ -24,3 +24,4 @@ export function updateUserLatLong(jsonData){
         payload: jsonData,
     }
 }
+

@@ -1,6 +1,5 @@
 import React from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Storage } from '../utils';
 const Stack = createStackNavigator();
 
 import Splash from '../screens/splash';

@@ -87,31 +87,6 @@ const style = StyleSheet.create({
     fontSize: 16,
     paddingTop: 8,
   },
-  dropdown: {
-    height: 40,
-    borderColor: COLOR.gray,
-    color: COLOR.black,
-    borderWidth: 0, // Removes the border
-    borderRadius: 8,
-    paddingHorizontal: 8,
-  },
-  dropdowncontainer: {
-    backgroundColor: COLOR.white, // Button color
-    marginTop: 20,
-    justifyContent: 'center',
-    borderRadius: 10,
-  },
-  placeholderStyle: {
-    color: COLOR.black, // Placeholder text color
-  },
-  selectedTextStyle: {
-    color: COLOR.black, // Selected item text color
-    fontSize: 16,
-  },
-  itemTextStyle: {
-    color: COLOR.black, // Dropdown list item text color
-    fontSize: 16,
-  },
   successImg: {
     width: 110,
     height: 110,

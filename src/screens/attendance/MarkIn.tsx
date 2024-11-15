@@ -1,66 +1,68 @@
 import React, {useEffect, useRef} from 'react';
 import {View, Text, ImageBackground, Pressable, Image} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
 import {useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
-import {getBillerList} from '../../store/actions/user';
-import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../constants';
-import {Storage, transformBillerData} from '../../utils';
+import {APP_IMAGE, BASEURL, COLOR} from '../../constants';
+import { Storage } from '../../utils';
+import {doCheckIn} from '../../store/actions/attendance';
+import {BillerDropdown} from '../../components/BillerDropdown';
 import {GetUserCurrentLocation} from '../../components/GetLocation';
 import styles from './style';
 
-export default function ApplyAttendance() {
+export default function MarkIn() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const refRBSheet = useRef();
-  const {billerList, selectedBiller} = useSelector(state => state.userReducer);
-
-  const getBiller = async () => {
-    const userData = await Storage.getAsyncItem('userData');
-    const config = {
-      method: 'GET',
-      url: `${BASEURL}/api/Employee/Employees?OrganizationID=${userData.OrganizationID}&EmployeeID=${userData.EmployeeID}`,
-      headers: {
-        Authorization: `Bearer ${userData.Token}`,
-      },
-    };
-    dispatch(getBillerList(config));
-  };
-
-  useEffect(() => {
-    //getBiller();
-  }, []);
-
-  const doCheckIn = async () => {
-    console.log('checking');
-    refRBSheet.current.open();
-  };
+  const {selectedBiller, latitude, longitude} = useSelector(state => state.userReducer);
 
   const closeDialog = () => {
     refRBSheet.current.close();
   };
 
+  const punchInAttendance = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    const base64Credentials = btoa(`${userData.username}:${userData.password}`);
+    const config = {
+      method: 'POST',
+      url: `${BASEURL}/api/Attendance/PunchInOut`,
+      data: {
+        EmployeeId: userData.EmployeeID,
+        Longitude: latitude,
+        Latitude: longitude,
+        DealerID: '1653', //(selectedBiller.DealerID).toString(),
+        EmpAttID: 0,
+        DeviceIPAddress: '',
+        Browser: 'MobileApp',
+        Operatingsystems: 'Mobile',
+        Hardwaretypes: 'Mobile',
+        DeviceID: '',
+        UserAgent: '',
+        GeolocationMsg: '',
+        Remarks: '',
+        ImageSavefullPath: '',
+        IsImageBase64: true,
+      },
+      headers: {
+        'Authorization': `Basic ${base64Credentials}`,
+      },
+    };
+    console.log(config);
+    dispatch(doCheckIn(config));
+    refRBSheet.current.open();
+  };
+
+  useEffect(() => {
+    checkAttendanceStatus();
+  }, []);
+
   return (
     <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
       <View style={styles.container}>
         {/* Dropdown to Choose Dealer */}
-        <View style={styles.dropdowncontainer}>
-          <Dropdown
-            style={styles.dropdown}
-            data={billerList}
-            labelField="DealerName"
-            valueField="DealerID"
-            placeholder="Choose Dealer"
-            value={selectedBiller.DealerID}
-            onChange={item => console.log('itemmmm', item)}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            itemTextStyle={styles.itemTextStyle}
-          />
-        </View>
+        <BillerDropdown />
         {/* Card with Camera & Location Permissions */}
         <View style={styles.permissionCard}>
           {/* Placeholder for Icon */}
@@ -88,7 +90,7 @@ export default function ApplyAttendance() {
         <Pressable
           style={styles.checkInButton}
           // disabled={true}
-          onPress={() => doCheckIn()}>
+          onPress={() => punchInAttendance()}>
           <Text style={styles.checkInText}>Check In</Text>
         </Pressable>
       </View>
