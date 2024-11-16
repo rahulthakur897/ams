@@ -19,10 +19,9 @@ const style = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 30,
-    
   },
   allowAccessText: {
-    color: COLOR.white, 
+    color: COLOR.white,
     fontFamily: FONT.Bold,
     fontSize: 14,
   },
@@ -49,6 +48,22 @@ const style = StyleSheet.create({
     color: COLOR.red,
     fontSize: 14,
     fontFamily: FONT.Medium,
+  },
+  inputLabel: {
+    color: COLOR.black,
+    fontSize: 16,
+    marginHorizontal: 20,
+    paddingBottom: 4,
+  },
+  textinput: {
+    marginHorizontal: 20,
+    borderWidth: 0.4,
+    borderColor: COLOR.lightBlack,
+    borderRadius: 5,
+    marginBottom: 8,
+    padding: 10,
+    color: COLOR.gray,
+    backgroundColor: COLOR.white,
   },
 });
 

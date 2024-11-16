@@ -18,7 +18,7 @@ export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, 
         labelField="label"
         valueField="value"
         placeholder={placeholder}
-        value={selectedItem.value}
+        value={selectedItem?.value}
         onChange={item => updateSelection(item)}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}

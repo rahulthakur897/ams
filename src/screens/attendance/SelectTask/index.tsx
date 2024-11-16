@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {APP_IMAGE, BASEURL} from '../../../constants';
+import {APP_IMAGE, BASEURL, Screen} from '../../../constants';
 import {Storage} from '../../../utils';
 import {
   fetchTaskNameList,
@@ -17,6 +17,7 @@ import {
   selectSubTask,
   getFormValues,
   renderDynamicForm,
+  resetDropdownTask,
 } from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
 import styles from './style';
@@ -49,6 +50,7 @@ export default function SelectTask() {
 
   useEffect(() => {
     getTaskNameList();
+    return () => dispatch(resetDropdownTask());
   }, []);
 
   const updateParentDropdownValue = item => {
@@ -85,22 +87,33 @@ export default function SelectTask() {
     callRenderFormData();
   };
 
-  const renderFormFields = () => {
-    if (_.size(dynamicFormValues)) {
-      dynamicFormValues.map(formElem => {
-        if (formElem.HTMLControlType === 'TextBox') {
-          return <TextInput placeholder={formElem.ControlHeader} />;
-        }
-        if (formElem.HTMLControlType === 'DropDown') {
-          return <MyDropdown placeholder={formElem.ControlHeader} />;
-        }
-      });
-    }
-  };
+  const renderFormFields = () =>
+    dynamicFormValues &&
+    dynamicFormValues.map(formElem => {
+      if (formElem.HTMLControlType === 'TextBox') {
+        return (
+          <View>
+            <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
+            <TextInput
+              key={formElem.AirtelTaskControlID}
+              placeholderTextColor="#333"
+              style={styles.textinput}
+              placeholder={'Enter ' + formElem.ControlHeader}
+            />
+          </View>
+        );
+      }
+      if (formElem.HTMLControlType === 'DropDown') {
+        return (<View>
+          <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
+          <MyDropdown key={formElem.AirtelTaskControlID} placeholder={formElem.ControlHeader} />
+        </View>);
+      }
+    });
 
   const taskListNavigation = () => {
     // You can add your authentication logic here
-    navigation.navigate('TaskList');
+    navigation.navigate(Screen.TASKLIST);
   };
 
   return (

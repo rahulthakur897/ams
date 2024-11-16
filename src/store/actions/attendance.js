@@ -8,6 +8,7 @@ import {
   FETCH_FORM_DEFAULT_VALUES,
   REMOVE_USER_TASK,
   FETCH_USER_TASK,
+  RESET_TASK_DROPDOWN,
 } from '../Constant';
 
 export function markAttn(configData) {
@@ -70,5 +71,11 @@ export function fetchUserTask(configData) {
   return {
     type: FETCH_USER_TASK,
     payload: configData,
+  };
+}
+
+export function resetDropdownTask(){
+  return {
+    type: RESET_TASK_DROPDOWN,
   };
 }

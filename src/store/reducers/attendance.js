@@ -6,6 +6,7 @@ import {
   RENDER_DYNAMIC_FORM_SUCCESS,
   SELECTED_SUBTASK,
   REMOVE_USER_TASK,
+  RESET_TASK_DROPDOWN,
 } from '../Constant';
 import {transformTaskListData} from '../../utils';
 const _ = require('lodash');
@@ -84,7 +85,16 @@ export const attendanceReducer = (state = initialState, action) => {
         allUserTasks: updatedUserTask,
       };
     }
-
+    case RESET_TASK_DROPDOWN: {
+      return {
+        ...state,
+        parentTaskList: [],
+        selectedParentTask: {},
+        childTaskList: [],
+        selectedChildTask: {},
+        dynamicFormValues: [],
+      };
+    }
     default:
       return state;
   }
