@@ -27,3 +27,7 @@ export const REMOVE_USER_TASK_SUCCESS = 'remove_user_task_success';
 export const FETCH_USER_TASK = 'fetch_user_task';
 export const FETCH_USER_TASK_SUCCESS = 'fetch_user_task_success';
 export const RESET_TASK_DROPDOWN = 'reset_task_dropdown';
+export const GET_MONTHLY_ATTENDANCE = 'get_monthly_attendance';
+export const GET_MONTHLY_ATTENDANCE_SUCCESS = 'get_monthly_attendance_success';
+
+
