@@ -1,6 +1,14 @@
 import React, {useEffect} from 'react';
-import {View, Text, TextInput, ImageBackground, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  ImageBackground,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 import {APP_IMAGE, BASEURL} from '../../../constants';
 import {Storage} from '../../../utils';
 import {
@@ -16,6 +24,7 @@ const _ = require('lodash');
 
 export default function SelectTask() {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const {
     parentTaskList,
@@ -79,14 +88,19 @@ export default function SelectTask() {
   const renderFormFields = () => {
     if (_.size(dynamicFormValues)) {
       dynamicFormValues.map(formElem => {
-        if(formElem.HTMLControlType === "TextBox"){
-          return <TextInput placeholder={formElem.ControlHeader} />
+        if (formElem.HTMLControlType === 'TextBox') {
+          return <TextInput placeholder={formElem.ControlHeader} />;
         }
-        if(formElem.HTMLControlType === "DropDown"){
-          return <MyDropdown placeholder={formElem.ControlHeader} />
+        if (formElem.HTMLControlType === 'DropDown') {
+          return <MyDropdown placeholder={formElem.ControlHeader} />;
         }
       });
     }
+  };
+
+  const taskListNavigation = () => {
+    // You can add your authentication logic here
+    navigation.navigate('TaskList');
   };
 
   return (
@@ -115,16 +129,23 @@ export default function SelectTask() {
             </View>
             {/* form fields */}
             {_.size(dynamicFormValues) ? (
-              <Text style={styles.addAdditional}>
-                -----Add Additional Details------
-              </Text>
+              <View>
+                <Text style={styles.addAdditional}>
+                  -----Add Additional Details------
+                </Text>
+                <Text style={styles.addAdditionalWarn}>
+                  * Marked fields are necessary
+                </Text>
+                {renderFormFields()}
+                <Pressable style={styles.allowAccessButton}>
+                  <Text
+                    onPress={taskListNavigation}
+                    style={styles.allowAccessText}>
+                    Save Tasks
+                  </Text>
+                </Pressable>
+              </View>
             ) : null}
-            {_.size(dynamicFormValues) ? (
-              <Text style={styles.addAdditionalWarn}>
-                * Marked fields are necessary
-              </Text>
-            ) : null}
-            {renderFormFields()}
           </View>
         </View>
       </ImageBackground>

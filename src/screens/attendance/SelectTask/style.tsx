@@ -14,6 +14,17 @@ const style = StyleSheet.create({
     color: COLOR.black,
     fontSize: 16,
     paddingBottom:5,
+  },allowAccessButton: {
+    backgroundColor: COLOR.orange,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    
+  },
+  allowAccessText: {
+    color: COLOR.white, 
+    fontFamily: FONT.Bold,
+    fontSize: 14,
   },
   choosetask:{
     marginTop: 20,

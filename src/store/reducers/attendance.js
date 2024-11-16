@@ -5,20 +5,23 @@ import {
   FILTER_SUBTASK_FOR_TASK,
   RENDER_DYNAMIC_FORM_SUCCESS,
   SELECTED_SUBTASK,
+  REMOVE_USER_TASK,
 } from '../Constant';
 import {transformTaskListData} from '../../utils';
-const _ = require("lodash");
+const _ = require('lodash');
 
 const initialState = {
   isLoading: false,
   attendanceData: [],
   allTaskList: [],
+  allUserTasks: [],
   parentTaskList: [],
   selectedParentTask: {},
   childTaskList: [],
   selectedChildTask: {},
   formDefaultValues: [],
   dynamicFormValues: [],
+  removeTask: {},
 };
 
 export const attendanceReducer = (state = initialState, action) => {
@@ -71,6 +74,17 @@ export const attendanceReducer = (state = initialState, action) => {
         dynamicFormValues: Data,
       };
     }
+    case REMOVE_USER_TASK: {
+      const selecteTaskId = action?.payload;
+      const updatedUserTask = state.allUserTasks.filter(
+        task => task.id === selecteTaskId,
+      );
+      return {
+        ...state,
+        allUserTasks: updatedUserTask,
+      };
+    }
+
     default:
       return state;
   }

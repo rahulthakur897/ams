@@ -22,3 +22,15 @@ export const SELECTED_SUBTASK = 'selected_subtask';
 export const RENDER_DYNAMIC_FORM = 'render_dynamic_form';
 export const RENDER_DYNAMIC_FORM_SUCCESS = 'render_dynamic_form_success';
 export const FETCH_FORM_DEFAULT_VALUES = "fetch_form_default_values";
+export const REMOVE_USER_TASK = 'remove_user_task';
+export const REMOVE_USER_TASK_SUCCESS = 'remove_user_task_success';
+export const FETCH_USER_TASK = 'fetch_user_task';
+export const FETCH_USER_TASK_SUCCESS = 'fetch_user_task_success';
+
+
+
+
+
+
+
+
