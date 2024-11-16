@@ -21,3 +21,4 @@ export const FILTER_SUBTASK_FOR_TASK = 'filter_subtask_for_task';
 export const SELECTED_SUBTASK = 'selected_subtask';
 export const RENDER_DYNAMIC_FORM = 'render_dynamic_form';
 export const RENDER_DYNAMIC_FORM_SUCCESS = 'render_dynamic_form_success';
+export const FETCH_FORM_DEFAULT_VALUES = "fetch_form_default_values";

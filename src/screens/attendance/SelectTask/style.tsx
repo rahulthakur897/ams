@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { ALIGN, COLOR, DIMENSIONS } from '../../../constants';
+import { ALIGN, COLOR, DIMENSIONS, FONT } from '../../../constants';
 
 const style = StyleSheet.create({
   bgImg: {
@@ -25,6 +25,19 @@ const style = StyleSheet.create({
     backgroundColor: COLOR.white,
     justifyContent: ALIGN.center.justifyContent,
     borderRadius: 10,
+  },
+  addAdditional: {
+    marginTop: 20,
+    color: COLOR.black,
+    fontSize: 14,
+    fontFamily: FONT.Medium,
+    textAlign: 'center',
+  },
+  addAdditionalWarn: {
+    marginTop: 10,
+    color: COLOR.red,
+    fontSize: 14,
+    fontFamily: FONT.Medium,
   },
 });
 

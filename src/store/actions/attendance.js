@@ -5,6 +5,7 @@ import {
     FILTER_SUBTASK_FOR_TASK,
     SELECTED_SUBTASK,
     RENDER_DYNAMIC_FORM,
+    FETCH_FORM_DEFAULT_VALUES,
 } from "../Constant";
 
 export function markAttn(configData){
@@ -45,6 +46,13 @@ export function selectSubTask(subtask){
 export function renderDynamicForm(configData){
     return {
         type: RENDER_DYNAMIC_FORM,
+        payload: configData,
+    }
+}
+
+export function getFormValues(configData){
+    return {
+        type: FETCH_FORM_DEFAULT_VALUES,
         payload: configData,
     }
 }

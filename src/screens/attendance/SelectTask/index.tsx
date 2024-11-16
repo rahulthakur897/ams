@@ -1,17 +1,30 @@
 import React, {useEffect} from 'react';
-import {View, Text, ImageBackground, ScrollView} from 'react-native';
+import {View, Text, TextInput, ImageBackground, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {APP_IMAGE, BASEURL} from '../../../constants';
 import {Storage} from '../../../utils';
-import {fetchTaskNameList, selectTaskAndFilterSubTask, selectSubTask, renderDynamicForm} from '../../../store/actions/attendance';
+import {
+  fetchTaskNameList,
+  selectTaskAndFilterSubTask,
+  selectSubTask,
+  getFormValues,
+  renderDynamicForm,
+} from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
 import styles from './style';
+const _ = require('lodash');
 
 export default function SelectTask() {
   const dispatch = useDispatch();
 
-  const {parentTaskList, selectedParentTask, childTaskList, selectedChildTask} =
-    useSelector(state => state.attendanceReducer);
+  const {
+    parentTaskList,
+    selectedParentTask,
+    childTaskList,
+    selectedChildTask,
+    dynamicFormValues,
+    formDefaultValues,
+  } = useSelector(state => state.attendanceReducer);
 
   const getTaskNameList = async () => {
     const userData = await Storage.getAsyncItem('userData');
@@ -45,9 +58,35 @@ export default function SelectTask() {
     dispatch(renderDynamicForm(config));
   };
 
+  const getFormDefaultValues = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    const config = {
+      method: 'GET',
+      url: `${BASEURL}/api/AirtelTask/GetAirtelTaskControlDefaultValues`,
+      headers: {
+        Authorization: `Bearer ${userData.Token}`,
+      },
+    };
+    dispatch(getFormValues(config));
+  };
+
   const updateChildDropdownValue = item => {
     dispatch(selectSubTask(item));
+    getFormDefaultValues();
     callRenderFormData();
+  };
+
+  const renderFormFields = () => {
+    if (_.size(dynamicFormValues)) {
+      dynamicFormValues.map(formElem => {
+        if(formElem.HTMLControlType === "TextBox"){
+          return <TextInput placeholder={formElem.ControlHeader} />
+        }
+        if(formElem.HTMLControlType === "DropDown"){
+          return <MyDropdown placeholder={formElem.ControlHeader} />
+        }
+      });
+    }
   };
 
   return (
@@ -74,6 +113,18 @@ export default function SelectTask() {
                 callback={updateChildDropdownValue}
               />
             </View>
+            {/* form fields */}
+            {_.size(dynamicFormValues) ? (
+              <Text style={styles.addAdditional}>
+                -----Add Additional Details------
+              </Text>
+            ) : null}
+            {_.size(dynamicFormValues) ? (
+              <Text style={styles.addAdditionalWarn}>
+                * Marked fields are necessary
+              </Text>
+            ) : null}
+            {renderFormFields()}
           </View>
         </View>
       </ImageBackground>

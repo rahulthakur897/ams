@@ -3,6 +3,7 @@ import {
   CHECK_ATTENDANCE_STATUS_SUCCESS,
   FETCH_TASK_NAME_SUCCESS,
   FILTER_SUBTASK_FOR_TASK,
+  RENDER_DYNAMIC_FORM_SUCCESS,
   SELECTED_SUBTASK,
 } from '../Constant';
 import {transformTaskListData} from '../../utils';
@@ -16,6 +17,8 @@ const initialState = {
   selectedParentTask: {},
   childTaskList: [],
   selectedChildTask: {},
+  formDefaultValues: [],
+  dynamicFormValues: [],
 };
 
 export const attendanceReducer = (state = initialState, action) => {
@@ -59,6 +62,13 @@ export const attendanceReducer = (state = initialState, action) => {
       return {
         ...state,
         selectedChildTask: selectedSubTask,
+      };
+    }
+    case RENDER_DYNAMIC_FORM_SUCCESS: {
+      const {Data} = action?.response;
+      return {
+        ...state,
+        dynamicFormValues: Data,
       };
     }
     default:
