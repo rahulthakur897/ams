@@ -1,14 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
-import {BASEURL, COLOR} from '../../constants';
+import {BASEURL, COLOR, FONT} from '../../constants';
 import {getMonthlyAttn} from '../../store/actions/calendar';
 import {Storage} from '../../utils';
-import styles from './style';
 const _ = require('lodash');
-
+import styles from './style';
 const getMarkedDates = (data: any) => {
   const markedDates = {};
 
@@ -21,8 +20,8 @@ const getMarkedDates = (data: any) => {
             item.AttendanceStatus === 'Present' ? 'green' : 'red', // Set color based on status
         },
         text: {
-          color: 'white',
-          fontWeight: 'bold',
+          color: COLOR.white,
+          fontFamily: FONT.Regular,
         },
       },
     };
@@ -32,6 +31,8 @@ const getMarkedDates = (data: any) => {
 
 export default function MyCalendar() {
   const dispatch = useDispatch();
+  const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM')); // Track current month
+
   const {monthlyAttendance} = useSelector(state => state.calendarReducer);
   const initDate = new Date();
   const disabledDaysIndexes = [6, 7];
@@ -50,14 +51,40 @@ export default function MyCalendar() {
     dispatch(getMonthlyAttn(config));
   };
 
+const getPreviousMonthAttendance = async () => {
+  const userData = await Storage.getAsyncItem('userData');
+  const firstdatePrevMonth = moment().subtract(1, 'month').startOf('month').format('MM-DD-YYYY');
+  const lastdatePrevMonth = moment().subtract(1, 'month').endOf('month').format('MM-DD-YYYY');
+  const config = {
+    method: 'GET',
+    url: `${BASEURL}/api/Attendance/GetEmpAttendanceCalender?EmployeeID=${userData.EmployeeID}&fromdate=${firstdatePrevMonth}&todate=${lastdatePrevMonth}`,
+    headers: {
+      Authorization: `Bearer ${userData.Token}`,
+    },
+  };
+  dispatch(getMonthlyAttn(config));
+};
+
   useEffect(() => {
     getMonthlyAttendance();
   }, []);
 
+  // Handle month changes
+  const onMonthChange = (month:any) => {
+    const newMonth = moment(month.dateString).format('YYYY-MM');
+    const previousMonth = moment(currentMonth).subtract(1, 'month').format('YYYY-MM');
+
+    if (newMonth === previousMonth) {
+      getPreviousMonthAttendance(month.dateString); // Call previous month method
+    }
+    setCurrentMonth(newMonth); // Update the current month
+  };
+  
   return (
     <View>
       {_.size(monthlyAttendance) ? (
         <Calendar
+        onMonthChange={onMonthChange} // Triggered when navigating between months
           markingType="custom"
           theme={{
             textSectionTitleDisabledColor: '#d9e1e8',

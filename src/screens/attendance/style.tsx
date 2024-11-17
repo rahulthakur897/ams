@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {DIMENSIONS, COLOR, FONT} from '../../constants';
+import {DIMENSIONS, COLOR, FONT, ALIGN} from '../../constants';
 
 const style = StyleSheet.create({
   bgImg: {
@@ -11,8 +11,8 @@ const style = StyleSheet.create({
     padding: 20,
   },
   permissionCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: ALIGN.center.justifyContent,
+    justifyContent: ALIGN.center.justifyContent,
     backgroundColor: COLOR.white,
     borderRadius: 10,
     marginTop: 30,
@@ -27,15 +27,15 @@ const style = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: ALIGN.center.justifyContent,
     fontFamily: 'Poppins',
-    color: 'black',
+    color: COLOR.black,
   },
   cardSubtitle: {
     fontSize: 14,
     color: '#666',
     marginTop: 10,
-    textAlign: 'center',
+    textAlign: ALIGN.center.justifyContent,
     marginBottom: 20,
     padding: 10,
   },
@@ -55,7 +55,7 @@ const style = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 25,
-    alignItems: 'center',
+    alignItems: ALIGN.center.justifyContent,
     marginTop: 50,
   },
   checkInText: {
@@ -77,9 +77,9 @@ const style = StyleSheet.create({
     backgroundColor: '#ec4218', // Button color
     width: 320,
     height: 40,
-    textAlign: 'center',
+    textAlign: ALIGN.center.justifyContent,
     borderRadius: 25,
-    alignItems: 'center',
+    alignItems: ALIGN.center.justifyContent,
     marginTop: 40,
   },
   checkinbuttonText: {
@@ -111,7 +111,7 @@ const style = StyleSheet.create({
   popupButtonText: {
     color: COLOR.white,
     fontFamily: FONT.Medium,
-    textAlign: 'center',
+    textAlign: ALIGN.center.justifyContent,
     fontSize: 14,
   },
 });
