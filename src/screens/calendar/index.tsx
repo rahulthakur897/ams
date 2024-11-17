@@ -9,7 +9,209 @@ import {Storage} from '../../utils';
 import styles from './style';
 const _ = require('lodash');
 
+
+const attendanceData = [
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-01T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-02T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-03T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-04T19:21:54.86",
+    "AttendanceStatus": "Present",
+    "CellColor": null,
+    "FirstCheckInTime": "2024-11-04T19:21:54.86",
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 1,
+    "ParentEmpAttID": 35232,
+    "TotalTimeAtDealerShip": null
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-05T18:23:04.197",
+    "AttendanceStatus": "Present",
+    "CellColor": null,
+    "FirstCheckInTime": "2024-11-05T18:23:04.197",
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 1,
+    "ParentEmpAttID": 35317,
+    "TotalTimeAtDealerShip": null
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-06T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-07T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-08T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-09T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-10T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-11T21:40:36.54",
+    "AttendanceStatus": "Present",
+    "CellColor": null,
+    "FirstCheckInTime": "2024-11-11T21:40:36.54",
+    "LastCheckOutTime": "2024-11-11T22:25:17.003",
+    "NoOfDealerShipVisited": 2,
+    "ParentEmpAttID": 35691,
+    "TotalTimeAtDealerShip": "0:44"
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-12T18:22:46.567",
+    "AttendanceStatus": "Pending",
+    "CellColor": null,
+    "FirstCheckInTime": "2024-11-12T18:22:46.567",
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 1,
+    "ParentEmpAttID": null,
+    "TotalTimeAtDealerShip": null
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-13T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-14T00:00:00",
+    "AttendanceStatus": "Absent",
+    "CellColor": null,
+    "FirstCheckInTime": null,
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 0,
+    "ParentEmpAttID": 0,
+    "TotalTimeAtDealerShip": ""
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-15T09:51:00.77",
+    "AttendanceStatus": "Pending",
+    "CellColor": null,
+    "FirstCheckInTime": "2024-11-15T09:51:00.77",
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 1,
+    "ParentEmpAttID": null,
+    "TotalTimeAtDealerShip": null
+  },
+  {
+    "ApprovedOrRejected": null,
+    "AttendanceDate": "2024-11-16T01:48:34.027",
+    "AttendanceStatus": "Pending",
+    "CellColor": null,
+    "FirstCheckInTime": "2024-11-16T01:48:34.027",
+    "LastCheckOutTime": null,
+    "NoOfDealerShipVisited": 1,
+    "ParentEmpAttID": null,
+    "TotalTimeAtDealerShip": null
+  }
+];
+// Convert attendance data to markedDates format
+const getMarkedDates = (data:any) => {
+  const markedDates = {};
+
+  data.forEach((item:any) => {
+    const date = item.AttendanceDate.split("T")[0]; // Extract YYYY-MM-DD
+    markedDates[date] = {
+      customStyles: {
+        container: {
+          backgroundColor:
+            item.AttendanceStatus === "Present" ? "green" : "red", // Set color based on status
+        },
+        text: {
+          color: "white",
+          fontWeight: "bold",
+        },
+      },
+    };
+  });
+console.log(markedDates);
+  return markedDates;
+};
 export default function MyCalendar() {
+  const markedDates = getMarkedDates(attendanceData);
   const dispatch = useDispatch();
   const {monthlyAttendance} = useSelector(
     state => state.calendarReducer,
@@ -18,11 +220,11 @@ export default function MyCalendar() {
   const disabledDaysIndexes = [6, 7];
   // And don't forget to disabled the "first" dates on init :
   useEffect(() => {
-    getDisabledDays(
-      initDate.getMonth(),
-      initDate.getFullYear(),
-      disabledDaysIndexes,
-    );
+    // getDisabledDays(
+    //   initDate.getMonth(),
+    //   initDate.getFullYear(),
+    //   disabledDaysIndexes,
+    // );
   }, []);
 
   const getMonthlyAttendance = async () => {
@@ -41,78 +243,9 @@ export default function MyCalendar() {
   };
 
   useEffect(() => {
-    getMonthlyAttendance();
+    // getMonthlyAttendance();
   }, []);
-
-  const getDisabledDays = (month, year, daysIndexes) => {
-    let pivot = moment().month(month).year(year).startOf('month');
-    const end = moment().month(month).year(year).endOf('month');
-    let dates = {};
-    const disabled = {disabled: true, disableTouchEvent: true};
-    while (pivot.isBefore(end)) {
-      daysIndexes.forEach(day => {
-        const copy = moment(pivot);
-        dates[copy.day(day).format('YYYY-MM-DD')] = disabled;
-      });
-      pivot.add(7, 'days');
-    }
-    // setMarkedDates(dates);
-    return dates;
-  };
-
-  const monthMap: {[key: string]: string} = {
-    Jan: '01',
-    Feb: '02',
-    Mar: '03',
-    Apr: '04',
-    May: '05',
-    Jun: '06',
-    Jul: '07',
-    Aug: '08',
-    Sep: '09',
-    Oct: '10',
-    Nov: '11',
-    Dec: '12',
-  };
-
-console.log("monthlyAttendance", monthlyAttendance);
-  const markedDates = monthlyAttendance?.map(curr => {
-      // Split the StartDate into day, month name, and year
-      const [day, monthName, year] = curr.AttendanceDate.split('T');
-
-      // Convert the month name to its numeric value
-      const month = monthMap[monthName as keyof typeof monthMap];
-
-      // Format the date as YYYY-MM-DD
-      const formattedDate = `${year}-${month}-${day.padStart(2, '0')}`;
-
-      // Create a new Date object to check the day of the week
-      const date = new Date(formattedDate);
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-
-      // Check if it's Saturday (6) or Sunday (0)
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-
-      // Return the formatted date and custom styles
-      return [
-        formattedDate,
-        {
-          customStyles: {
-            container: {
-              backgroundColor: curr.CellColor, // Set background color
-              borderRadius: 10, // Optional: for rounded corners
-              opacity: isWeekend ? 0.5 : 1, // Optional: make weekends less visible
-            },
-            text: {
-              color: COLOR.white, // Ensure text color is visible
-              fontWeight: FONT.Bold, // Optional: make text bold
-            },
-          },
-          disabled: isWeekend, // Mark as disabled if it's Saturday or Sunday
-        },
-      ];
-    });
-
+   
   return (
     <View>
       <Calendar
@@ -124,14 +257,14 @@ console.log("monthlyAttendance", monthlyAttendance);
         }}
         markedDates={markedDates}
         current={initDate}
-        onDayPress={day => {
-          setDate(day.dateString);
-        }}
+        // onDayPress={day => {
+        //   setDate(day.dateString);
+        // }}
         enableSwipeMonths={true}
         disabledDaysIndexes={disabledDaysIndexes}
-        onMonthChange={date => {
-          getDisabledDays(date.month - 1, date.year, disabledDaysIndexes);
-        }}
+        // onMonthChange={date => {
+        //   getDisabledDays(date.month - 1, date.year, disabledDaysIndexes);
+        // }}
       />
     </View>
   );
