@@ -10,7 +10,6 @@ import {
 function* getAttendance(configData) {
   yield put({type: API_LOADING});
   const response = yield makeApiCall(configData.payload);
-  console.log('in saga', response)
   if (response !== undefined) {
     yield put({type: GET_MONTHLY_ATTENDANCE_SUCCESS, response});
   } else {

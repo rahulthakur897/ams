@@ -13,11 +13,8 @@ export const calendarReducer = (state = initialState, action) => {
         isLoading: true,
       };
     case GET_MONTHLY_ATTENDANCE_SUCCESS: {
-      console.log("in reducer -->", action?.response);
       const {Data} = action?.response;
-      console.log("in reducer Data -->", Data);
       const DailyAttendance = Data[0]['DailyAttendance'];
-      console.log("in reducer Data DailyAttendance -->", DailyAttendance);
       return {
         ...state,
         monthlyAttendance: DailyAttendance,
