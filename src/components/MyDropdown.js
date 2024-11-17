@@ -30,16 +30,16 @@ export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, 
 
 const styles = StyleSheet.create({
   dropdowncontainer: {
-    backgroundColor: COLOR.white, // Button color
     marginTop: 20,
     justifyContent: 'center',
     borderRadius: 10,
   },
   dropdown: {
-    height: 40,
-    borderColor: COLOR.gray,
+    height: 48,
+    borderColor: COLOR.lightBlack,
+    backgroundColor: COLOR.white,
     color: COLOR.black,
-    borderWidth: 0, // Removes the border
+    borderWidth: 0.2,
     borderRadius: 8,
     paddingHorizontal: 8,
   },

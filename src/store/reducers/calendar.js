@@ -1,12 +1,8 @@
-import { API_LOADING, GET_MONTHLY_ATTENDANCE_SUCCESS } from "../Constant";
+import {API_LOADING, GET_MONTHLY_ATTENDANCE_SUCCESS} from '../Constant';
 
-import {
-  API_LOADING,
-  GET_MONTHLY_ATTENDANCE_SUCCESS,
-} from '../Constant';
 const initialState = {
   isLoading: false,
-  getMonthlyAttendanceList: [],
+  monthlyAttendance: [],
 };
 
 export const calendarReducer = (state = initialState, action) => {
@@ -17,10 +13,14 @@ export const calendarReducer = (state = initialState, action) => {
         isLoading: true,
       };
     case GET_MONTHLY_ATTENDANCE_SUCCESS: {
-      const { Data } = action?.response;
+      console.log("in reducer -->", action?.response);
+      const {Data} = action?.response;
+      console.log("in reducer Data -->", Data);
+      const DailyAttendance = Data[0]['DailyAttendance'];
+      console.log("in reducer Data DailyAttendance -->", DailyAttendance);
       return {
         ...state,
-        getMonthlyAttendanceList: Data,
+        monthlyAttendance: DailyAttendance,
       };
     }
     default:

@@ -171,7 +171,7 @@ export default function MarkAttendance() {
           {/* show location */}
           <GetUserCurrentLocation />
           {/* Check-In Button */}
-          {_.size(attendanceData) ? (
+          {!_.size(attendanceData) ? (
             <Pressable
               style={styles.checkInButton}
               // disabled={true}
@@ -179,7 +179,7 @@ export default function MarkAttendance() {
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
           ) : null}
-          {!_.size(attendanceData) ? (
+          {_.size(attendanceData) ? (
             <Pressable
               style={styles.checkInButton}
               // disabled={true}

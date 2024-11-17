@@ -6,9 +6,6 @@ const style = StyleSheet.create({
     width: DIMENSIONS.width,
     height: DIMENSIONS.height,
   },
-  container: {
-    flex: 1,
-  },
   chooseSubtask:{
     marginTop: 20,
     color: COLOR.black,
@@ -31,11 +28,6 @@ const style = StyleSheet.create({
     fontSize: 16,
     paddingBottom:5,
   },
-  addtaskdroptextone:{
-    backgroundColor: COLOR.white,
-    justifyContent: ALIGN.center.justifyContent,
-    borderRadius: 10,
-  },
   addAdditional: {
     marginTop: 20,
     color: COLOR.black,
@@ -52,15 +44,14 @@ const style = StyleSheet.create({
   inputLabel: {
     color: COLOR.black,
     fontSize: 16,
-    marginHorizontal: 20,
     paddingBottom: 4,
   },
   textinput: {
-    marginHorizontal: 20,
     borderWidth: 0.4,
     borderColor: COLOR.lightBlack,
-    borderRadius: 5,
+    borderRadius: 8,
     marginBottom: 8,
+    height: 48,
     padding: 10,
     color: COLOR.gray,
     backgroundColor: COLOR.white,

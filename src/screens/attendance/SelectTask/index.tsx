@@ -92,10 +92,9 @@ export default function SelectTask() {
     dynamicFormValues.map(formElem => {
       if (formElem.HTMLControlType === 'TextBox') {
         return (
-          <View>
+          <View key={formElem.AirtelTaskControlID}>
             <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
             <TextInput
-              key={formElem.AirtelTaskControlID}
               placeholderTextColor="#333"
               style={styles.textinput}
               placeholder={'Enter ' + formElem.ControlHeader}
@@ -104,9 +103,9 @@ export default function SelectTask() {
         );
       }
       if (formElem.HTMLControlType === 'DropDown') {
-        return (<View>
+        return (<View key={formElem.AirtelTaskControlID}>
           <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
-          <MyDropdown key={formElem.AirtelTaskControlID} placeholder={formElem.ControlHeader} />
+          <MyDropdown placeholder={formElem.ControlHeader} />
         </View>);
       }
     });
@@ -117,29 +116,25 @@ export default function SelectTask() {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{flex: 1}}>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
-        <View style={styles.container}>
-          <View style={{marginLeft: 20, marginRight: 10}}>
+        <View>
+          <View style={{marginHorizontal: 20}}>
             <Text style={styles.choosetask}>Choose Task</Text>
-            <View style={styles.addtaskdroptextone}>
-              <MyDropdown
-                dropdownList={parentTaskList}
-                selectedItem={selectedParentTask}
-                placeholder="Select Task"
-                callback={updateParentDropdownValue}
-              />
-            </View>
+            <MyDropdown
+              dropdownList={parentTaskList}
+              selectedItem={selectedParentTask}
+              placeholder="Select Task"
+              callback={updateParentDropdownValue}
+            />
             {/* subtask dropdown */}
             <Text style={styles.chooseSubtask}>Choose Sub Task</Text>
-            <View style={styles.addtaskdroptextone}>
-              <MyDropdown
-                dropdownList={childTaskList}
-                selectedItem={selectedChildTask}
-                placeholder="Select Sub Task"
-                callback={updateChildDropdownValue}
-              />
-            </View>
+            <MyDropdown
+              dropdownList={childTaskList}
+              selectedItem={selectedChildTask}
+              placeholder="Select Sub Task"
+              callback={updateChildDropdownValue}
+            />
             {/* form fields */}
             {_.size(dynamicFormValues) ? (
               <View>

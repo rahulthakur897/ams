@@ -1,9 +1,9 @@
-import {
-    GET_MONTHLY_ATTENDANCE,
-  } from '../Constant';
+import {GET_MONTHLY_ATTENDANCE} from '../Constant';
+
 export function getMonthlyAttn(configData) {
-    return {
-      type: GET_MONTHLY_ATTENDANCE,
-      payload: configData,
-    };
-  }
+  console.log('in action getMonthlyAttn');
+  return {
+    type: GET_MONTHLY_ATTENDANCE,
+    payload: configData,
+  };
+}
