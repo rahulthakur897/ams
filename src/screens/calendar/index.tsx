@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
-import {View} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
-import {BASEURL} from '../../constants';
+import {BASEURL, COLOR} from '../../constants';
 import {getMonthlyAttn} from '../../store/actions/calendar';
 import {Storage} from '../../utils';
 import styles from './style';
@@ -47,7 +47,6 @@ export default function MyCalendar() {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
-    console.log('getMonthlyAttendance', config);
     dispatch(getMonthlyAttn(config));
   };
 
@@ -57,18 +56,20 @@ export default function MyCalendar() {
 
   return (
     <View>
-      {_.size(monthlyAttendance) && <Calendar
-        markingType="custom"
-        theme={{
-          textSectionTitleDisabledColor: '#d9e1e8',
-          selectedDayBackgroundColor: '#dfr3eg',
-          selectedDayTextColor: '#D9E1E8',
-        }}
-        markedDates={getMarkedDates(monthlyAttendance)}
-        current={initDate}
-        enableSwipeMonths={true}
-        disabledDaysIndexes={disabledDaysIndexes}
-      />}
+      {_.size(monthlyAttendance) ? (
+        <Calendar
+          markingType="custom"
+          theme={{
+            textSectionTitleDisabledColor: '#d9e1e8',
+            selectedDayBackgroundColor: '#dfr3eg',
+            selectedDayTextColor: '#D9E1E8',
+          }}
+          markedDates={getMarkedDates(monthlyAttendance)}
+          current={initDate}
+          enableSwipeMonths={true}
+          disabledDaysIndexes={disabledDaysIndexes}
+        />
+      ) : <ActivityIndicator size={'large'} color={COLOR.gray} />}
     </View>
   );
 }
