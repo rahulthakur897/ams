@@ -46,16 +46,16 @@ export function selectSubTask(subtask) {
   };
 }
 
-export function renderDynamicForm(configData) {
+export function getFormValues(configData) {
   return {
-    type: RENDER_DYNAMIC_FORM,
+    type: FETCH_FORM_DEFAULT_VALUES,
     payload: configData,
   };
 }
 
-export function getFormValues(configData) {
+export function renderDynamicForm(configData) {
   return {
-    type: FETCH_FORM_DEFAULT_VALUES,
+    type: RENDER_DYNAMIC_FORM,
     payload: configData,
   };
 }

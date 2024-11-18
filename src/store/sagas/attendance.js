@@ -7,6 +7,8 @@ import {
   CHECK_ATTENDANCE_STATUS_SUCCESS,
   FETCH_TASK_NAME,
   FETCH_TASK_NAME_SUCCESS,
+  FETCH_FORM_DEFAULT_VALUES,
+  FETCH_FORM_DEFAULT_VALUES_SUCCESS,
   RENDER_DYNAMIC_FORM,
   RENDER_DYNAMIC_FORM_SUCCESS,
   REMOVE_USER_TASK,
@@ -43,6 +45,15 @@ function* fetchTaskNameList(configData) {
   }
 }
 
+function* fetchDefaultValues(configData){
+  const response = yield makeApiCall(configData.payload);
+  if (response !== undefined) {
+    yield put({type: FETCH_FORM_DEFAULT_VALUES_SUCCESS, response});
+  } else {
+    yield put({type: API_FAILURE});
+  }
+}
+
 function* fetchFormValues(configData){
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
@@ -74,9 +85,10 @@ export function* getAttendanceSaga() {
   yield takeLatest(MARK_ATTENDANCE, markYourAttn);
   yield takeLatest(CHECK_ATTENDANCE_STATUS, checkAttnStatus);
   yield takeLatest(FETCH_TASK_NAME, fetchTaskNameList);
-  yield takeLatest(RENDER_DYNAMIC_FORM, fetchFormValues)
-  yield takeLatest(REMOVE_USER_TASK, removeUserTask)
-  yield takeLatest(FETCH_USER_TASK, fetchUserTask)  
+  yield takeLatest(FETCH_FORM_DEFAULT_VALUES, fetchDefaultValues);
+  yield takeLatest(RENDER_DYNAMIC_FORM, fetchFormValues);
+  yield takeLatest(REMOVE_USER_TASK, removeUserTask);
+  yield takeLatest(FETCH_USER_TASK, fetchUserTask)  ;
 }
 
 

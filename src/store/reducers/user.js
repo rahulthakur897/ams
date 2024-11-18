@@ -16,7 +16,6 @@ const initialState = {
   selectedBiller: {},
   latitude: null,
   longitude: null,
-  empAttID: null,
   taskList: [],
 };
 

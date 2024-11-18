@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Pressable,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import {Formik, Field} from 'formik';
@@ -78,7 +78,12 @@ export default function Login() {
 
   useEffect(() => {
     if(_.size(userData)){
-      navigation.navigate(Screen.DASHBOARD);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: Screen.DASHBOARD}],
+        }),
+      );
     }
   }, [userData]);
 

@@ -1,9 +1,12 @@
 import {
   API_LOADING,
   CHECK_ATTENDANCE_STATUS_SUCCESS,
+  MARK_ATTENDANCE_SUCCESS,
   FETCH_TASK_NAME_SUCCESS,
   FILTER_SUBTASK_FOR_TASK,
+  FETCH_FORM_DEFAULT_VALUES_SUCCESS,
   RENDER_DYNAMIC_FORM_SUCCESS,
+  SELECTED_TASK,
   SELECTED_SUBTASK,
   REMOVE_USER_TASK,
   RESET_TASK_DROPDOWN,
@@ -14,6 +17,7 @@ const _ = require('lodash');
 const initialState = {
   isLoading: false,
   attendanceData: [],
+  empAttID: null,
   allTaskList: [],
   allUserTasks: [],
   parentTaskList: [],
@@ -40,6 +44,14 @@ export const attendanceReducer = (state = initialState, action) => {
         attendanceData: apiResp?.Data,
       };
     }
+    case MARK_ATTENDANCE_SUCCESS: {
+      const {Data} = action?.response;
+      const empAttID = Data[0]['EmpAttID'];
+      return {
+        ...state,
+        empAttID,
+      };
+    }
     case FETCH_TASK_NAME_SUCCESS: {
       const {Data} = action?.response;
       const parentTaskList = filterParentTasks(Data);
@@ -47,6 +59,13 @@ export const attendanceReducer = (state = initialState, action) => {
         ...state,
         allTaskList: Data,
         parentTaskList,
+      };
+    }
+    case SELECTED_TASK: {
+      const selectedSubTask = action?.payload;
+      return {
+        ...state,
+        selectedChildTask: selectedSubTask,
       };
     }
     case FILTER_SUBTASK_FOR_TASK: {
@@ -58,7 +77,11 @@ export const attendanceReducer = (state = initialState, action) => {
       const childTaskList = _.sortBy(formatDDRecords, 'DisplayOrder');
       return {
         ...state,
+        selectedParentTask: selectedTask,
         childTaskList,
+        selectedChildTask: {},
+        formDefaultValues: [],
+        dynamicFormValues: [],
       };
     }
     case SELECTED_SUBTASK: {
@@ -68,11 +91,20 @@ export const attendanceReducer = (state = initialState, action) => {
         selectedChildTask: selectedSubTask,
       };
     }
-    case RENDER_DYNAMIC_FORM_SUCCESS: {
+    case FETCH_FORM_DEFAULT_VALUES_SUCCESS: {
       const {Data} = action?.response;
       return {
         ...state,
-        dynamicFormValues: Data,
+        formDefaultValues: Data,
+      };
+    }
+    case RENDER_DYNAMIC_FORM_SUCCESS: {
+      const {Data} = action?.response;
+      const selectedChildAirtelTaskID = state.selectedChildTask.AirtelTaskID
+      const selectedFormValues = Data.filter(d => d.AirtelTaskID === selectedChildAirtelTaskID)
+      return {
+        ...state,
+        dynamicFormValues: selectedFormValues,
       };
     }
     case REMOVE_USER_TASK: {

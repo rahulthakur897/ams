@@ -6,11 +6,12 @@ import {
   ImageBackground,
   Pressable,
   Image,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../constants';
 import {Storage, transformBillerData} from '../../utils';
@@ -21,6 +22,7 @@ import {
 } from '../../store/actions/user';
 import {markAttn, checkAttnStatus} from '../../store/actions/attendance';
 import {MyDropdown} from '../../components/MyDropdown';
+import {GetCamera} from '../../components/GetCamera';
 import {GetUserCurrentLocation} from '../../components/GetLocation';
 import styles from './style';
 const _ = require('lodash');
@@ -29,9 +31,18 @@ export default function MarkAttendance() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const childRef = useRef();
+
+  const callChildMethod = async () => {
+    if (childRef.current) {
+      const photoResp = await childRef.current.takePhoto();
+      return photoResp;
+    }
+  };
+
   const {billerList, selectedBiller, taskList, latitude, longitude} =
     useSelector(state => state.userReducer);
-  const {attendanceData} = useSelector(state => state.attendanceReducer);
+  const {attendanceData, empAttID} = useSelector(state => state.attendanceReducer);
 
   const getBiller = async () => {
     const userData = await Storage.getAsyncItem('userData');
@@ -61,7 +72,7 @@ export default function MarkAttendance() {
 
   const punchAttendance = async () => {
     const userData = await Storage.getAsyncItem('userData');
-    const base64Credentials = btoa(`${userData.username}:${userData.password}`);
+    const imageBase64Data = await callChildMethod();
     const config = {
       method: 'POST',
       url: `${BASEURL}/api/Attendance/PunchInOut`,
@@ -69,8 +80,8 @@ export default function MarkAttendance() {
         EmployeeId: userData.EmployeeID,
         Longitude: latitude,
         Latitude: longitude,
-        DealerID: '1653', //(selectedBiller.DealerID).toString(),
-        EmpAttID: 0,
+        DealerID: selectedBiller?.value,
+        EmpAttID: empAttID || 0,
         DeviceIPAddress: '',
         Browser: 'MobileApp',
         Operatingsystems: 'Mobile',
@@ -79,11 +90,11 @@ export default function MarkAttendance() {
         UserAgent: '',
         GeolocationMsg: '',
         Remarks: '',
-        ImageSavefullPath: '',
+        ImageSavefullPath: imageBase64Data,
         IsImageBase64: true,
       },
       headers: {
-        Authorization: `Basic ${base64Credentials}`,
+        Authorization: `Bearer ${userData.Token}`,
       },
     };
     dispatch(markAttn(config));
@@ -134,6 +145,12 @@ export default function MarkAttendance() {
     }
   };
 
+  const checkSelectedBiller = () => {
+    if(!_.size(selectedBiller)){
+      Alert.alert('', 'Please select Biller');
+    }
+  };
+
   return (
     <ScrollView>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
@@ -142,47 +159,58 @@ export default function MarkAttendance() {
           <MyDropdown
             dropdownList={transformBillerData(billerList)}
             selectedItem={selectedBiller}
-            placeholder="Select Biller"
+            placeholder="Select Dealer"
             callback={updateDropdownValue}
           />
           {/* Card with Camera & Location Permissions */}
-          <View style={styles.permissionCard}>
-            {/* Placeholder for Icon */}
-            <View style={styles.iconss}>
-              <Icon name="camera-alt" size={74} color="#ccc" />
-              <Icon
-                name="location-pin"
-                size={74}
-                color="#ccc"
-                style={{marginLeft: 5}}
-              />
+          {/* show camera */}
+          {_.size(selectedBiller) ? (
+            <GetCamera ref={childRef} />
+          ) : (
+            <View style={styles.permissionCard}>
+              {/* Placeholder for Icon */}
+              <View style={styles.iconss}>
+                <Icon name="camera-alt" size={74} color="#ccc" />
+                <Icon
+                  name="location-pin"
+                  size={74}
+                  color="#ccc"
+                  style={{marginLeft: 5}}
+                />
+              </View>
+              <Text style={styles.cardTitle}>
+                Enable Camera & Location Access
+              </Text>
+              <Text style={styles.cardSubtitle}>
+                We need your permission to access the camera and location
+              </Text>
+              {/* Allow Access Button */}
+              <Pressable style={styles.allowAccessButton} onPress={checkSelectedBiller}>
+                <Text style={styles.allowAccessText}>Allow Access</Text>
+              </Pressable>
             </View>
-            <Text style={styles.cardTitle}>
-              Enable Camera & Location Access
-            </Text>
-            <Text style={styles.cardSubtitle}>
-              We need your permission to access the camera and location
-            </Text>
-            {/* Allow Access Button */}
-            <Pressable style={styles.allowAccessButton}>
-              <Text style={styles.allowAccessText}>Allow Access</Text>
-            </Pressable>
-          </View>
+          )}
           {/* show location */}
-          <GetUserCurrentLocation />
+          {_.size(selectedBiller) ? <GetUserCurrentLocation /> : null}
           {/* Check-In Button */}
-          {!_.size(attendanceData) ? (
+          {_.size(attendanceData) ? (
             <Pressable
-              style={styles.checkInButton}
-              // disabled={true}
+              style={ _.size(selectedBiller)
+                ? styles.checkInButton
+                : styles.checkInButtonDisable}
+              disabled={_.size(selectedBiller) ? false : true}
               onPress={() => getTaskListCount()}>
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
           ) : null}
-          {_.size(attendanceData) ? (
+          {!_.size(attendanceData) ? (
             <Pressable
-              style={styles.checkInButton}
-              // disabled={true}
+              style={
+                _.size(selectedBiller)
+                  ? styles.checkInButton
+                  : styles.checkInButtonDisable
+              }
+              disabled={_.size(selectedBiller) ? false : true}
               onPress={() => punchAttendance()}>
               <Text style={styles.checkInText}>Check In</Text>
             </Pressable>

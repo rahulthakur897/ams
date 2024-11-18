@@ -1,8 +1,12 @@
 import { Dimensions, StyleSheet, Platform } from "react-native";
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 
 export const DIMENSIONS = {
   width: Dimensions.get("window").width,
-  height: Dimensions.get("window").height,
+  height: Platform.select({
+    android: Dimensions.get('screen').height - StaticSafeAreaInsets.safeAreaInsetsBottom,
+    ios: Dimensions.get('window').height,
+  }),
 };
 
 export const COLOR = {
