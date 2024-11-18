@@ -31,7 +31,7 @@ export default function MyCalendar() {
   const dispatch = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM')); // Track current month
   const [markedDates, setMarkedDates] = useState({});
-  const [disableArrowRight, setDisableArrowRight] = useState({});
+  const [disableArrowRight, setDisableArrowRight] = useState(false);
   const {monthlyAttendance} = useSelector(state => state.calendarReducer);
   const initDate = new Date();
   const disabledDaysIndexes = [6, 7]; 
@@ -54,7 +54,7 @@ export default function MyCalendar() {
     const prevMonthStart = moment(currentMonth).subtract(1, "month").startOf("month").format("YYYY-MM-DD");
     const prevMonthEnd = moment(currentMonth).subtract(1, "month").endOf("month").format("YYYY-MM-DD");
     setCurrentMonth(moment(currentMonth).subtract(1, "month").format("YYYY-MM"));
-    setDisableArrowRight(false);
+    setDisableArrowRight(false); // Enable right arrow when moving to a previous month
     await fetchAttendance(prevMonthStart, prevMonthEnd);
   };
 
@@ -62,9 +62,17 @@ export default function MyCalendar() {
   const handleNextMonth = async () => {
     const nextMonthStart = moment(currentMonth).add(1, "month").startOf("month").format("YYYY-MM-DD");
     const nextMonthEnd = moment(currentMonth).add(1, "month").endOf("month").format("YYYY-MM-DD");
-    setCurrentMonth(moment(currentMonth).add(1, "month").format("YYYY-MM"));
-    
+    const current = moment().format("YYYY-MM");
+    const newMonth = moment(currentMonth).add(1, "month").format("YYYY-MM");
+
+    setCurrentMonth(newMonth);
+
+    // If moving to the current month, disable the right arrow
+    if (newMonth === current) {
+      setDisableArrowRight(true);
+    }
     await fetchAttendance(nextMonthStart, nextMonthEnd);
+    console.log("************************",disableArrowRight)
   };
   // Update markedDates when attendance data changes
   useEffect(() => {
@@ -78,6 +86,7 @@ export default function MyCalendar() {
     const initialStart = moment().startOf("month").format("YYYY-MM-DD");
     const initialEnd = moment().endOf("month").format("YYYY-MM-DD");
     fetchAttendance(initialStart, initialEnd);
+    setDisableArrowRight(true); // Disable right arrow initially as we start with the current month
   }, []);
 
   
