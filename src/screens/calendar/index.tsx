@@ -70,9 +70,20 @@ export default function MyCalendar() {
     setCurrentMonth(
       moment(currentMonth).subtract(1, 'month').format('YYYY-MM'),
     );
-    await fetchAttendance(prevMonthStart, prevMonthEnd);
+    if (isTodayAfterPrevMonthStart(currentMonth)) {
+      await fetchAttendance(prevMonthStart, prevMonthEnd);
+    }
   };
 
+  const isTodayAfterPrevMonthStart = (currentMonth: any) => {
+    const today = moment();
+    const prevMonthStart = moment(currentMonth)
+      .subtract(1, "month")
+      .startOf("month");
+
+    // Compare the two dates
+    return today.isSameOrAfter(prevMonthStart);
+  };
   // Handle next month navigation
   const handleNextMonth = async () => {
     const currentMonthMoment = moment(currentMonth, 'YYYY-MM');
