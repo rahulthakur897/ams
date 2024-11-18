@@ -7,9 +7,9 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import {StyleSheet, Linking, ActivityIndicator, Image} from 'react-native';
-import {useCameraDevice, useCameraPermission, Camera} from 'react-native-vision-camera';
+import {useCameraDevice, Camera} from 'react-native-vision-camera';
 import {DIMENSIONS, COLOR} from '../constants';
-import {errorHandler} from "../utils";
+import {errorHandler, Storage} from "../utils";
 const RNFS = require('react-native-fs');
 
 export const GetCamera = forwardRef((props, ref) => {
@@ -29,7 +29,8 @@ export const GetCamera = forwardRef((props, ref) => {
         const photo = await cameraRef.current.takePhoto();
         const photoPath = `file://${photo?.path}`;
         const imageUriBase64 = await RNFS.readFile(photoPath, 'base64');
-        const fullImage = `data:image/jpeg;base64,${imageUriBase64}`
+        const fullImage = `data:image/jpeg;base64,${imageUriBase64}`;
+        Storage.setAsyncItem('imgBase64', fullImage);
         setImagePath(fullImage);
         return fullImage;
       } catch (err) {
@@ -39,10 +40,7 @@ export const GetCamera = forwardRef((props, ref) => {
   };
 
   const requestCameraPermission = useCallback(async () => {
-    console.log('Requesting camera permission...');
     const permission = await Camera.requestCameraPermission();
-    console.log(`Camera permission status: ${permission}`);
-
     if (permission === 'denied') await Linking.openSettings();
     //setCameraPermissionStatus(permission);
   }, []);

@@ -1,9 +1,9 @@
 import {
     USER_LOGIN_INITIATED,
-    GET_BILLER_LIST,
+    GET_DEALER_LIST,
     UPDATE_USER_LOCATION,
     FETCH_TASK_LIST,
-    UPDATE_BILLER,
+    UPDATE_DEALER,
 } from "../Constant";
 
 export function doLogin(configData){
@@ -13,9 +13,9 @@ export function doLogin(configData){
     }
 }
 
-export function getBillerList(configData){
+export function getDealerList(configData){
     return {
-        type: GET_BILLER_LIST,
+        type: GET_DEALER_LIST,
         payload: configData,
     }
 }
@@ -27,10 +27,10 @@ export function updateUserLatLong(jsonData){
     }
 }
 
-export function updateBiller(biller){
+export function updateDealer(dealer){
     return {
-        type: UPDATE_BILLER,
-        payload: biller,
+        type: UPDATE_DEALER,
+        payload: dealer,
     }
 }
 

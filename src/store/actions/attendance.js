@@ -9,6 +9,9 @@ import {
   REMOVE_USER_TASK,
   FETCH_USER_TASK,
   RESET_TASK_DROPDOWN,
+  UPDATE_FORM_VALUE,
+  SAVE_TASK,
+  RESET_SAVE_TASK,
 } from '../Constant';
 
 export function markAttn(configData) {
@@ -74,8 +77,28 @@ export function fetchUserTask(configData) {
   };
 }
 
-export function resetDropdownTask(){
+export function resetDropdownTask() {
   return {
     type: RESET_TASK_DROPDOWN,
+  };
+}
+
+export function updateFormValues(formElemObj) {
+  return {
+    type: UPDATE_FORM_VALUE,
+    payload: formElemObj,
+  };
+}
+
+export function saveTaskAsDraft(configData) {
+  return {
+    type: SAVE_TASK,
+    payload: configData,
+  };
+}
+
+export function clearSavedTaskFlag(){
+  return {
+    type: RESET_SAVE_TASK,
   };
 }

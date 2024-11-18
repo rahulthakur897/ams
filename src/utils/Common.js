@@ -4,12 +4,12 @@ export const Common = {
    isHTML: (str) => /<[a-z][\s\S]*>/i.test(str)
 }
 
-export const transformBillerData = (data) => {
+export const transformDealerData = (data) => {
    const output = [];
-   data.forEach(biller => {
+   data.forEach(dealer => {
       output.push({
-         label: biller.DealerName,
-         value: biller.DealerID,
+         label: dealer.DealerName,
+         value: dealer.DealerID,
       });
    });
    return output;

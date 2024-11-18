@@ -1,19 +1,25 @@
-import React from 'react';
+import React, { useDebugValue } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
 } from 'react-native';
+import { useDispatch, UseDispatch } from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import {clearSavedTaskFlag} from '../../../store/actions/attendance';
 import {ALIGN, COLOR, FONT, Screen} from '../../../constants';
 
 const TaskListHeader = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
   const addtaskNavigation = () => {
     // You can add your authentication logic here
+    dispatch(clearSavedTaskFlag());
     navigation.navigate(Screen.SELECTTASK);
   };
+
   return (
     <View style={styles.headerContainer}>
       <Text style={styles.title}>Task List</Text>

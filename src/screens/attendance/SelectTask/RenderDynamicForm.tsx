@@ -1,17 +1,31 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, Pressable, StyleSheet} from 'react-native';
-import {COLOR, FONT, DIMENSIONS} from '../../../constants';
+import React, {useState, forwardRef, useImperativeHandle} from 'react';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {COLOR, FONT} from '../../../constants';
+import {updateFormValues} from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
 const _ = require('lodash');
 
-export const RenderDynamicForm = React.memo(({defaultValues, formValues}) => {
-  const [val, setVal] = useState({});
+export const RenderDynamicForm = forwardRef((props, ref) => {
+  const {dispatch, parentTaskObj, defaultValues, formValues} = props;
+  const [val, setVal] = useState('');
 
-  const handleChange = (text, inputId) => {
-    setVal(prevState => ({
-        ...prevState,
-        [inputId]: text,
+  useImperativeHandle(ref, () => ({
+    sendFormData,
+  }));
+
+  const handleChange = (text, formElemObj) => {
+    setVal(prev => ({
+      ...prev,
+      [formElemObj.ControlHeader]: {
+        ...formElemObj,
+        inputVal: text,
+        parentTaskId: parentTaskObj.value,
+      },
     }));
+  };
+
+  const sendFormData = () => {
+    dispatch(updateFormValues(val));
   };
 
   const appendDropdownValues = AirtelTaskControlID => {
@@ -33,8 +47,7 @@ export const RenderDynamicForm = React.memo(({defaultValues, formValues}) => {
     formValues.map(formElem => {
       if (formElem.HTMLControlType === 'TextBox') {
         return (
-          <View
-            key={formElem.AirtelTaskControlID}>
+          <View key={formElem.AirtelTaskControlID}>
             <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
             <TextInput
               placeholderTextColor="#333"
@@ -46,8 +59,7 @@ export const RenderDynamicForm = React.memo(({defaultValues, formValues}) => {
       }
       if (formElem.HTMLControlType === 'DropDown') {
         return (
-          <View
-            key={formElem.AirtelTaskControlID}>
+          <View key={formElem.AirtelTaskControlID}>
             <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
             <MyDropdown
               dropdownList={appendDropdownValues(formElem.AirtelTaskControlID)}
@@ -73,28 +85,31 @@ export const RenderDynamicForm = React.memo(({defaultValues, formValues}) => {
             {formValues.map(formElem => {
               if (formElem.HTMLControlType === 'TextBox') {
                 return (
-                  <View
-                    key={formElem.AirtelTaskControlID}>
-                    <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
+                  <View key={formElem.AirtelTaskControlID}>
+                    <Text style={styles.inputLabel}>
+                      {formElem.ControlHeader}
+                    </Text>
                     <TextInput
                       id={formElem.ControlHeader}
                       placeholderTextColor="#333"
                       style={styles.textinput}
                       placeholder={'Enter ' + formElem.ControlHeader}
-                      value={val[formElem.ControlHeader]}
-                      onChangeText={(text) => handleChange(text, formElem.ControlHeader)}
+                      // value={val[formElem.ControlHeader]}
+                      onChangeText={text => handleChange(text, formElem)}
                     />
                   </View>
                 );
               }
               if (formElem.HTMLControlType === 'DropDown') {
-                console.log(formElem);
                 return (
-                  <View
-                    key={formElem.AirtelTaskControlID}>
-                    <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
+                  <View key={formElem.AirtelTaskControlID}>
+                    <Text style={styles.inputLabel}>
+                      {formElem.ControlHeader}
+                    </Text>
                     <MyDropdown
-                      dropdownList={appendDropdownValues(formElem.AirtelTaskControlID)}
+                      dropdownList={appendDropdownValues(
+                        formElem.AirtelTaskControlID,
+                      )}
                       placeholder={formElem.ControlHeader}
                     />
                   </View>

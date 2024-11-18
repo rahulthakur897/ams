@@ -1,11 +1,5 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  Text,
-  ImageBackground,
-  ScrollView,
-  Pressable,
-} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {View, Text, ImageBackground, ScrollView, Pressable} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {APP_IMAGE, BASEURL, Screen} from '../../../constants';
@@ -17,8 +11,9 @@ import {
   getFormValues,
   renderDynamicForm,
   resetDropdownTask,
+  saveTaskAsDraft,
 } from '../../../store/actions/attendance';
-import { RenderDynamicForm } from './RenderDynamicForm';
+import {RenderDynamicForm} from './RenderDynamicForm';
 import {MyDropdown} from '../../../components/MyDropdown';
 import styles from './style';
 const _ = require('lodash');
@@ -26,14 +21,18 @@ const _ = require('lodash');
 export default function SelectTask() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const renderDynamicRef = useRef();
 
   const {
+    empAttID,
+    taskSaved,
     parentTaskList,
     selectedParentTask,
     childTaskList,
     selectedChildTask,
     formDefaultValues,
     dynamicFormValues,
+    airtelControlInputValues,
   } = useSelector(state => state.attendanceReducer);
 
   const getTaskNameList = async () => {
@@ -87,14 +86,35 @@ export default function SelectTask() {
     callRenderFormData();
   };
 
-  
+  useEffect(() => {
+    if (taskSaved) {
+      navigation.navigate(Screen.TASKLIST);
+    }
+  }, [taskSaved]);
 
-  const taskListNavigation = () => {
-    // You can add your authentication logic here
-    navigation.navigate(Screen.TASKLIST);
+  const saveTask = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    console.log('before if');
+    if (renderDynamicRef.current) {
+      renderDynamicRef.current.sendFormData();
+    }
+    console.log('after if');
+    const config = {
+      method: 'POST',
+      url: `${BASEURL}/api/Attendance/SaveTaskAsDraft`,
+      data: {
+        EmployeeId: userData.EmployeeID,
+        EmpAttID: empAttID || 0,
+        AirtelControlInputValues: airtelControlInputValues,
+        ImageBase64: [],
+      },
+      headers: {
+        Authorization: `Bearer ${userData.Token}`,
+      },
+    };
+    dispatch(saveTaskAsDraft(config));
   };
 
-  
   return (
     <ScrollView>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
@@ -116,12 +136,20 @@ export default function SelectTask() {
           />
           {/* form fields */}
           <View>
-            <RenderDynamicForm defaultValues={formDefaultValues} formValues={dynamicFormValues} />
+            <RenderDynamicForm
+              ref={renderDynamicRef}
+              dispatch={dispatch}
+              parentTaskObj={selectedParentTask}
+              defaultValues={formDefaultValues}
+              formValues={dynamicFormValues}
+            />
           </View>
 
-          {_.size(formDefaultValues) ? <Pressable style={styles.allowAccessButton} onPress={taskListNavigation}>
-            <Text style={styles.allowAccessText}>Save Tasks</Text>
-          </Pressable> : null}
+          {_.size(dynamicFormValues) ? (
+            <Pressable style={styles.allowAccessButton} onPress={saveTask}>
+              <Text style={styles.allowAccessText}>Save Tasks</Text>
+            </Pressable>
+          ) : null}
         </View>
       </ImageBackground>
     </ScrollView>

@@ -6,12 +6,13 @@ const style = StyleSheet.create({
     width: DIMENSIONS.width,
     height: DIMENSIONS.height,
   },
-  container: {
-    flexDirection: ALIGN.row.flexDirection,
-    justifyContent: ALIGN.contentSpaceBetween.justifyContent,
-  },
   listContainer: {
-    padding: 10,
+    margin: 10,
+  },
+  flatListContainer: {
+    height: DIMENSIONS.height - 250,
+    overflow: 'scroll',
+    paddingBottom: 15,
   },
   taskCard: {
     flexDirection: ALIGN.row.flexDirection,
@@ -21,12 +22,12 @@ const style = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginBottom: 8,
-    shadowColor: COLOR.white,
+    shadowColor: COLOR.black,
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
-    width: 310,
-    height: 50,
+    marginHorizontal: 10,
+    height: 62,
   },
   taskTitle: {
     color: COLOR.black,
@@ -35,6 +36,54 @@ const style = StyleSheet.create({
   },
   taskSubtitle: {
     color: '#888',
+  },
+  checkInButton: {
+    backgroundColor: COLOR.red,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    alignItems: ALIGN.center.justifyContent,
+  },
+  checkInButtonDisable: {
+    backgroundColor: COLOR.lightBlack,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    alignItems: ALIGN.center.justifyContent,
+  },
+  checkInText: {
+    color: COLOR.white,
+    fontFamily: FONT.Medium,
+    fontSize: 16,
+  },
+  successImg: {
+    width: 110,
+    height: 110,
+  },
+  successText: {
+    color: COLOR.green,
+    fontFamily: FONT.Medium,
+    fontSize: 16,
+  },
+  successAddText: {
+    color: COLOR.gray,
+    fontFamily: FONT.Regular,
+    fontSize: 12,
+  },
+  popupButton: {
+    marginTop: 15,
+    width: DIMENSIONS.width - 40,
+    paddingVertical: 10,
+    backgroundColor: COLOR.red,
+    borderRadius: 25,
+  },
+  popupButtonText: {
+    color: COLOR.white,
+    fontFamily: FONT.Medium,
+    textAlign: ALIGN.center.justifyContent,
+    fontSize: 14,
   },
 });
 

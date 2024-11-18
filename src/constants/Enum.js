@@ -9,9 +9,7 @@ export const Screen = {
 
     LOGIN: 'Login',
 
-    DASHBOARD: 'Dashboard',
     MARKATTENDANCE: 'MarkAttendance',
-    PHOTOANDLOCATION: 'PhotoAndLocation',
     ADDTASKS: 'AddTasks',
     SELECTTASK: 'SelectTask',
     TASKLIST: 'TaskList',

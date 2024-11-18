@@ -39,7 +39,7 @@ export default function BottomTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Employee Calendar"
+        name="Calendar"
         component={MyCalendar}
         options={{
           tabBarLabel: 'Employee Calendar',
@@ -59,7 +59,7 @@ export default function BottomTabNavigator() {
           tabBarLabel: 'Reports',
           tabBarIcon: ({color, focused}) => (
             <FeatherIcon
-              name={'calendar'}
+              name={'file-text'}
               size={22}
               color={focused ? 'red' : COLOR.gray}
             />

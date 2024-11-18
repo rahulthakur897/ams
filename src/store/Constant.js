@@ -6,9 +6,9 @@ export const USER_LOGIN_SUCCESS = "user_login_success";
 export const FETCH_TASK_LIST = 'fetch_task_list';
 export const FETCH_TASK_LIST_SUCCESS = 'fetch_task_list_success';
 
-export const GET_BILLER_LIST = 'get_biller_list';
-export const GET_BILLER_LIST_SUCCESS = 'get_biller_list_success';
-export const UPDATE_BILLER = 'update_biller';
+export const GET_DEALER_LIST = 'get_dealer_list';
+export const GET_DEALER_LIST_SUCCESS = 'get_dealer_list_success';
+export const UPDATE_DEALER = 'update_dealer';
 export const UPDATE_USER_LOCATION = 'update_user_location';
 
 export const MARK_ATTENDANCE = 'mark_attendance';
@@ -29,10 +29,13 @@ export const REMOVE_USER_TASK_SUCCESS = 'remove_user_task_success';
 export const FETCH_USER_TASK = 'fetch_user_task';
 export const FETCH_USER_TASK_SUCCESS = 'fetch_user_task_success';
 export const RESET_TASK_DROPDOWN = 'reset_task_dropdown';
+export const UPDATE_FORM_VALUE = 'update_form_value';
+export const SAVE_TASK = 'save_task';
+export const SAVE_TASK_SUCCESS = 'save_task_success';
+export const RESET_SAVE_TASK = 'reset_save_task';
 
 export const GET_MONTHLY_ATTENDANCE = 'get_monthly_attendance';
 export const GET_MONTHLY_ATTENDANCE_SUCCESS = 'get_monthly_attendance_success';
 
 export const GET_EMP_ATTENDANCE_DETAIL = 'get_emp_attendance_detail';
 export const GET_EMP_ATTENDANCE_DETAIL_SUCCESS = 'get_emp_attendance_detail_success';
-

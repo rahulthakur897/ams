@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   ScrollView,
@@ -14,11 +14,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../constants';
-import {Storage, transformBillerData} from '../../utils';
+import {Storage, transformDealerData} from '../../utils';
 import {
-  getBillerList,
+  getDealerList,
   fetchTaskList,
-  updateBiller,
+  updateDealer,
 } from '../../store/actions/user';
 import {markAttn, checkAttnStatus} from '../../store/actions/attendance';
 import {MyDropdown} from '../../components/MyDropdown';
@@ -40,11 +40,13 @@ export default function MarkAttendance() {
     }
   };
 
-  const {billerList, selectedBiller, taskList, latitude, longitude} =
+  const {dealerList, selectedDealer, taskList, latitude, longitude} =
     useSelector(state => state.userReducer);
   const {attendanceData, empAttID} = useSelector(state => state.attendanceReducer);
 
-  const getBiller = async () => {
+  const [selectedDealerHook, setSelectedDealer] = useState(selectedDealer);
+
+  const getDealer = async () => {
     const userData = await Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
@@ -53,17 +55,15 @@ export default function MarkAttendance() {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
-    dispatch(getBillerList(config));
+    dispatch(getDealerList(config));
   };
 
   useEffect(() => {
-    if (!_.size(billerList)) {
-      getBiller();
-    }
+    getDealer();
   }, []);
 
   const updateDropdownValue = item => {
-    dispatch(updateBiller(item));
+    dispatch(updateDealer(item));
   };
 
   const closeDialog = () => {
@@ -80,7 +80,7 @@ export default function MarkAttendance() {
         EmployeeId: userData.EmployeeID,
         Longitude: latitude,
         Latitude: longitude,
-        DealerID: selectedBiller?.value,
+        DealerID: selectedDealerHook?.value,
         EmpAttID: empAttID || 0,
         DeviceIPAddress: '',
         Browser: 'MobileApp',
@@ -121,9 +121,11 @@ export default function MarkAttendance() {
 
   const getTaskList = async () => {
     const userData = await Storage.getAsyncItem('userData');
+    const selDealer = await Storage.getAsyncItem('selectedDealer');
+    setSelectedDealer(selDealer);
     const config = {
       method: 'GET',
-      url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${userData.EmployeeID}`,
+      url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${empAttID}`,
       headers: {
         Authorization: `Bearer ${userData.Token}`,
       },
@@ -139,15 +141,16 @@ export default function MarkAttendance() {
 
   const getTaskListCount = () => {
     if (_.size(taskList)) {
+      callChildMethod();
       navigation.navigate(Screen.TASKLIST);
     } else {
       navigation.navigate(Screen.ADDTASKS);
     }
   };
 
-  const checkSelectedBiller = () => {
-    if(!_.size(selectedBiller)){
-      Alert.alert('', 'Please select Biller');
+  const checkSelectedDealer = () => {
+    if(!_.size(selectedDealerHook)){
+      Alert.alert('', 'Please select Dealer');
     }
   };
 
@@ -157,14 +160,15 @@ export default function MarkAttendance() {
         <View style={styles.container}>
           {/* Dropdown to Choose Dealer */}
           <MyDropdown
-            dropdownList={transformBillerData(billerList)}
-            selectedItem={selectedBiller}
+            dropdownList={transformDealerData(dealerList)}
+            selectedItem={selectedDealerHook}
             placeholder="Select Dealer"
+            disable={_.size(attendanceData) ? true : false}
             callback={updateDropdownValue}
           />
           {/* Card with Camera & Location Permissions */}
           {/* show camera */}
-          {_.size(selectedBiller) ? (
+          {_.size(selectedDealerHook) ? (
             <GetCamera ref={childRef} />
           ) : (
             <View style={styles.permissionCard}>
@@ -185,20 +189,20 @@ export default function MarkAttendance() {
                 We need your permission to access the camera and location
               </Text>
               {/* Allow Access Button */}
-              <Pressable style={styles.allowAccessButton} onPress={checkSelectedBiller}>
+              <Pressable style={styles.allowAccessButton} onPress={checkSelectedDealer}>
                 <Text style={styles.allowAccessText}>Allow Access</Text>
               </Pressable>
             </View>
           )}
           {/* show location */}
-          {_.size(selectedBiller) ? <GetUserCurrentLocation /> : null}
+          {_.size(selectedDealerHook) ? <GetUserCurrentLocation /> : null}
           {/* Check-In Button */}
           {_.size(attendanceData) ? (
             <Pressable
-              style={ _.size(selectedBiller)
+              style={ _.size(selectedDealerHook)
                 ? styles.checkInButton
                 : styles.checkInButtonDisable}
-              disabled={_.size(selectedBiller) ? false : true}
+              disabled={_.size(selectedDealerHook) ? false : true}
               onPress={() => getTaskListCount()}>
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
@@ -206,11 +210,11 @@ export default function MarkAttendance() {
           {!_.size(attendanceData) ? (
             <Pressable
               style={
-                _.size(selectedBiller)
+                _.size(selectedDealerHook)
                   ? styles.checkInButton
                   : styles.checkInButtonDisable
               }
-              disabled={_.size(selectedBiller) ? false : true}
+              disabled={_.size(selectedDealerHook) ? false : true}
               onPress={() => punchAttendance()}>
               <Text style={styles.checkInText}>Check In</Text>
             </Pressable>

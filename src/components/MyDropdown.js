@@ -4,7 +4,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {COLOR} from '../constants';
 const _ = require('lodash');
 
-export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, callback}) => {
+export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, disable, callback}) => {
   
   const updateSelection = (item) => {
     callback(item);
@@ -19,6 +19,7 @@ export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, 
         valueField="value"
         placeholder={placeholder}
         value={selectedItem?.value}
+        disable={disable ? true : false}
         onChange={item => updateSelection(item)}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}

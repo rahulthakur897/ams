@@ -12,30 +12,29 @@ export default function Reports() {
 
   const { getEmpAttendanceDetail } = useSelector(state => state.attendanceReducer);
   // Fetch attendance data from the API
-  const fetchEmpAttendanceSheet = async (fromDate: any, toDate: any) => { 
-    const userData = await Storage.getAsyncItem("userData");
+  const fetchEmpAttendanceSheet = async (fromDate: any, toDate: any) => {
+    const userData = await Storage.getAsyncItem('userData');
     const config = {
-      method: "GET",
+      method: 'GET',
       url: `${BASEURL}/api/Attendance/TeamDetailAttendanceCheck?EmployeeID=${userData.EmployeeID}&fromdate=${fromDate}&todate=${toDate}`,
       headers: {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
-    console.log("*****************config*******************************",config)
+    console.log('*****************config*******************************',config);
     dispatch(fetchtEmpAttendanceDetail(config));
   };
 
   useEffect(() => {
-    const initialStart = moment().startOf("month").format("YYYY-MM-DD");
-    const initialEnd = moment().endOf("month").format("YYYY-MM-DD");
+    const initialStart = moment().startOf('month').format('YYYY-MM-DD');
+    const initialEnd = moment().endOf('month').format('YYYY-MM-DD');
     fetchEmpAttendanceSheet(initialStart, initialEnd);
   }, []);
 
   return (
     <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row', }}>
-        </View>
+        <View style={{ flexDirection: 'row' }} />
 
         {/* Card with Camera & Location Permissions */}
         <View style={styles.permissionCard}>
@@ -48,9 +47,9 @@ export default function Reports() {
 
 
         </View>
-        <View style={{ flexDirection: 'row', marginLeft: 18, }}>
+        <View style={{ flexDirection: 'row', marginLeft: 18 }}>
           <TouchableOpacity style={styles.checkinbutton} >
-            <Text style={styles.checkinbuttonText}>{"Download Report"}</Text>
+            <Text style={styles.checkinbuttonText}>{'Download Report'}</Text>
           </TouchableOpacity>
         </View>
         {/* Bottom Navigation */}

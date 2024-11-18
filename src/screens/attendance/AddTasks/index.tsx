@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ImageBackground,
-  TouchableOpacity,
   Pressable,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -29,9 +28,9 @@ export default function AddTasks() {
           </Pressable>
         </View>
         <View style={styles.checkoutborder}>
-          <TouchableOpacity style={styles.checkoutbutton}>
+          <Pressable style={styles.checkoutbutton}>
             <Text style={styles.checkoutbuttonText}>Check Out</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </ImageBackground>

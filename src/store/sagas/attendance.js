@@ -15,8 +15,10 @@ import {
   REMOVE_USER_TASK_SUCCESS,
   FETCH_USER_TASK,
   FETCH_USER_TASK_SUCCESS,
+  SAVE_TASK,
+  SAVE_TASK_SUCCESS,
 } from '../Constant';
-import {makeApiCall} from '../../utils'; 
+import {makeApiCall} from '../../utils';
 
 function* markYourAttn(configData) {
   const response = yield makeApiCall(configData.payload);
@@ -45,7 +47,7 @@ function* fetchTaskNameList(configData) {
   }
 }
 
-function* fetchDefaultValues(configData){
+function* fetchDefaultValues(configData) {
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
     yield put({type: FETCH_FORM_DEFAULT_VALUES_SUCCESS, response});
@@ -54,7 +56,7 @@ function* fetchDefaultValues(configData){
   }
 }
 
-function* fetchFormValues(configData){
+function* fetchFormValues(configData) {
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
     yield put({type: RENDER_DYNAMIC_FORM_SUCCESS, response});
@@ -63,7 +65,7 @@ function* fetchFormValues(configData){
   }
 }
 
-function* removeUserTask(configData){
+function* removeUserTask(configData) {
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
     yield put({type: REMOVE_USER_TASK_SUCCESS, response});
@@ -81,6 +83,15 @@ function* fetchUserTask(configData) {
   }
 }
 
+function* saveTaskAsDraft(configData) {
+  const response = yield makeApiCall(configData.payload);
+  if (response !== undefined) {
+    yield put({type: SAVE_TASK_SUCCESS, response});
+  } else {
+    yield put({type: API_FAILURE});
+  }
+}
+
 export function* getAttendanceSaga() {
   yield takeLatest(MARK_ATTENDANCE, markYourAttn);
   yield takeLatest(CHECK_ATTENDANCE_STATUS, checkAttnStatus);
@@ -88,7 +99,6 @@ export function* getAttendanceSaga() {
   yield takeLatest(FETCH_FORM_DEFAULT_VALUES, fetchDefaultValues);
   yield takeLatest(RENDER_DYNAMIC_FORM, fetchFormValues);
   yield takeLatest(REMOVE_USER_TASK, removeUserTask);
-  yield takeLatest(FETCH_USER_TASK, fetchUserTask)  ;
+  yield takeLatest(FETCH_USER_TASK, fetchUserTask);
+  yield takeLatest(SAVE_TASK, saveTaskAsDraft);
 }
-
-

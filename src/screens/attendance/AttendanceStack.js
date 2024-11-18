@@ -1,7 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import MarkAttendance from './MarkAttendance';
-import PhotoAndLocation from './PhotoAndLocation';
 import SelectTask from './SelectTask';
 import TaskListHeader from './TaskList/TaskListHeader';
 import TaskList from './TaskList';
@@ -16,15 +15,9 @@ const AttendanceStack = () => {
         name="MarkAttendance"
         options={{
           title: 'Apply Attendance',
+          headerLeft: ()=> null,
         }}
         component={MarkAttendance}
-      />
-      <Stack.Screen
-        name="PhotoAndLocation"
-        options={{
-          title: 'Photo & Location',
-        }}
-        component={PhotoAndLocation}
       />
       <Stack.Screen
         name="AddTasks"

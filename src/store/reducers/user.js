@@ -2,18 +2,19 @@ import {
   API_LOADING,
   API_FAILURE,
   USER_LOGIN_SUCCESS,
-  GET_BILLER_LIST_SUCCESS,
-  UPDATE_BILLER,
+  GET_DEALER_LIST_SUCCESS,
+  UPDATE_DEALER,
   UPDATE_USER_LOCATION,
   FETCH_TASK_LIST_SUCCESS,
 } from '../Constant';
 import {Storage} from '../../utils';
+
 const initialState = {
   isLoading: false,
   isLoginError: false,
   userData: {},
-  billerList: [],
-  selectedBiller: {},
+  dealerList: [],
+  selectedDealer: {},
   latitude: null,
   longitude: null,
   taskList: [],
@@ -36,22 +37,24 @@ export const userReducer = (state = initialState, action) => {
         isLoading: false,
       };
     }
-    case GET_BILLER_LIST_SUCCESS: {
+    case GET_DEALER_LIST_SUCCESS: {
       const {Dealers} = action.response;
       return {
         ...state,
-        billerList: Dealers,
+        dealerList: Dealers,
       };
     }
-    case UPDATE_BILLER: {
-      const selectedBiller = action.payload;
+    case UPDATE_DEALER: {
+      const selectedDealer = action.payload;
+      Storage.setAsyncItem('selectedDealer', selectedDealer);
       return {
         ...state,
-        selectedBiller,
+        selectedDealer,
       };
     }
     case UPDATE_USER_LOCATION: {
       const {latitude, longitude} = action.payload;
+      Storage.setAsyncItem('latlong', {latitude, longitude});
       return {
         ...state,
         latitude,

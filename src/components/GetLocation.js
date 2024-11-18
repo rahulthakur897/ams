@@ -19,11 +19,14 @@ export const GetUserCurrentLocation = React.memo(() => {
   const {latitude, longitude} = useSelector(state => state.userReducer);
 
   const checkLocationPermission = async () => {
+    console.log("checkLocationPermission")
     const permission = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+    console.log("checkLocationPermission", permission)
     if (permission !== 'granted') {
       const requestResult = await request(
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
+      console.log("checkLocationPermission requestResult", requestResult);
       if (requestResult === 'granted') {
         getUserLocation();
       } else {
@@ -71,7 +74,7 @@ export const GetUserCurrentLocation = React.memo(() => {
   return (
     <View style={styles.container}>
       <Text style={styles.address}>
-        Address: {latitude && longitude ? (<Text>{latitude} - {longitude}</Text>) : <ActivityIndicator size='small' color={COLOR.gray} />}
+        Address: {latitude && longitude ? (<Text>Captured</Text>) : <ActivityIndicator size='small' color={COLOR.gray} />}
       </Text>
       <Text style={styles.address}>
         Check In Time: {moment().format('DD/MM/YYYY')} {moment().format('LT')}
