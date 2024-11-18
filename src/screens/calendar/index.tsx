@@ -8,16 +8,14 @@ import {getMonthlyAttn} from '../../store/actions/calendar';
 import {Storage} from '../../utils';
 const _ = require('lodash');
 import styles from './style';
-const getMarkedDates = (data: any) => {
-  const markedDates = {};
-
-  data.forEach((item: any) => {
-    const date = item.AttendanceDate.split('T')[0]; // Extract YYYY-MM-DD
-    markedDates[date] = {
+// Map attendance data to markedDates format
+const mapAttendanceToMarkedDates = (data:any) => {
+  return data.reduce((acc:any, item:any) => {
+    const date = item.AttendanceDate.split("T")[0]; // Extract YYYY-MM-DD
+    acc[date] = {
       customStyles: {
         container: {
-          backgroundColor:
-            item.AttendanceStatus === 'Present' ? 'green' : 'red', // Set color based on status
+          backgroundColor: item.AttendanceStatus === "Present" ? "green" : "red",
         },
         text: {
           color: COLOR.white,
@@ -25,77 +23,88 @@ const getMarkedDates = (data: any) => {
         },
       },
     };
-  });
-  return markedDates;
+    return acc;
+  }, {});
 };
 
 export default function MyCalendar() {
   const dispatch = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM')); // Track current month
-
+  const [markedDates, setMarkedDates] = useState({});
+  const [disableArrowRight, setDisableArrowRight] = useState({});
   const {monthlyAttendance} = useSelector(state => state.calendarReducer);
   const initDate = new Date();
-  const disabledDaysIndexes = [6, 7];
-
-  const getMonthlyAttendance = async () => {
-    const userData = await Storage.getAsyncItem('userData');
-    const firstdate = moment().startOf('month').format('MM-DD-YYYY');
-    const lastdate = moment().endOf('month').format('MM-DD-YYYY');
+  const disabledDaysIndexes = [6, 7]; 
+   // Fetch attendance data from the API
+  const fetchAttendance = async (fromDate:any, toDate:any) => {
+    const userData = await Storage.getAsyncItem("userData");
     const config = {
-      method: 'GET',
-      url: `${BASEURL}/api/Attendance/GetEmpAttendanceCalender?EmployeeID=${userData.EmployeeID}&fromdate=${firstdate}&todate=${lastdate}`,
+      method: "GET",
+      url: `${BASEURL}/api/Attendance/GetEmpAttendanceCalender?EmployeeID=${userData.EmployeeID}&fromdate=${fromDate}&todate=${toDate}`,
       headers: {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
+    setDisableArrowRight(true);
     dispatch(getMonthlyAttn(config));
   };
 
-const getPreviousMonthAttendance = async () => {
-  const userData = await Storage.getAsyncItem('userData');
-  const firstdatePrevMonth = moment().subtract(1, 'month').startOf('month').format('MM-DD-YYYY');
-  const lastdatePrevMonth = moment().subtract(1, 'month').endOf('month').format('MM-DD-YYYY');
-  const config = {
-    method: 'GET',
-    url: `${BASEURL}/api/Attendance/GetEmpAttendanceCalender?EmployeeID=${userData.EmployeeID}&fromdate=${firstdatePrevMonth}&todate=${lastdatePrevMonth}`,
-    headers: {
-      Authorization: `Bearer ${userData.Token}`,
-    },
+  // Handle previous month navigation
+  const handlePreviousMonth = async () => {
+    const prevMonthStart = moment(currentMonth).subtract(1, "month").startOf("month").format("YYYY-MM-DD");
+    const prevMonthEnd = moment(currentMonth).subtract(1, "month").endOf("month").format("YYYY-MM-DD");
+    setCurrentMonth(moment(currentMonth).subtract(1, "month").format("YYYY-MM"));
+    setDisableArrowRight(false);
+    await fetchAttendance(prevMonthStart, prevMonthEnd);
   };
-  dispatch(getMonthlyAttn(config));
-};
 
+  // Handle next month navigation
+  const handleNextMonth = async () => {
+    const nextMonthStart = moment(currentMonth).add(1, "month").startOf("month").format("YYYY-MM-DD");
+    const nextMonthEnd = moment(currentMonth).add(1, "month").endOf("month").format("YYYY-MM-DD");
+    setCurrentMonth(moment(currentMonth).add(1, "month").format("YYYY-MM"));
+    
+    await fetchAttendance(nextMonthStart, nextMonthEnd);
+  };
+  // Update markedDates when attendance data changes
   useEffect(() => {
-    getMonthlyAttendance();
+    if (monthlyAttendance && monthlyAttendance.length) {
+      setMarkedDates(mapAttendanceToMarkedDates(monthlyAttendance));
+    }
+  }, [monthlyAttendance]);
+
+  // Fetch initial month's attendance on component mount
+  useEffect(() => {
+    const initialStart = moment().startOf("month").format("YYYY-MM-DD");
+    const initialEnd = moment().endOf("month").format("YYYY-MM-DD");
+    fetchAttendance(initialStart, initialEnd);
   }, []);
 
-  // Handle month changes
-  const onMonthChange = (month:any) => {
-    const newMonth = moment(month.dateString).format('YYYY-MM');
-    const previousMonth = moment(currentMonth).subtract(1, 'month').format('YYYY-MM');
-
-    if (newMonth === previousMonth) {
-      getPreviousMonthAttendance(month.dateString); // Call previous month method
-    }
-    setCurrentMonth(newMonth); // Update the current month
-  };
   
   return (
     <View>
       {_.size(monthlyAttendance) ? (
         <Calendar
-        onMonthChange={onMonthChange} // Triggered when navigating between months
-          markingType="custom"
-          theme={{
-            textSectionTitleDisabledColor: '#d9e1e8',
-            selectedDayBackgroundColor: '#dfr3eg',
-            selectedDayTextColor: '#D9E1E8',
-          }}
-          markedDates={getMarkedDates(monthlyAttendance)}
-          current={initDate}
-          enableSwipeMonths={true}
-          disabledDaysIndexes={disabledDaysIndexes}
-        />
+        enableSwipeMonths={true}
+        disableArrowRight={disableArrowRight}
+        disabledDaysIndexes={disabledDaysIndexes}
+        theme={{
+                textSectionTitleDisabledColor: '#d9e1e8',
+                selectedDayBackgroundColor: '#dfr3eg',
+                selectedDayTextColor: '#D9E1E8',
+              }}
+        current={currentMonth} // Dynamically controlled month
+        markingType="custom"
+        markedDates={markedDates} // Dynamically fetched attendance data
+        onPressArrowLeft={(subtractMonth:any) => {
+          subtractMonth(); // Update visual display
+          handlePreviousMonth();
+        }}
+        onPressArrowRight={(addMonth:any) => {
+          addMonth(); // Update visual display
+          handleNextMonth();
+        }}
+      />
       ) : <ActivityIndicator size={'large'} color={COLOR.gray} />}
     </View>
   );
