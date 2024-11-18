@@ -30,3 +30,7 @@ export const RESET_TASK_DROPDOWN = 'reset_task_dropdown';
 
 export const GET_MONTHLY_ATTENDANCE = 'get_monthly_attendance';
 export const GET_MONTHLY_ATTENDANCE_SUCCESS = 'get_monthly_attendance_success';
+
+export const GET_EMP_ATTENDANCE_DETAIL = 'get_emp_attendance_detail';
+export const GET_EMP_ATTENDANCE_DETAIL_SUCCESS = 'get_emp_attendance_detail_success';
+
