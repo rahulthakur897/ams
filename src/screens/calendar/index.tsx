@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, View, Text} from 'react-native';
-import {Calendar} from 'react-native-calendars';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View, Text } from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import {ALIGN, BASEURL, COLOR, FONT} from '../../constants';
-import {getMonthlyAttn} from '../../store/actions/calendar';
-import {Storage} from '../../utils';
+import { ALIGN, BASEURL, COLOR, FONT } from '../../constants';
+import { getMonthlyAttn } from '../../store/actions/calendar';
+import { Storage } from '../../utils';
 import styles from './style';
 const _ = require('lodash');
 
@@ -20,12 +20,12 @@ const mapAttendanceToMarkedDates = (data: any) => {
             item.AttendanceStatus === 'Present'
               ? '#00b300'
               : item.AttendanceStatus === 'Pending'
-              ? '#1F77DF'
-              : item.AttendanceStatus === 'Week Off'
-              ? '#4d4dff'
-              : item.AttendanceStatus === 'Holiday'
-              ? '#00cc66'
-              : '#e65252',
+                ? '#1F77DF'
+                : item.AttendanceStatus === 'Week Off'
+                  ? '#4d4dff'
+                  : item.AttendanceStatus === 'Holiday'
+                    ? '#00cc66'
+                    : '#e65252',
         },
         text: {
           color: COLOR.white,
@@ -41,7 +41,7 @@ export default function MyCalendar() {
   const dispatch = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM')); // Track current month
   const [markedDates, setMarkedDates] = useState({});
-  const {monthlyAttendance} = useSelector(state => state.calendarReducer);
+  const { monthlyAttendance } = useSelector(state => state.calendarReducer);
   const disabledDaysIndexes = [6, 7];
 
   // Fetch attendance data from the API
@@ -139,19 +139,25 @@ export default function MyCalendar() {
             handlePreviousMonth();
           }}
           onPressArrowRight={(addMonth: any) => {
-            addMonth(); // Update visual display
-            handleNextMonth();
+            const nextMonth = moment(currentMonth).add(1, "month");
+            // Prevent navigation to December or future months
+            if (nextMonth.isSameOrBefore(moment(), "month")) {
+              addMonth(); // Update visual display
+              handleNextMonth(); // Call your handler for the next month
+            } else {
+              console.log("Cannot navigate to future months.");
+            }
           }}
         />
       ) : (
         <ActivityIndicator size={'large'} color={COLOR.gray} />
       )}
-      <View style={[ALIGN.contentSpaceEvenly, ALIGN.row, {marginTop: 20}]}>
-        <View style={[styles.legend, {backgroundColor: '#00b300'}]} />
+      <View style={[ALIGN.contentSpaceEvenly, ALIGN.row, { marginTop: 20 }]}>
+        <View style={[styles.legend, { backgroundColor: '#00b300' }]} />
         <Text style={styles.legendText}>Present</Text>
-        <View style={[styles.legend, {backgroundColor: '#e65252'}]} />
+        <View style={[styles.legend, { backgroundColor: '#e65252' }]} />
         <Text style={styles.legendText}>Absent</Text>
-        <View style={[styles.legend, {backgroundColor: '#1F77DF'}]} />
+        <View style={[styles.legend, { backgroundColor: '#1F77DF' }]} />
         <Text style={styles.legendText}>Pending</Text>
       </View>
     </View>
