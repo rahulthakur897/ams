@@ -67,6 +67,7 @@ function* fetchFormValues(configData) {
 
 function* removeUserTask(configData) {
   const response = yield makeApiCall(configData.payload);
+  console.log('removeUserTask', response);
   if (response !== undefined) {
     yield put({type: REMOVE_USER_TASK_SUCCESS, response});
   } else {

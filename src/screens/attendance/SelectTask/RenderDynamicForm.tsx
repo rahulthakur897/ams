@@ -8,7 +8,8 @@ const _ = require('lodash');
 export const RenderDynamicForm = forwardRef((props, ref) => {
   const {dispatch, parentTaskObj, defaultValues, formValues} = props;
   const [val, setVal] = useState('');
-
+console.log('formValues', formValues);
+console.log('defaultValues', defaultValues);
   useImperativeHandle(ref, () => ({
     sendFormData,
   }));
@@ -24,6 +25,17 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
     }));
   };
 
+  const handleDropdown = (item, placeholder) => {
+    setVal(prev => ({
+      ...prev,
+      [placeholder]: {
+        ...item,
+        inputVal: item.value,
+        parentTaskId: parentTaskObj.value,
+      },
+    }));
+  };
+
   const sendFormData = () => {
     dispatch(updateFormValues(val));
   };
@@ -34,41 +46,13 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
       if (list.AirtelTaskControlID === AirtelTaskControlID) {
         ddList.push({
           ...list,
-          label: list.defaultValues?.toString(),
-          value: list.defaultValues,
+          label: list.DefaultValues?.toString(),
+          value: list.AirtelTaskDefaultValueID,
         });
       }
     });
-    return ddList; //_.sortBy(ddList, 'DefaultValues');
+    return _.orderBy(ddList, ['value']);
   };
-
-  const renderFormFields = () =>
-    formValues &&
-    formValues.map(formElem => {
-      if (formElem.HTMLControlType === 'TextBox') {
-        return (
-          <View key={formElem.AirtelTaskControlID}>
-            <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
-            <TextInput
-              placeholderTextColor="#333"
-              style={styles.textinput}
-              placeholder={'Enter ' + formElem.ControlHeader}
-            />
-          </View>
-        );
-      }
-      if (formElem.HTMLControlType === 'DropDown') {
-        return (
-          <View key={formElem.AirtelTaskControlID}>
-            <Text style={styles.inputLabel}>{formElem.ControlHeader}</Text>
-            <MyDropdown
-              dropdownList={appendDropdownValues(formElem.AirtelTaskControlID)}
-              placeholder={formElem.ControlHeader}
-            />
-          </View>
-        );
-      }
-    });
 
   return (
     <View>
@@ -94,7 +78,6 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
                       placeholderTextColor="#333"
                       style={styles.textinput}
                       placeholder={'Enter ' + formElem.ControlHeader}
-                      // value={val[formElem.ControlHeader]}
                       onChangeText={text => handleChange(text, formElem)}
                     />
                   </View>
@@ -102,15 +85,17 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
               }
               if (formElem.HTMLControlType === 'DropDown') {
                 return (
-                  <View key={formElem.AirtelTaskControlID}>
-                    <Text style={styles.inputLabel}>
+                  <View key={formElem.AirtelTaskControlID} style={{marginBottom: 15}}>
+                    <Text style={[styles.inputLabel, {paddingBottom: 0, marginBottom: -15}]}>
                       {formElem.ControlHeader}
                     </Text>
                     <MyDropdown
                       dropdownList={appendDropdownValues(
                         formElem.AirtelTaskControlID,
                       )}
+                      selectedItem={val[formElem.ControlHeader]}
                       placeholder={formElem.ControlHeader}
+                      callback={handleDropdown}
                     />
                   </View>
                 );

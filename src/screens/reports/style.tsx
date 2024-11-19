@@ -36,22 +36,12 @@ const style = StyleSheet.create({
     borderRadius: 30,
     marginVertical: 20,
     alignItems: 'center',
-
   }, checkinbutton: {
     backgroundColor: '#ec4218', // Button color
-    paddingTop: 8,
+    paddingVertical: 12,
     marginTop: 140,
-    borderRadius: 5,
-    width: 320,
-    height: 40,
     textAlign: 'center',
-    borderEndEndRadius: 25,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    borderBottomStartRadius: 25,
-    borderTopEndRadius: 25,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderRadius: 25,
     alignItems: 'center',
   },
   permissionCard: {

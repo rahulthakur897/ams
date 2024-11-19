@@ -9,6 +9,10 @@ export const Screen = {
 
     LOGIN: 'Login',
 
+    DASHBOARD: 'Dashboard',
+    CALENDAR: 'Calendar',
+    REPORTS: 'Reports',
+    
     MARKATTENDANCE: 'MarkAttendance',
     ADDTASKS: 'AddTasks',
     SELECTTASK: 'SelectTask',

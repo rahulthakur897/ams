@@ -1,16 +1,16 @@
 import {StyleSheet} from 'react-native';
-import {COLOR, DIMENSIONS, FONT} from '../../../constants';
+import {COLOR, FONT} from '../../../constants';
 
 const style = StyleSheet.create({
   bgImg: {
-    width: DIMENSIONS.width,
-    height: DIMENSIONS.height,
+    flex: 1,
   },
   allowAccessButton: {
     backgroundColor: COLOR.orange,
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 30,
+    marginBottom: 10,
   },
   allowAccessText: {
     color: COLOR.white,

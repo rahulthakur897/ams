@@ -14,6 +14,7 @@ import {Formik, Field} from 'formik';
 import * as yup from 'yup';
 import {APP_IMAGE, COLOR, ALIGN, BASEURL, Screen} from '../../constants';
 import { doLogin } from '../../store/actions/user';
+import { Storage } from '../../utils';
 import {
   CustomButton,
   CustomCheckbox,
@@ -47,6 +48,7 @@ export default function Login() {
       return;
     }
     action.setSubmitting(true);
+    Storage.setAsyncItem('loginCreds', {username: params.username, password: params.password});
     const base64Credentials = btoa(`${params.username}:${params.password}`);
 
     const config = {

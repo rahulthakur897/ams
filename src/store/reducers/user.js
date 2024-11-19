@@ -5,7 +5,9 @@ import {
   GET_DEALER_LIST_SUCCESS,
   UPDATE_DEALER,
   UPDATE_USER_LOCATION,
+  RESET_USER_LOCATION,
   FETCH_TASK_LIST_SUCCESS,
+  USER_LOGOUT_INITIATED,
 } from '../Constant';
 import {Storage} from '../../utils';
 
@@ -61,11 +63,24 @@ export const userReducer = (state = initialState, action) => {
         longitude,
       };
     }
+    case RESET_USER_LOCATION: {
+      Storage.clearAsyncItem('latlong');
+      return {
+        ...state,
+        latitude: null,
+        longitude: null,
+      };
+    }
     case FETCH_TASK_LIST_SUCCESS: {
       const {Data} = action.response;
       return {
         ...state,
         taskList: Data,
+      };
+    }
+    case USER_LOGOUT_INITIATED: {
+      return {
+        ...initialState,
       };
     }
     case API_FAILURE: {

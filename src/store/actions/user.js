@@ -1,7 +1,9 @@
 import {
     USER_LOGIN_INITIATED,
+    USER_LOGOUT_INITIATED,
     GET_DEALER_LIST,
     UPDATE_USER_LOCATION,
+    RESET_USER_LOCATION,
     FETCH_TASK_LIST,
     UPDATE_DEALER,
 } from "../Constant";
@@ -27,6 +29,12 @@ export function updateUserLatLong(jsonData){
     }
 }
 
+export function resetUserLatLong(){
+    return {
+        type: RESET_USER_LOCATION,
+    }
+}
+
 export function updateDealer(dealer){
     return {
         type: UPDATE_DEALER,
@@ -38,6 +46,12 @@ export function fetchTaskList(configData){
     return {
         type: FETCH_TASK_LIST,
         payload: configData,
+    }
+}
+
+export function doLogoutAction(){
+    return {
+        type: USER_LOGOUT_INITIATED,
     }
 }
 

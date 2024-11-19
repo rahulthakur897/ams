@@ -1,6 +1,7 @@
 import {
   MARK_ATTENDANCE,
   CHECK_ATTENDANCE_STATUS,
+  UPDATE_ATTENDANCE_STATUS,
   FETCH_TASK_NAME,
   FILTER_SUBTASK_FOR_TASK,
   SELECTED_SUBTASK,
@@ -25,6 +26,13 @@ export function checkAttnStatus(configData) {
   return {
     type: CHECK_ATTENDANCE_STATUS,
     payload: configData,
+  };
+}
+
+export function updateUserAttnCurrentStatus(attnStatus){
+  return {
+    type: UPDATE_ATTENDANCE_STATUS,
+    payload: attnStatus
   };
 }
 

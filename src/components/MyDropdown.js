@@ -7,7 +7,7 @@ const _ = require('lodash');
 export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, disable, callback}) => {
   
   const updateSelection = (item) => {
-    callback(item);
+    callback(item, placeholder);
   };
 
   return (

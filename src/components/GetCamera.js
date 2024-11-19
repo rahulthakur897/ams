@@ -2,11 +2,10 @@ import React, {
   useEffect,
   useRef,
   useState,
-  useCallback,
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import {StyleSheet, Linking, ActivityIndicator, Image} from 'react-native';
+import {StyleSheet, Linking, Alert, PermissionsAndroid, ActivityIndicator, Image} from 'react-native';
 import {useCameraDevice, Camera} from 'react-native-vision-camera';
 import {DIMENSIONS, COLOR} from '../constants';
 import {errorHandler, Storage} from "../utils";
@@ -39,11 +38,37 @@ export const GetCamera = forwardRef((props, ref) => {
     }
   };
 
-  const requestCameraPermission = useCallback(async () => {
-    const permission = await Camera.requestCameraPermission();
-    if (permission === 'denied') await Linking.openSettings();
-    //setCameraPermissionStatus(permission);
-  }, []);
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'AMS App Camera Permission',
+          message:
+            'AMS App needs access to your camera ' +
+            'to capture your pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+        Alert.alert(
+          'Camera Permission Required',
+          'Please enable Camera services in settings.',
+          [
+            {text: 'Cancel', style: 'cancel'},
+            {text: 'Open Settings', onPress: () => Linking.openSettings()},
+          ],
+        );
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   useEffect(() => {
     requestCameraPermission();
@@ -58,7 +83,6 @@ export const GetCamera = forwardRef((props, ref) => {
       device={device}
       isActive={true}
       photo={true}
-      photoQualityBalance="speed"
     />
   );
 });

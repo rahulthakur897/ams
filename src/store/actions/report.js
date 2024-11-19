@@ -1,8 +1,8 @@
-import {GET_EMP_ATTENDANCE_DETAIL} from '../Constant';
+import {DOWNLOAD_REPORT} from '../Constant';
 
-export function fetchtEmpAttendanceDetail(configData) {
+export function downloadEmpReport(configData) {
   return {
-    type: GET_EMP_ATTENDANCE_DETAIL,
+    type: DOWNLOAD_REPORT,
     payload: configData,
   };
 }

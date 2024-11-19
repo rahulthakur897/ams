@@ -6,8 +6,8 @@ import {
   Alert,
   Linking,
   ActivityIndicator,
+  PermissionsAndroid,
 } from 'react-native';
-import {PERMISSIONS, request, check} from 'react-native-permissions';
 import GetLocation, {isLocationError} from 'react-native-get-location';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
@@ -18,29 +18,36 @@ export const GetUserCurrentLocation = React.memo(() => {
   const dispatch = useDispatch();
   const {latitude, longitude} = useSelector(state => state.userReducer);
 
-  const checkLocationPermission = async () => {
-    console.log("checkLocationPermission")
-    const permission = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    console.log("checkLocationPermission", permission)
-    if (permission !== 'granted') {
-      const requestResult = await request(
-        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'AMS App Location Permission',
+          message:
+            'AMS App needs access to your location ' +
+            'to capture your address.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
       );
-      console.log("checkLocationPermission requestResult", requestResult);
-      if (requestResult === 'granted') {
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the location');
         getUserLocation();
       } else {
+        console.log('location permission denied');
         Alert.alert(
           'Location Permission Required',
-          'Please enable location services in settings.',
+          'Please enable Location services in settings.',
           [
             {text: 'Cancel', style: 'cancel'},
             {text: 'Open Settings', onPress: () => Linking.openSettings()},
           ],
         );
       }
-    } else {
-      getUserLocation();
+    } catch (err) {
+      console.warn(err);
     }
   };
 
@@ -68,7 +75,7 @@ export const GetUserCurrentLocation = React.memo(() => {
   };
 
   useEffect(() => {
-    checkLocationPermission();
+    requestLocationPermission();
   }, []);
 
   return (

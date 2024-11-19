@@ -94,11 +94,9 @@ export default function SelectTask() {
 
   const saveTask = async () => {
     const userData = await Storage.getAsyncItem('userData');
-    console.log('before if');
     if (renderDynamicRef.current) {
       renderDynamicRef.current.sendFormData();
     }
-    console.log('after if');
     const config = {
       method: 'POST',
       url: `${BASEURL}/api/Attendance/SaveTaskAsDraft`,
@@ -144,7 +142,6 @@ export default function SelectTask() {
               formValues={dynamicFormValues}
             />
           </View>
-
           {_.size(dynamicFormValues) ? (
             <Pressable style={styles.allowAccessButton} onPress={saveTask}>
               <Text style={styles.allowAccessText}>Save Tasks</Text>

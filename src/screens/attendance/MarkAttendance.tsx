@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useReducer, useRef} from 'react';
 import {
   View,
   ScrollView,
@@ -30,6 +30,7 @@ const _ = require('lodash');
 export default function MarkAttendance() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const refRBSheet = useRef();
   const childRef = useRef();
 
@@ -63,10 +64,12 @@ export default function MarkAttendance() {
   }, []);
 
   const updateDropdownValue = item => {
+    setSelectedDealer(item);
     dispatch(updateDealer(item));
   };
 
   const closeDialog = () => {
+    forceUpdate();
     refRBSheet.current.close();
   };
 
@@ -135,6 +138,11 @@ export default function MarkAttendance() {
 
   useEffect(() => {
     if (_.size(attendanceData)) {
+      const selected = {
+        label: attendanceData.DealerName,
+        value: attendanceData.DealerID,
+      };
+      dispatch(updateDealer(selected));
       getTaskList();
     }
   }, [attendanceData]);
@@ -154,6 +162,16 @@ export default function MarkAttendance() {
     }
   };
 
+  const getUserCurrentAttendanceStatus = () => {
+    if(_.size(attendanceData)){
+      if(attendanceData.TimeOut === null && attendanceData.ApprovedOrRejected === 'P'){
+        return true;
+      }
+      return false;
+    }
+    return false;
+  };
+
   return (
     <ScrollView>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
@@ -163,7 +181,7 @@ export default function MarkAttendance() {
             dropdownList={transformDealerData(dealerList)}
             selectedItem={selectedDealerHook}
             placeholder="Select Dealer"
-            disable={_.size(attendanceData) ? true : false}
+            disable={getUserCurrentAttendanceStatus()}
             callback={updateDropdownValue}
           />
           {/* Card with Camera & Location Permissions */}
@@ -197,7 +215,7 @@ export default function MarkAttendance() {
           {/* show location */}
           {_.size(selectedDealerHook) ? <GetUserCurrentLocation /> : null}
           {/* Check-In Button */}
-          {_.size(attendanceData) ? (
+          {getUserCurrentAttendanceStatus() ? (
             <Pressable
               style={ _.size(selectedDealerHook)
                 ? styles.checkInButton
@@ -207,7 +225,7 @@ export default function MarkAttendance() {
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
           ) : null}
-          {!_.size(attendanceData) ? (
+          {!getUserCurrentAttendanceStatus() ? (
             <Pressable
               style={
                 _.size(selectedDealerHook)

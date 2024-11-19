@@ -1,13 +1,13 @@
-import React, { useDebugValue } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { useDispatch, UseDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {clearSavedTaskFlag} from '../../../store/actions/attendance';
+import {clearSavedTaskFlag, resetDropdownTask} from '../../../store/actions/attendance';
 import {ALIGN, COLOR, FONT, Screen} from '../../../constants';
 
 const TaskListHeader = () => {
@@ -17,6 +17,7 @@ const TaskListHeader = () => {
   const addtaskNavigation = () => {
     // You can add your authentication logic here
     dispatch(clearSavedTaskFlag());
+    dispatch(resetDropdownTask());
     navigation.navigate(Screen.SELECTTASK);
   };
 

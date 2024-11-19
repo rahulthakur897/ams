@@ -21,6 +21,9 @@ import {
   removeTask,
   markAttn,
 } from '../../../store/actions/attendance';
+import {
+  resetUserLatLong,
+} from '../../../store/actions/user';
 import {Storage} from '../../../utils';
 import styles from './style';
 const _ = require('lodash');
@@ -103,11 +106,13 @@ export default function TaskList() {
   }, []);
 
   const removeUserTask = async taskGroupId => {
-    console.log('taskGroupId', taskGroupId);
     const userData = await Storage.getAsyncItem('userData');
     const config = {
-      method: 'GET',
-      url: `${BASEURL}/api/Attendance/RemoveAirtelTaskAsDraft?GroupId==${taskGroupId}`,
+      method: 'POST',
+      url: `${BASEURL}/api/Attendance/RemoveAirtelTaskAsDraft`,
+      data: {
+        GroupId: taskGroupId,
+      },
       headers: {
         Authorization: `Bearer ${userData.Token}`,
       },
@@ -166,7 +171,9 @@ export default function TaskList() {
 
   const closeDialog = () => {
     refRBSheet.current.close();
-    navigation.navigate(Screen.DASHBOARD);
+    dispatch(resetUserLatLong());
+    Storage.clearAsyncItem('selectedDealer');
+    navigation.navigate(Screen.MARKATTENDANCE);
   };
 
   return (

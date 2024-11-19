@@ -1,6 +1,7 @@
 import {
   API_LOADING,
   CHECK_ATTENDANCE_STATUS_SUCCESS,
+  UPDATE_ATTENDANCE_STATUS,
   MARK_ATTENDANCE_SUCCESS,
   FETCH_TASK_NAME_SUCCESS,
   FILTER_SUBTASK_FOR_TASK,
@@ -9,7 +10,7 @@ import {
   RENDER_DYNAMIC_FORM_SUCCESS,
   SELECTED_TASK,
   SELECTED_SUBTASK,
-  REMOVE_USER_TASK,
+  REMOVE_USER_TASK_SUCCESS,
   RESET_TASK_DROPDOWN,
   UPDATE_FORM_VALUE,
   SAVE_TASK_SUCCESS,
@@ -22,6 +23,7 @@ const initialState = {
   isLoading: false,
   attendanceData: [],
   empAttID: null,
+  attnStatus: null,
   taskSaved: false,
   allTaskList: [],
   allUserTasks: [],
@@ -45,11 +47,19 @@ export const attendanceReducer = (state = initialState, action) => {
     case CHECK_ATTENDANCE_STATUS_SUCCESS: {
       const {Data} = action?.response;
       const attnInfo = _.size(Data) ? Data[0]['AttendanceInfo'] : [];
-      const empAttID = _.size(attnInfo) ? attnInfo[0]['EmpAttID'] : 0;
+      const latestAttnInfo = _.orderBy(attnInfo, ['EmpAttID'], ['desc']);
+      const empAttID = _.size(latestAttnInfo) ? latestAttnInfo[0]['EmpAttID'] : 0;
       return {
         ...state,
-        attendanceData: attnInfo,
+        attendanceData: latestAttnInfo[0],
         empAttID,
+      };
+    }
+    case UPDATE_ATTENDANCE_STATUS: {
+      const attnStatus = action?.payload;
+      return {
+        ...state,
+        attnStatus,
       };
     }
     case MARK_ATTENDANCE_SUCCESS: {
@@ -102,7 +112,6 @@ export const attendanceReducer = (state = initialState, action) => {
     }
     case FETCH_USER_TASK_SUCCESS: {
       const {Data} = action?.response;
-      console.log('FETCH_USER_TASK_SUCCESS', Data);
       return {
         ...state,
         allUserTasks: Data,
@@ -126,7 +135,7 @@ export const attendanceReducer = (state = initialState, action) => {
         dynamicFormValues: selectedFormValues,
       };
     }
-    case REMOVE_USER_TASK: {
+    case REMOVE_USER_TASK_SUCCESS: {
       const selecteTaskId = action?.payload;
       const updatedUserTask = state.allUserTasks.filter(
         task => task.id === selecteTaskId,
