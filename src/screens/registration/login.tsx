@@ -31,14 +31,12 @@ export default function Login() {
   const navigation = useNavigation();
   const passwordRef = useRef();
 
-  const {userData} = useSelector(
+  const {userData, isLoginError, loginErrMsg} = useSelector(
     state => state.userReducer,
   );
 
   const loginValidationSchema = yup.object().shape({
-    username: yup.string().trim().required('Username is required'),
-    //.email('Please enter valid email')
-    //.required('Email address is required'),
+    username: yup.string().email().required('Username is required'),
     password: yup.string().required('Password is required'),
   });
 
@@ -50,7 +48,6 @@ export default function Login() {
     action.setSubmitting(true);
     Storage.setAsyncItem('loginCreds', {username: params.username, password: params.password});
     const base64Credentials = btoa(`${params.username}:${params.password}`);
-
     const config = {
       method: 'POST',
       url: `${BASEURL}/api/Users/CreateToken`,
@@ -58,24 +55,7 @@ export default function Login() {
         'Authorization': `Basic ${base64Credentials}`,
       },
     };
-    dispatch(doLogin(config));
-    // const loginResp = await makeApiCall(config, 'LoginApi');
-    // if(_.size(loginResp)){
-    //   //make api call to get client profile
-    //   const clientId = loginResp?.ClientID;
-    //   getClientProfile(clientId);
-    //   UserService.setData(loginResp);
-    //   navigation.dispatch(
-    //     CommonActions.reset({
-    //       index: 0,
-    //       routes: [{name: clientId === BiraClientId ? Screen.DASHBOARDOJT : Screen.DASHBOARD}],
-    //     }),
-    //   );
-    // } else {
-    //   Alert.alert('', 'Username or Password is incorrect');
-    //   action.setSubmitting(false);
-    //   return;
-    // }
+    dispatch(doLogin(config, action));
   };
 
   useEffect(() => {
@@ -102,6 +82,7 @@ export default function Login() {
             onSubmit={(values, action) => login(values, action)}>
             {({handleSubmit, isSubmitting, isValid, dirty, values}) => (
               <View>
+                {isLoginError ? <Text style={styles.errorMsg}>{loginErrMsg}</Text> : null}
                 <Field
                   component={CustomInput}
                   name="username"
@@ -157,9 +138,9 @@ export default function Login() {
                     checked={rememberMe}
                     onPress={() => setRememberMe(!rememberMe)}
                   />
-                  <Pressable>
+                  {/* <Pressable>
                     <Text style={styles.forgetText}>Forgot Password?</Text>
-                  </Pressable>
+                  </Pressable> */}
                 </View>
                 <CustomButton
                   disabled={isSubmitting}

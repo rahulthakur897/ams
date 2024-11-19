@@ -47,6 +47,13 @@ const style = StyleSheet.create({
     marginLeft: 130,
     marginTop: 40,
   },
+  errorMsg: {
+    color: COLOR.red,
+    fontFamily: FONT.MediumItalic,
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 5,
+  },
 });
 
 export default style;

@@ -136,9 +136,9 @@ export const attendanceReducer = (state = initialState, action) => {
       };
     }
     case REMOVE_USER_TASK_SUCCESS: {
-      const selecteTaskId = action?.payload;
+      const {GroupId} = action?.response;
       const updatedUserTask = state.allUserTasks.filter(
-        task => task.id === selecteTaskId,
+        task => task.GroupID !== GroupId,
       );
       return {
         ...state,

@@ -19,6 +19,7 @@ import {
   getDealerList,
   fetchTaskList,
   updateDealer,
+  resetUserLatLong,
 } from '../../store/actions/user';
 import {markAttn, checkAttnStatus} from '../../store/actions/attendance';
 import {MyDropdown} from '../../components/MyDropdown';
@@ -70,6 +71,7 @@ export default function MarkAttendance() {
 
   const closeDialog = () => {
     forceUpdate();
+    dispatch(resetUserLatLong());
     refRBSheet.current.close();
   };
 
@@ -224,8 +226,17 @@ export default function MarkAttendance() {
               onPress={() => getTaskListCount()}>
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
-          ) : null}
-          {!getUserCurrentAttendanceStatus() ? (
+          ) : <Pressable
+          style={
+            _.size(selectedDealerHook)
+              ? styles.checkInButton
+              : styles.checkInButtonDisable
+          }
+          disabled={_.size(selectedDealerHook) ? false : true}
+          onPress={() => punchAttendance()}>
+          <Text style={styles.checkInText}>Check In</Text>
+        </Pressable>}
+          {/* {!getUserCurrentAttendanceStatus() ? (
             <Pressable
               style={
                 _.size(selectedDealerHook)
@@ -236,7 +247,7 @@ export default function MarkAttendance() {
               onPress={() => punchAttendance()}>
               <Text style={styles.checkInText}>Check In</Text>
             </Pressable>
-          ) : null}
+          ) : null} */}
         </View>
         {/* success msg bottom sheet */}
         <RBSheet

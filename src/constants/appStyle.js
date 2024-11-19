@@ -28,13 +28,13 @@ export const FONT = {
     ios: {
       Regular: "Poppins-Regular",
       Medium: "Poppins-SemiBold",
-      MediumItalic: "Poppins-SemiBoldItalic",
+      MediumItalic: "Poppins-MediumItalic",
       Bold: "Poppins-Bold",
     },
     android: {
       Regular: "Poppins-Regular",
       Medium: "Poppins-SemiBold",
-      MediumItalic: "Poppins-SemiBoldItalic",
+      MediumItalic: "Poppins-MediumItalic",
       Bold: "Poppins-Bold",
     },
   }),

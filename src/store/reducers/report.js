@@ -14,7 +14,6 @@ export const reportReducer = (state = initialState, action) => {
       };
     case DOWNLOAD_REPORT_SUCCESS: {
       const response = action?.response;
-      console.log("response", response);
       return {
         ...state,
         userReport: response,

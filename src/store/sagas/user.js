@@ -5,18 +5,25 @@ import {
   API_FAILURE,
   USER_LOGIN_INITIATED,
   USER_LOGIN_SUCCESS,
+  USER_LOGIN_FAILED,
   GET_DEALER_LIST,
   GET_DEALER_LIST_SUCCESS,
   FETCH_TASK_LIST,
   FETCH_TASK_LIST_SUCCESS,
 } from '../Constant';
 
-function* doLogin(configData) {
+function* doLogin(data) {
   yield put({type: API_LOADING});
-  const response = yield makeApiCall(configData.payload);
+  const response = yield makeApiCall(data.payload.configData);
   if (response !== undefined) {
-    yield put({type: USER_LOGIN_SUCCESS, response});
+    if(!response?.status && response?.status !== undefined){
+      data.payload.action.setSubmitting(false);
+      yield put({type: USER_LOGIN_FAILED, response});
+    } else {
+      yield put({type: USER_LOGIN_SUCCESS, response});
+    }
   } else {
+    data.payload.action.setSubmitting(false);
     yield put({type: API_FAILURE});
   }
 }

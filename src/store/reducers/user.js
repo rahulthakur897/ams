@@ -2,6 +2,7 @@ import {
   API_LOADING,
   API_FAILURE,
   USER_LOGIN_SUCCESS,
+  USER_LOGIN_FAILED,
   GET_DEALER_LIST_SUCCESS,
   UPDATE_DEALER,
   UPDATE_USER_LOCATION,
@@ -14,6 +15,7 @@ import {Storage} from '../../utils';
 const initialState = {
   isLoading: false,
   isLoginError: false,
+  loginErrMsg: '',
   userData: {},
   dealerList: [],
   selectedDealer: {},
@@ -36,6 +38,17 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         userData: Data,
+        loginErrMsg: '',
+        isLoading: false,
+        isLoginError: false,
+      };
+    }
+    case USER_LOGIN_FAILED: {
+      const {message} = action.response;
+      return {
+        ...state,
+        loginErrMsg: message,
+        isLoginError: true,
         isLoading: false,
       };
     }

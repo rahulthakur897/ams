@@ -8,8 +8,7 @@ const _ = require('lodash');
 export const RenderDynamicForm = forwardRef((props, ref) => {
   const {dispatch, parentTaskObj, defaultValues, formValues} = props;
   const [val, setVal] = useState('');
-console.log('formValues', formValues);
-console.log('defaultValues', defaultValues);
+
   useImperativeHandle(ref, () => ({
     sendFormData,
   }));

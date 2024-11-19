@@ -25,18 +25,16 @@ export default function Reports() {
 
   const {userReport} = useSelector(state => state.reportReducer);
 
-  const exportDataToExcel = () => {
+  const exportDataToExcel = async () => {
+    const ws = XLSX.utils.aoa_to_sheet(userReport);
     let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.json_to_sheet(userReport);
-    XLSX.utils.book_append_sheet(wb,ws,'Users');
-    const wbout = XLSX.write(wb, {type:'binary', bookType:'xlsx'});
+    XLSX.utils.book_append_sheet(wb, ws, 'UsersReport');
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
 
     // Write generated excel to Storage
-    RNFS.writeFile(RNFS.ExternalStorageDirectoryPath + '/Download/attendance_report.xlsx', wbout, 'ascii').then((r)=>{
-     console.log('Success');
-    }).catch((e)=>{
-      console.log('Error', e);
-    });
+    const path = `${RNFS.DocumentDirectoryPath}/attendance_report.xlsx`;
+    await RNFS.writeFile(path, wbout, 'base64');
+    Alert.alert('Success', `File saved to: ${path}`);
   };
 
   const handleClick = async () => {

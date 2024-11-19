@@ -10,10 +10,13 @@ export const makeApiCall = async (config) => {
       if(response.status === 200){
         return response.data;
       } else {
-        return {status: response.status, message: "Some server error occured"};
+        return {status: false, message: "Some server error occured"};
       }
     }
   }catch(err){
+    if(err.status === 400){
+      return {status: false, message: "Incorrect Username or Password"}
+    }
     errorHandler(err, false);
   }
 }

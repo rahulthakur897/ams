@@ -8,10 +8,10 @@ import {
     UPDATE_DEALER,
 } from "../Constant";
 
-export function doLogin(configData){
+export function doLogin(configData, action){
     return {
         type: USER_LOGIN_INITIATED,
-        payload: configData,
+        payload: {configData, action},
     }
 }
 
