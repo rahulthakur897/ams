@@ -22,7 +22,10 @@ import {
   markAttn,
 } from '../../../store/actions/attendance';
 import {
+  clearTaskList,
   resetUserLatLong,
+  updateAttFlag,
+  clearSelectedDealer,
 } from '../../../store/actions/user';
 import {Storage} from '../../../utils';
 import styles from './style';
@@ -149,7 +152,7 @@ export default function TaskList() {
         Longitude: latlong.latitude,
         Latitude: latlong.longitude,
         DealerID: selectedDealer?.value,
-        EmpAttID: empAttID || 0,
+        EmpAttID: empAttID,
         DeviceIPAddress: '',
         Browser: 'MobileApp',
         Operatingsystems: 'Mobile',
@@ -170,9 +173,11 @@ export default function TaskList() {
   };
 
   const closeDialog = () => {
-    refRBSheet.current.close();
     dispatch(resetUserLatLong());
-    Storage.clearAsyncItem('selectedDealer');
+    dispatch(clearTaskList());
+    dispatch(clearSelectedDealer());
+    dispatch(updateAttFlag('ReadyForCheckIn'));
+    refRBSheet.current.close();
     navigation.navigate(Screen.MARKATTENDANCE);
   };
 

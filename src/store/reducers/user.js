@@ -5,9 +5,12 @@ import {
   USER_LOGIN_FAILED,
   GET_DEALER_LIST_SUCCESS,
   UPDATE_DEALER,
+  CLEAR_SELECTED_DEALER,
   UPDATE_USER_LOCATION,
+  UPDATE_ATT_STATUS,
   RESET_USER_LOCATION,
   FETCH_TASK_LIST_SUCCESS,
+  CLEAR_TASK_LIST,
   USER_LOGOUT_INITIATED,
 } from '../Constant';
 import {Storage} from '../../utils';
@@ -22,6 +25,7 @@ const initialState = {
   latitude: null,
   longitude: null,
   taskList: [],
+  attFlag: 'ReadyForCheckIn',
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -67,6 +71,20 @@ export const userReducer = (state = initialState, action) => {
         selectedDealer,
       };
     }
+    case CLEAR_SELECTED_DEALER: {
+      Storage.clearAsyncItem('selectedDealer');
+      return {
+        ...state,
+        selectedDealer: {},
+      };
+    }
+    case UPDATE_ATT_STATUS: {
+      const updatedStatus = action.payload;
+      return {
+        ...state,
+        attFlag: updatedStatus,
+      };
+    }
     case UPDATE_USER_LOCATION: {
       const {latitude, longitude} = action.payload;
       Storage.setAsyncItem('latlong', {latitude, longitude});
@@ -89,6 +107,12 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         taskList: Data,
+      };
+    }
+    case CLEAR_TASK_LIST: {
+      return {
+        ...state,
+        taskList: [],
       };
     }
     case USER_LOGOUT_INITIATED: {

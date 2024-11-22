@@ -5,11 +5,14 @@ import {
   ImageBackground,
   Pressable,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {APP_IMAGE, Screen} from '../../../constants';
 import styles from './style';
+import { clearSavedTaskFlag, resetDropdownTask } from '../../../store/actions/attendance';
 
 export default function AddTasks() {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   return (
@@ -21,7 +24,11 @@ export default function AddTasks() {
           </Text>
           <Pressable style={styles.allowAccessButton}>
             <Text
-              onPress={() => navigation.navigate(Screen.SELECTTASK)}
+              onPress={() => {
+                dispatch(resetDropdownTask());
+                dispatch(clearSavedTaskFlag());
+                navigation.navigate(Screen.SELECTTASK);
+              }}
               style={styles.allowAccessText}>
               Add Tasks
             </Text>

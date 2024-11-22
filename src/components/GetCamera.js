@@ -1,10 +1,10 @@
 import React, {
-  useEffect,
   useRef,
   useState,
   forwardRef,
   useImperativeHandle,
 } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {StyleSheet, Linking, Alert, PermissionsAndroid, ActivityIndicator, Image} from 'react-native';
 import {useCameraDevice, Camera} from 'react-native-vision-camera';
 import {DIMENSIONS, COLOR} from '../constants';
@@ -12,15 +12,37 @@ import {errorHandler, Storage} from "../utils";
 const RNFS = require('react-native-fs');
 
 export const GetCamera = forwardRef((props, ref) => {
+  const {cbCameraReady} = props;
   const cameraRef = useRef(null);
 
+  const [isActive, setIsActive] = useState(true);
   const [cameraPosition, setCameraPosition] = useState('front');
   const [imagePath, setImagePath] = useState('');
-  const device = useCameraDevice(cameraPosition);
+  let device = useCameraDevice(cameraPosition);
 
   useImperativeHandle(ref, () => ({
+    clearPhotoPath,
     takePhoto,
   }));
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      console.log('CameraScreen focus effect');
+      setIsActive(true);
+      requestCameraPermission();
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        console.log('CameraScreen focus effect cleanup');
+        setIsActive(false);
+      };
+    }, [])
+  );
+
+  const clearPhotoPath = () => {
+    setImagePath('');
+  }
 
   const takePhoto = async () => {
     if (cameraRef != null) {
@@ -54,6 +76,7 @@ export const GetCamera = forwardRef((props, ref) => {
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('You can use the camera');
+        cbCameraReady(true);
       } else {
         console.log('Camera permission denied');
         Alert.alert(
@@ -70,10 +93,6 @@ export const GetCamera = forwardRef((props, ref) => {
     }
   };
 
-  useEffect(() => {
-    requestCameraPermission();
-  }, []);
-
   if (device == null)
     return <ActivityIndicator size={'large'} color={COLOR.gray} />;
   return imagePath ? <Image source={{uri: imagePath}} style={styles.photoContainer} /> : (
@@ -81,7 +100,7 @@ export const GetCamera = forwardRef((props, ref) => {
       ref={cameraRef}
       style={styles.cameraRoll}
       device={device}
-      isActive={true}
+      isActive={isActive}
       photo={true}
     />
   );
@@ -89,12 +108,12 @@ export const GetCamera = forwardRef((props, ref) => {
 
 const styles = StyleSheet.create({
   cameraRoll: {
-    marginTop: 20,
+    position: 'absolute',
     width: DIMENSIONS.width - 40,
     height: 300,
   },
   photoContainer: {
-    marginTop: 20,
+    position: 'absolute',
     width: DIMENSIONS.width - 40,
     height: 300,
   }

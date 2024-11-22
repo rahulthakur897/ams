@@ -7,11 +7,14 @@ export const USER_LOGIN_SUCCESS = "user_login_success";
 export const USER_LOGIN_FAILED = 'user_login_failed';
 export const FETCH_TASK_LIST = 'fetch_task_list';
 export const FETCH_TASK_LIST_SUCCESS = 'fetch_task_list_success';
+export const CLEAR_TASK_LIST = 'clear_task_list';
 
 export const GET_DEALER_LIST = 'get_dealer_list';
 export const GET_DEALER_LIST_SUCCESS = 'get_dealer_list_success';
 export const UPDATE_DEALER = 'update_dealer';
+export const CLEAR_SELECTED_DEALER = 'clear_selected_dealer';
 export const UPDATE_USER_LOCATION = 'update_user_location';
+export const UPDATE_ATT_STATUS = 'update_att_status';
 export const RESET_USER_LOCATION = 'reset_user_location';
 
 export const MARK_ATTENDANCE = 'mark_attendance';

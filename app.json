@@ -1,4 +1,14 @@
 {
-  "name": "AtomAttendance",
-  "displayName": "AtomAttendance"
+  "name": "ams",
+  "displayName": "AMS",
+  "plugins": [
+    [
+      "react-native-vision-camera",
+      {
+        "cameraPermissionText": "CUSTOM: Allow $(PRODUCT_NAME) to access the camera",
+        "enableMicrophonePermission": true,
+        "microphonePermissionText": "CUSTOM: Allow $(PRODUCT_NAME) to access the microphone"
+      }
+    ]
+  ]
 }

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useImperativeHandle, forwardRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,15 +8,21 @@ import {
   ActivityIndicator,
   PermissionsAndroid,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import GetLocation, {isLocationError} from 'react-native-get-location';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
-import {updateUserLatLong} from '../store/actions/user';
+import {resetUserLatLong, updateUserLatLong} from '../store/actions/user';
 import {DIMENSIONS, COLOR} from '../constants';
+const _ = require('lodash');
 
-export const GetUserCurrentLocation = React.memo(() => {
+export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttStatus}, ref) => {
   const dispatch = useDispatch();
-  const {latitude, longitude} = useSelector(state => state.userReducer);
+  const {latitude, longitude, selectedDealer} = useSelector(state => state.userReducer);
+
+  useImperativeHandle(ref, () => ({
+    requestLocationPermission
+  }));
 
   const requestLocationPermission = async () => {
     try {
@@ -25,8 +31,7 @@ export const GetUserCurrentLocation = React.memo(() => {
         {
           title: 'AMS App Location Permission',
           message:
-            'AMS App needs access to your location ' +
-            'to capture your address.',
+            'AMS App needs access to your location to capture your address.',
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
@@ -54,7 +59,7 @@ export const GetUserCurrentLocation = React.memo(() => {
   const getUserLocation = () => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
-      timeout: 30000,
+      timeout: 6000,
       rationale: {
         title: 'Location permission',
         message: 'The app needs the permission to request your location.',
@@ -62,6 +67,7 @@ export const GetUserCurrentLocation = React.memo(() => {
       },
     })
       .then(newLocation => {
+        cbLocationReady(true);
         dispatch(updateUserLatLong(newLocation));
       })
       .catch(ex => {
@@ -74,17 +80,13 @@ export const GetUserCurrentLocation = React.memo(() => {
       });
   };
 
-  useEffect(() => {
-    requestLocationPermission();
-  }, []);
-
   return (
     <View style={styles.container}>
       <Text style={styles.address}>
-        Address: {latitude && longitude ? (<Text>Captured</Text>) : <ActivityIndicator size='small' color={COLOR.gray} />}
+        Address: {_.size(selectedDealer) ? (latitude && longitude) ? (<Text>Captured</Text>) : <ActivityIndicator size='small' color={COLOR.gray} /> : '-'}
       </Text>
       <Text style={styles.address}>
-        Check In Time: {moment().format('DD/MM/YYYY')} {moment().format('LT')}
+        Check {currentAttStatus === 'ReadyForCheckIn' ? 'In' : 'Out'} Time: {moment().format('DD/MM/YYYY')} {moment().format('LT')}
       </Text>
     </View>
   );

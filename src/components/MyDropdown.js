@@ -13,7 +13,7 @@ export const MyDropdown = React.memo(({dropdownList, selectedItem, placeholder, 
   return (
     <View style={styles.dropdowncontainer}>
       <Dropdown
-        style={styles.dropdown}
+        style={[styles.dropdown, {backgroundColor: disable ? COLOR.hexgray : COLOR.white}]}
         data={dropdownList}
         labelField="label"
         valueField="value"

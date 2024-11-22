@@ -8,6 +8,7 @@ import {
   Alert,
   Linking,
   Platform,
+  NativeModules,
 } from 'react-native';
 import {APP_IMAGE, BASEURL} from '../../constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -19,6 +20,7 @@ import {Storage} from '../../utils';
 import styles from './style';
 const RNFS = require('react-native-fs');
 const _ = require('lodash');
+const { RequestStorageModule } = NativeModules;
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -26,14 +28,13 @@ export default function Reports() {
   const {userReport} = useSelector(state => state.reportReducer);
 
   const exportDataToExcel = async () => {
-    const ws = XLSX.utils.aoa_to_sheet(userReport);
+    const ws = XLSX.utils.json_to_sheet(userReport);
     let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'UsersReport');
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
     // Write generated excel to Storage
-    const path = `${RNFS.DocumentDirectoryPath}/attendance_report.xlsx`;
-    await RNFS.writeFile(path, wbout, 'base64');
+    const path = `${RNFS.ExternalStorageDirectoryPath}/attendance_report.xlsx`;
+    await RNFS.writeFile(path, wbout, 'ascii');
     Alert.alert('Success', `File saved to: ${path}`);
   };
 
@@ -43,6 +44,7 @@ export default function Reports() {
       let isPermitedExternalStorage = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       );
+      console.log('isPermitedExternalStorage', isPermitedExternalStorage);
 
       if (!isPermitedExternalStorage) {
         // Ask for permission
@@ -64,10 +66,12 @@ export default function Reports() {
         } else {
           // Permission denied
           console.log('Permission denied');
-          if (Number(Platform.Version) >= 33) {
-            exportDataToExcel();
-            return;
-          }
+          const storageAccess = await RequestStorageModule.fileAccessPermission();
+          console.log(storageAccess);
+          // if (Number(Platform.Version) >= 33) {
+          //   exportDataToExcel();
+          //   return;
+          // }
           Alert.alert(
             'Storage Permission Required',
             'Please enable storage services in settings.',

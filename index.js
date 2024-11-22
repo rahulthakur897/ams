@@ -6,6 +6,14 @@ import App from './App';
 import store from './src/store';
 import {name as appName} from './app.json';
 
+const originalConsoleError = console.error;
+console.error = (message, ...args) => {
+    if (typeof message === 'string' && message.includes('defaultProps will be removed')) {
+        return;
+    }
+    originalConsoleError.apply(console, [message, ...args])
+}
+
 function HeadlessCheck({isHeadless}) {
   if (isHeadless) {
     // App has been launched in the background by iOS, ignore

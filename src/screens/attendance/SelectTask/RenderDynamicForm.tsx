@@ -76,6 +76,7 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
                       id={formElem.ControlHeader}
                       placeholderTextColor="#333"
                       style={styles.textinput}
+                      returnKeyType="next"
                       placeholder={'Enter ' + formElem.ControlHeader}
                       onChangeText={text => handleChange(text, formElem)}
                     />

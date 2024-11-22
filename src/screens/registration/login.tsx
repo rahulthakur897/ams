@@ -21,7 +21,7 @@ import {
   CustomInput,
 } from '../../components/elements';
 import styles from './style';
-const _ = require("lodash");
+const _ = require('lodash');
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -86,7 +86,9 @@ export default function Login() {
                 <Field
                   component={CustomInput}
                   name="username"
+                  keyboardType="email-address"
                   autoCapitalize="none"
+                  autoCorrect={false}
                   returnKeyType="next"
                   placeholder="Username"
                   onSubmitEditing={() => {

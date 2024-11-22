@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useReducer, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   ScrollView,
@@ -20,6 +20,7 @@ import {
   fetchTaskList,
   updateDealer,
   resetUserLatLong,
+  updateAttFlag,
 } from '../../store/actions/user';
 import {markAttn, checkAttnStatus} from '../../store/actions/attendance';
 import {MyDropdown} from '../../components/MyDropdown';
@@ -31,22 +32,50 @@ const _ = require('lodash');
 export default function MarkAttendance() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const refRBSheet = useRef();
-  const childRef = useRef();
+  const cameraRef = useRef();
+  const locRef = useRef();
 
-  const callChildMethod = async () => {
-    if (childRef.current) {
-      const photoResp = await childRef.current.takePhoto();
-      return photoResp;
-    }
-  };
-
-  const {dealerList, selectedDealer, taskList, latitude, longitude} =
+  const {dealerList, selectedDealer, taskList, latitude, longitude, attFlag} =
     useSelector(state => state.userReducer);
-  const {attendanceData, empAttID} = useSelector(state => state.attendanceReducer);
+  const {attendanceData, empAttID} = useSelector(
+    state => state.attendanceReducer,
+  );
 
   const [selectedDealerHook, setSelectedDealer] = useState(selectedDealer);
+  const [cameraStatus, setIsCameraReady] = useState(false);
+  const [locationStatus, setIsLocationReady] = useState(false);
+
+  const getTaskList = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    // const selDealer = await Storage.getAsyncItem('selectedDealer');
+    // setSelectedDealer(selDealer);
+    const config = {
+      method: 'GET',
+      url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${empAttID}`,
+      headers: {
+        Authorization: `Bearer ${userData.Token}`,
+      },
+    };
+    dispatch(fetchTaskList(config));
+  };
+
+  useEffect(() => {
+    if (_.size(attendanceData)) {
+      if (
+        attendanceData.TimeOut === null &&
+        attendanceData.ApprovedOrRejected === 'P'
+      ) {
+        const selected = {
+          label: attendanceData.DealerName,
+          value: attendanceData.DealerID,
+        };
+        dispatch(updateDealer(selected));
+        //dispatch(updateAttFlag('ReadyForCheckOut'));
+      }
+      getTaskList();
+    }
+  }, [attendanceData]);
 
   const getDealer = async () => {
     const userData = await Storage.getAsyncItem('userData');
@@ -60,18 +89,47 @@ export default function MarkAttendance() {
     dispatch(getDealerList(config));
   };
 
+  const getAttendanceRecord = async () => {
+    const userData = await Storage.getAsyncItem('userData');
+    const config = {
+      method: 'GET',
+      url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${
+        userData.EmployeeID
+      }&AppliedOn=${moment().format('MM-DD-YYYY')}`,
+      headers: {
+        Authorization: `Bearer ${userData.Token}`,
+      },
+    };
+    dispatch(checkAttnStatus(config));
+  };
+
   useEffect(() => {
     getDealer();
-  }, []);
+    getAttendanceRecord();
+  }, [attFlag]);
+
+  const callChildMethod = async () => {
+    if (cameraRef.current) {
+      const photoResp = await cameraRef.current.takePhoto();
+      return photoResp;
+    }
+  };
+
+  const enableChildComponent = () => {
+    cameraRef?.current?.clearPhotoPath();
+    locRef?.current?.requestLocationPermission();
+  };
 
   const updateDropdownValue = item => {
     setSelectedDealer(item);
     dispatch(updateDealer(item));
+    enableChildComponent();
   };
 
   const closeDialog = () => {
-    forceUpdate();
     dispatch(resetUserLatLong());
+    dispatch(updateAttFlag('ReadyForCheckOut'));
+    enableChildComponent();
     refRBSheet.current.close();
   };
 
@@ -86,7 +144,7 @@ export default function MarkAttendance() {
         Longitude: latitude,
         Latitude: longitude,
         DealerID: selectedDealerHook?.value,
-        EmpAttID: empAttID || 0,
+        EmpAttID: 0,
         DeviceIPAddress: '',
         Browser: 'MobileApp',
         Operatingsystems: 'Mobile',
@@ -106,52 +164,9 @@ export default function MarkAttendance() {
     refRBSheet.current.open();
   };
 
-  const getAttendanceRecord = async () => {
-    const userData = await Storage.getAsyncItem('userData');
-    const config = {
-      method: 'GET',
-      url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${
-        userData.EmployeeID
-      }&AppliedOn=${moment().format('MM-DD-YYYY')}`,
-      headers: {
-        Authorization: `Bearer ${userData.Token}`,
-      },
-    };
-    dispatch(checkAttnStatus(config));
-  };
-
-  useEffect(() => {
-    getAttendanceRecord();
-  }, []);
-
-  const getTaskList = async () => {
-    const userData = await Storage.getAsyncItem('userData');
-    const selDealer = await Storage.getAsyncItem('selectedDealer');
-    setSelectedDealer(selDealer);
-    const config = {
-      method: 'GET',
-      url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${empAttID}`,
-      headers: {
-        Authorization: `Bearer ${userData.Token}`,
-      },
-    };
-    dispatch(fetchTaskList(config));
-  };
-
-  useEffect(() => {
-    if (_.size(attendanceData)) {
-      const selected = {
-        label: attendanceData.DealerName,
-        value: attendanceData.DealerID,
-      };
-      dispatch(updateDealer(selected));
-      getTaskList();
-    }
-  }, [attendanceData]);
-
   const getTaskListCount = () => {
+    callChildMethod();
     if (_.size(taskList)) {
-      callChildMethod();
       navigation.navigate(Screen.TASKLIST);
     } else {
       navigation.navigate(Screen.ADDTASKS);
@@ -159,19 +174,18 @@ export default function MarkAttendance() {
   };
 
   const checkSelectedDealer = () => {
-    if(!_.size(selectedDealerHook)){
+    if (!_.size(selectedDealerHook)) {
       Alert.alert('', 'Please select Dealer');
+      return;
     }
   };
 
-  const getUserCurrentAttendanceStatus = () => {
-    if(_.size(attendanceData)){
-      if(attendanceData.TimeOut === null && attendanceData.ApprovedOrRejected === 'P'){
-        return true;
-      }
-      return false;
-    }
-    return false;
+  const getLocationCurrentStatus = (currentState) => {
+    setIsLocationReady(currentState);
+  };
+
+  const getCameraCurrentStatus = (currentState) => {
+    setIsCameraReady(currentState);
   };
 
   return (
@@ -183,71 +197,69 @@ export default function MarkAttendance() {
             dropdownList={transformDealerData(dealerList)}
             selectedItem={selectedDealerHook}
             placeholder="Select Dealer"
-            disable={getUserCurrentAttendanceStatus()}
+            disable={attFlag === 'ReadyForCheckIn' ? false : true}
             callback={updateDropdownValue}
           />
           {/* Card with Camera & Location Permissions */}
           {/* show camera */}
+          <View style={styles.cameraContainer}>
           {_.size(selectedDealerHook) ? (
-            <GetCamera ref={childRef} />
-          ) : (
-            <View style={styles.permissionCard}>
-              {/* Placeholder for Icon */}
-              <View style={styles.iconss}>
-                <Icon name="camera-alt" size={74} color="#ccc" />
-                <Icon
-                  name="location-pin"
-                  size={74}
-                  color="#ccc"
-                  style={{marginLeft: 5}}
-                />
+            <GetCamera ref={cameraRef} cbCameraReady={getCameraCurrentStatus} />
+            ) : (
+              <View style={styles.permissionCard}>
+                {/* Placeholder for Icon */}
+                <View style={styles.iconss}>
+                  <Icon name="camera-alt" size={74} color="#ccc" />
+                  <Icon
+                    name="location-pin"
+                    size={74}
+                    color="#ccc"
+                    style={{marginLeft: 5}}
+                  />
+                </View>
+                <Text style={styles.cardTitle}>
+                  Enable Camera & Location Access
+                </Text>
+                <Text style={styles.cardSubtitle}>
+                  We need your permission to access the camera and location
+                </Text>
+                {/* Allow Access Button */}
+                <Pressable
+                  style={styles.allowAccessButton}
+                  onPress={checkSelectedDealer}>
+                  <Text style={styles.allowAccessText}>Allow Access</Text>
+                </Pressable>
               </View>
-              <Text style={styles.cardTitle}>
-                Enable Camera & Location Access
-              </Text>
-              <Text style={styles.cardSubtitle}>
-                We need your permission to access the camera and location
-              </Text>
-              {/* Allow Access Button */}
-              <Pressable style={styles.allowAccessButton} onPress={checkSelectedDealer}>
-                <Text style={styles.allowAccessText}>Allow Access</Text>
-              </Pressable>
-            </View>
-          )}
+            )}
+          </View>
+
           {/* show location */}
-          {_.size(selectedDealerHook) ? <GetUserCurrentLocation /> : null}
+          <GetUserCurrentLocation ref={locRef} cbLocationReady={getLocationCurrentStatus} currentAttStatus={attFlag} />
           {/* Check-In Button */}
-          {getUserCurrentAttendanceStatus() ? (
-            <Pressable
-              style={ _.size(selectedDealerHook)
-                ? styles.checkInButton
-                : styles.checkInButtonDisable}
-              disabled={_.size(selectedDealerHook) ? false : true}
-              onPress={() => getTaskListCount()}>
-              <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
-            </Pressable>
-          ) : <Pressable
-          style={
-            _.size(selectedDealerHook)
-              ? styles.checkInButton
-              : styles.checkInButtonDisable
-          }
-          disabled={_.size(selectedDealerHook) ? false : true}
-          onPress={() => punchAttendance()}>
-          <Text style={styles.checkInText}>Check In</Text>
-        </Pressable>}
-          {/* {!getUserCurrentAttendanceStatus() ? (
+          {attFlag === 'ReadyForCheckOut' ? (
             <Pressable
               style={
-                _.size(selectedDealerHook)
+                _.size(selectedDealerHook) && locationStatus && cameraStatus
                   ? styles.checkInButton
                   : styles.checkInButtonDisable
               }
-              disabled={_.size(selectedDealerHook) ? false : true}
+              disabled={_.size(selectedDealerHook) && locationStatus && cameraStatus ? false : true}
+              onPress={() => getTaskListCount()}>
+              <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
+            </Pressable>
+          ) : null}
+          {attFlag === 'ReadyForCheckIn' ? (
+            <Pressable
+              style={
+                _.size(selectedDealerHook) && locationStatus && cameraStatus
+                  ? styles.checkInButton
+                  : styles.checkInButtonDisable
+              }
+              disabled={_.size(selectedDealerHook) && locationStatus && cameraStatus ? false : true}
               onPress={() => punchAttendance()}>
               <Text style={styles.checkInText}>Check In</Text>
             </Pressable>
-          ) : null} */}
+          ) : null}
         </View>
         {/* success msg bottom sheet */}
         <RBSheet

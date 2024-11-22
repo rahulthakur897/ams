@@ -10,18 +10,23 @@ const style = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  permissionCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLOR.white,
+  cameraContainer: {
+    position: 'relative',
     borderRadius: 10,
     marginTop: 20,
     height: 300,
     shadowColor: COLOR.black,
     shadowOpacity: 0.1,
     shadowOffset: {width: 0, height: 5},
-    shadowRadius: 10,
+    shadowRadius: 2,
     elevation: 3,
+  },
+  permissionCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLOR.white,
+    borderRadius: 10,
+    height: 300,
   },
   cardTitle: {
     fontSize: 16,
