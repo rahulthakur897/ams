@@ -25,7 +25,7 @@ const AttendanceStack = () => {
       CommonActions.reset({
         index: 0,
         routes: [
-          { name: Screen.SPLASH },
+          { name: Screen.LOGIN },
         ],
       })
     );

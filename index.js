@@ -8,11 +8,14 @@ import {name as appName} from './app.json';
 
 const originalConsoleError = console.error;
 console.error = (message, ...args) => {
-    if (typeof message === 'string' && message.includes('defaultProps will be removed')) {
-        return;
-    }
-    originalConsoleError.apply(console, [message, ...args])
-}
+  if (
+    typeof message === 'string' &&
+    message.includes('defaultProps will be removed')
+  ) {
+    return;
+  }
+  originalConsoleError.apply(console, [message, ...args]);
+};
 
 function HeadlessCheck({isHeadless}) {
   if (isHeadless) {
@@ -22,7 +25,7 @@ function HeadlessCheck({isHeadless}) {
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-        <App />
+          <App />
       </Provider>
     </SafeAreaProvider>
   );

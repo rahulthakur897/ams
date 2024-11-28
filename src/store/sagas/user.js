@@ -17,13 +17,13 @@ function* doLogin(data) {
   const response = yield makeApiCall(data.payload.configData);
   if (response !== undefined) {
     if(!response?.status && response?.status !== undefined){
-      data.payload.action.setSubmitting(false);
+      data?.payload?.action?.setSubmitting(false);
       yield put({type: USER_LOGIN_FAILED, response});
     } else {
       yield put({type: USER_LOGIN_SUCCESS, response});
     }
   } else {
-    data.payload.action.setSubmitting(false);
+    data?.payload?.action?.setSubmitting(false);
     yield put({type: API_FAILURE});
   }
 }

@@ -10,7 +10,7 @@ const style = StyleSheet.create({
     margin: 10,
   },
   flatListContainer: {
-    height: DIMENSIONS.height - 250,
+    height: DIMENSIONS.height - 200,
     overflow: 'scroll',
     paddingBottom: 15,
   },

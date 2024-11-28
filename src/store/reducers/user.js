@@ -58,9 +58,11 @@ export const userReducer = (state = initialState, action) => {
     }
     case GET_DEALER_LIST_SUCCESS: {
       const {Dealers} = action.response;
+      //add additional entry for others
+      const updatedDealerList = [...Dealers, {DealerName: 'Others', DealerID: 0}];
       return {
         ...state,
-        dealerList: Dealers,
+        dealerList: updatedDealerList,
       };
     }
     case UPDATE_DEALER: {

@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   Alert,
+  TextInput,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -37,19 +38,25 @@ export default function MarkAttendance() {
   const locRef = useRef();
 
   const {dealerList, selectedDealer, taskList, latitude, longitude, attFlag} =
-    useSelector(state => state.userReducer);
-  const {attendanceData, empAttID} = useSelector(
-    state => state.attendanceReducer,
+    useSelector((state: any) => state.userReducer);
+  const {attendanceData, empAttID, taskSaveError} = useSelector(
+    (state: any) => state.attendanceReducer,
   );
 
+  useEffect(() => {
+    if(_.size(taskSaveError)){
+      setBtnClicked(false);
+    }
+  }, [taskSaveError]);
+
   const [selectedDealerHook, setSelectedDealer] = useState(selectedDealer);
+  const [newDealerName, setNewDealerName] = useState('');
   const [cameraStatus, setIsCameraReady] = useState(false);
   const [locationStatus, setIsLocationReady] = useState(false);
+  const [btnClicked, setBtnClicked] = useState(false);
 
   const getTaskList = async () => {
     const userData = await Storage.getAsyncItem('userData');
-    // const selDealer = await Storage.getAsyncItem('selectedDealer');
-    // setSelectedDealer(selDealer);
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${empAttID}`,
@@ -70,8 +77,11 @@ export default function MarkAttendance() {
           label: attendanceData.DealerName,
           value: attendanceData.DealerID,
         };
+        setSelectedDealer(selected);
+        setNewDealerName(attendanceData.Remarks);
         dispatch(updateDealer(selected));
-        //dispatch(updateAttFlag('ReadyForCheckOut'));
+        dispatch(updateAttFlag('ReadyForCheckOut'));
+        enableChildComponent();
       }
       getTaskList();
     }
@@ -106,7 +116,7 @@ export default function MarkAttendance() {
   useEffect(() => {
     getDealer();
     getAttendanceRecord();
-  }, [attFlag]);
+  }, []);
 
   const callChildMethod = async () => {
     if (cameraRef.current) {
@@ -117,10 +127,13 @@ export default function MarkAttendance() {
 
   const enableChildComponent = () => {
     cameraRef?.current?.clearPhotoPath();
-    locRef?.current?.requestLocationPermission();
+    locRef?.current?.checkForLocationEnabled();
   };
 
-  const updateDropdownValue = item => {
+  const updateDropdownValue = (item: any) => {
+    if(item.label !== 'Others'){
+      setNewDealerName('');
+    }
     setSelectedDealer(item);
     dispatch(updateDealer(item));
     enableChildComponent();
@@ -134,6 +147,15 @@ export default function MarkAttendance() {
   };
 
   const punchAttendance = async () => {
+    //check for other selection
+    if(selectedDealerHook?.value === 'Others'){
+      if(!newDealerName){
+        Alert.alert('Error', 'Please enter location detail');
+        return;
+      }
+    }
+    if(btnClicked) {return;}
+    setBtnClicked(true);
     const userData = await Storage.getAsyncItem('userData');
     const imageBase64Data = await callChildMethod();
     const config = {
@@ -152,7 +174,7 @@ export default function MarkAttendance() {
         DeviceID: '',
         UserAgent: '',
         GeolocationMsg: '',
-        Remarks: '',
+        Remarks: newDealerName,
         ImageSavefullPath: imageBase64Data,
         IsImageBase64: true,
       },
@@ -180,12 +202,30 @@ export default function MarkAttendance() {
     }
   };
 
-  const getLocationCurrentStatus = (currentState) => {
+  const getLocationCurrentStatus = currentState => {
     setIsLocationReady(currentState);
   };
 
-  const getCameraCurrentStatus = (currentState) => {
+  const getCameraCurrentStatus = currentState => {
     setIsCameraReady(currentState);
+  };
+
+  const checkBtnStatus = () => {
+    let btnStatus = true;
+    if(_.size(selectedDealerHook)){
+      if(selectedDealerHook.label === 'Others' && !newDealerName){
+        btnStatus = false;
+      }
+    } else {
+      btnStatus = false;
+    }
+    if(!locationStatus){
+      btnStatus = false;
+    }
+    if(!cameraStatus){
+      btnStatus = false;
+    }
+    return btnStatus;
   };
 
   return (
@@ -200,14 +240,30 @@ export default function MarkAttendance() {
             disable={attFlag === 'ReadyForCheckIn' ? false : true}
             callback={updateDropdownValue}
           />
+          {selectedDealerHook.label === 'Others' ? (
+            <TextInput
+              value={newDealerName}
+              placeholderTextColor={COLOR.gray}
+              placeholder="Enter location detail"
+              onChangeText={txt => setNewDealerName(txt)}
+              editable={attFlag === 'ReadyForCheckIn' ? true : false}
+              style={[styles.inputText, {backgroundColor: attFlag === 'ReadyForCheckIn' ? COLOR.white : COLOR.hexgray}]}
+            />
+          ) : null}
           {/* Card with Camera & Location Permissions */}
           {/* show camera */}
           <View style={styles.cameraContainer}>
-          {_.size(selectedDealerHook) ? (
-            <GetCamera ref={cameraRef} cbCameraReady={getCameraCurrentStatus} />
+            <GetCamera
+              ref={cameraRef}
+              cbCameraReady={getCameraCurrentStatus}
+            />
+            {/* {_.size(selectedDealerHook) ? (
+              <GetCamera
+                ref={cameraRef}
+                cbCameraReady={getCameraCurrentStatus}
+              />
             ) : (
               <View style={styles.permissionCard}>
-                {/* Placeholder for Icon */}
                 <View style={styles.iconss}>
                   <Icon name="camera-alt" size={74} color="#ccc" />
                   <Icon
@@ -223,18 +279,21 @@ export default function MarkAttendance() {
                 <Text style={styles.cardSubtitle}>
                   We need your permission to access the camera and location
                 </Text>
-                {/* Allow Access Button */}
                 <Pressable
                   style={styles.allowAccessButton}
                   onPress={checkSelectedDealer}>
                   <Text style={styles.allowAccessText}>Allow Access</Text>
                 </Pressable>
               </View>
-            )}
+            )} */}
           </View>
 
           {/* show location */}
-          <GetUserCurrentLocation ref={locRef} cbLocationReady={getLocationCurrentStatus} currentAttStatus={attFlag} />
+          <GetUserCurrentLocation
+            ref={locRef}
+            cbLocationReady={getLocationCurrentStatus}
+            currentAttStatus={attFlag}
+          />
           {/* Check-In Button */}
           {attFlag === 'ReadyForCheckOut' ? (
             <Pressable
@@ -243,7 +302,11 @@ export default function MarkAttendance() {
                   ? styles.checkInButton
                   : styles.checkInButtonDisable
               }
-              disabled={_.size(selectedDealerHook) && locationStatus && cameraStatus ? false : true}
+              disabled={
+                _.size(selectedDealerHook) && locationStatus && cameraStatus
+                  ? false
+                  : true
+              }
               onPress={() => getTaskListCount()}>
               <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
             </Pressable>
@@ -251,11 +314,15 @@ export default function MarkAttendance() {
           {attFlag === 'ReadyForCheckIn' ? (
             <Pressable
               style={
-                _.size(selectedDealerHook) && locationStatus && cameraStatus
+                checkBtnStatus()
                   ? styles.checkInButton
                   : styles.checkInButtonDisable
               }
-              disabled={_.size(selectedDealerHook) && locationStatus && cameraStatus ? false : true}
+              disabled={
+                checkBtnStatus()
+                  ? false
+                  : true
+              }
               onPress={() => punchAttendance()}>
               <Text style={styles.checkInText}>Check In</Text>
             </Pressable>
@@ -265,6 +332,7 @@ export default function MarkAttendance() {
         <RBSheet
           ref={refRBSheet}
           useNativeDriver={false}
+          closeOnPressMask={false}
           height={280}
           customStyles={{
             wrapper: {

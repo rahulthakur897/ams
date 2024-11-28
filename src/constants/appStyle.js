@@ -1,12 +1,8 @@
 import { Dimensions, StyleSheet, Platform } from "react-native";
-import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 
 export const DIMENSIONS = {
   width: Dimensions.get("window").width,
-  height: Platform.select({
-    android: Dimensions.get('screen').height - StaticSafeAreaInsets.safeAreaInsetsBottom,
-    ios: Dimensions.get('window').height,
-  }),
+  height: Dimensions.get("window").height,
 };
 
 export const COLOR = {
@@ -119,7 +115,7 @@ export const BTNCSS = StyleSheet.create({
     alignSelf: "center",
   },
   text: {
-    color: COLOR.blue,
+    color: COLOR.gray,
     fontFamily: FONT.SemiBold,
     fontSize: Platform.isPad ? 18 : 14,
   },
@@ -157,7 +153,7 @@ export const MODALCSS = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: "white",
     borderWidth: 1,
-    borderColor: COLOR.blue,
+    borderColor: COLOR.gray,
     zIndex: 9,
     justifyContent: "center",
     alignItems: "center",
@@ -165,7 +161,7 @@ export const MODALCSS = StyleSheet.create({
   },
   modal: {
     borderWidth: 1,
-    borderColor: COLOR.blue,
+    borderColor: COLOR.gray,
     backgroundColor: COLOR.white,
     borderRadius: 20,
     width: DIMENSIONS.width - 40,

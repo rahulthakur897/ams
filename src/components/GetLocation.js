@@ -1,4 +1,4 @@
-import React, {useEffect, useImperativeHandle, forwardRef} from 'react';
+import React, {useState, useImperativeHandle, forwardRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import GetLocation, {isLocationError} from 'react-native-get-location';
+import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
 import {resetUserLatLong, updateUserLatLong} from '../store/actions/user';
@@ -19,10 +20,37 @@ const _ = require('lodash');
 export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttStatus}, ref) => {
   const dispatch = useDispatch();
   const {latitude, longitude, selectedDealer} = useSelector(state => state.userReducer);
+  const [isLocLoading, setIsLocLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
-    requestLocationPermission
+    checkForLocationEnabled
   }));
+
+  const checkForLocationEnabled = async() => {
+    if (Platform.OS === 'android') {
+      try {
+        const enableResult = await promptForEnableLocationIfNeeded();
+        if(enableResult === 'already-enabled'){
+          requestLocationPermission();
+        }
+        // The user has accepted to enable the location services
+        // data can be :
+        //  - "already-enabled" if the location services has been already enabled
+        //  - "enabled" if user has clicked on OK button in the popup
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+          // The user has not accepted to enable the location services or something went wrong during the process
+          // "err" : { "code" : "ERR00|ERR01|ERR02|ERR03", "message" : "message"}
+          // codes :
+          //  - ERR00 : The user has clicked on Cancel button in the popup
+          //  - ERR01 : If the Settings change are unavailable
+          //  - ERR02 : If the popup has failed to open
+          //  - ERR03 : Internal error
+        }
+      }
+    }
+  }
 
   const requestLocationPermission = async () => {
     try {
@@ -39,7 +67,10 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('You can use the location');
-        getUserLocation();
+        if(!isLocLoading){
+          setIsLocLoading(true);
+          getUserLocation();
+        }
       } else {
         console.log('location permission denied');
         Alert.alert(
@@ -69,6 +100,7 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
       .then(newLocation => {
         cbLocationReady(true);
         dispatch(updateUserLatLong(newLocation));
+        setIsLocLoading(false);
       })
       .catch(ex => {
         if (isLocationError(ex)) {

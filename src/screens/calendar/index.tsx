@@ -41,7 +41,7 @@ export default function MyCalendar() {
   const dispatch = useDispatch();
   const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM')); // Track current month
   const [markedDates, setMarkedDates] = useState({});
-  const { monthlyAttendance } = useSelector(state => state.calendarReducer);
+  const { monthlyAttendance } = useSelector((state: any) => state.calendarReducer);
   const disabledDaysIndexes = [6, 7];
 
   // Fetch attendance data from the API
@@ -75,11 +75,11 @@ export default function MyCalendar() {
     }
   };
 
-  const isTodayAfterPrevMonthStart = (currentMonth: any) => {
+  const isTodayAfterPrevMonthStart = (currMonth: any) => {
     const today = moment();
-    const prevMonthStart = moment(currentMonth)
-      .subtract(1, "month")
-      .startOf("month");
+    const prevMonthStart = moment(currMonth)
+      .subtract(1, 'month')
+      .startOf('month');
 
     // Compare the two dates
     return today.isSameOrAfter(prevMonthStart);
@@ -92,7 +92,6 @@ export default function MyCalendar() {
 
     // Prevent API call if the next month is in the future
     if (nextMonthMoment.isAfter(today, 'month')) {
-      console.log('Skipping backend call. Next month is in the future.');
       setCurrentMonth(nextMonthMoment.format('YYYY-MM')); // Update UI without API call
       return;
     }
@@ -139,13 +138,13 @@ export default function MyCalendar() {
             handlePreviousMonth();
           }}
           onPressArrowRight={(addMonth: any) => {
-            const nextMonth = moment(currentMonth).add(1, "month");
+            const nextMonth = moment(currentMonth).add(1, 'month');
             // Prevent navigation to December or future months
-            if (nextMonth.isSameOrBefore(moment(), "month")) {
+            if (nextMonth.isSameOrBefore(moment(), 'month')) {
               addMonth(); // Update visual display
               handleNextMonth(); // Call your handler for the next month
             } else {
-              console.log("Cannot navigate to future months.");
+              console.log('Cannot navigate to future months.');
             }
           }}
         />

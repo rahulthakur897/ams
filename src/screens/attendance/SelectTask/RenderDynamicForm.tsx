@@ -5,6 +5,11 @@ import {updateFormValues} from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
 const _ = require('lodash');
 
+type Dropdown = {
+  label: string;
+  value: number;
+}
+
 export const RenderDynamicForm = forwardRef((props, ref) => {
   const {dispatch, parentTaskObj, defaultValues, formValues} = props;
   const [val, setVal] = useState('');
@@ -13,8 +18,8 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
     sendFormData,
   }));
 
-  const handleChange = (text, formElemObj) => {
-    setVal(prev => ({
+  const handleChange = (text: string, formElemObj: any) => {
+    setVal((prev: any) => ({
       ...prev,
       [formElemObj.ControlHeader]: {
         ...formElemObj,
@@ -24,8 +29,8 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
     }));
   };
 
-  const handleDropdown = (item, placeholder) => {
-    setVal(prev => ({
+  const handleDropdown = (item: any, placeholder: string) => {
+    setVal((prev: any) => ({
       ...prev,
       [placeholder]: {
         ...item,
@@ -39,9 +44,9 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
     dispatch(updateFormValues(val));
   };
 
-  const appendDropdownValues = AirtelTaskControlID => {
-    const ddList = [];
-    defaultValues.forEach(list => {
+  const appendDropdownValues = (AirtelTaskControlID: string) => {
+    const ddList: Dropdown[] = [];
+    defaultValues.forEach((list: any) => {
       if (list.AirtelTaskControlID === AirtelTaskControlID) {
         ddList.push({
           ...list,
@@ -65,12 +70,12 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
           </Text>
           <View>
             {/* {renderFormFields()} */}
-            {formValues.map(formElem => {
+            {formValues.map((formElem: any) => {
               if (formElem.HTMLControlType === 'TextBox') {
                 return (
                   <View key={formElem.AirtelTaskControlID}>
                     <Text style={styles.inputLabel}>
-                      {formElem.ControlHeader}
+                      {formElem.ControlHeader} {formElem.IsRequired ? <Text style={styles.mandatoryField}>*</Text> : null}
                     </Text>
                     <TextInput
                       id={formElem.ControlHeader}
@@ -136,5 +141,8 @@ const styles = StyleSheet.create({
     padding: 10,
     color: COLOR.gray,
     backgroundColor: COLOR.white,
+  },
+  mandatoryField: {
+    color: COLOR.red,
   },
 });

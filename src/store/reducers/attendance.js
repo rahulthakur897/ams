@@ -1,5 +1,6 @@
 import {
   API_LOADING,
+  API_FAILURE,
   CHECK_ATTENDANCE_STATUS_SUCCESS,
   UPDATE_ATTENDANCE_STATUS,
   MARK_ATTENDANCE_SUCCESS,
@@ -34,6 +35,7 @@ const initialState = {
   formDefaultValues: [],
   dynamicFormValues: [],
   removeTask: {},
+  taskSaveError: {},
 };
 
 export const attendanceReducer = (state = initialState, action) => {
@@ -65,9 +67,11 @@ export const attendanceReducer = (state = initialState, action) => {
     case MARK_ATTENDANCE_SUCCESS: {
       const {Data} = action?.response;
       const empAttID = Data[0]['EmpAttID'];
+      const attendanceData = Data[0];
       return {
         ...state,
         empAttID,
+        attendanceData,
       };
     }
     case FETCH_TASK_NAME_SUCCESS: {
@@ -183,6 +187,15 @@ export const attendanceReducer = (state = initialState, action) => {
         childTaskList: [],
         selectedChildTask: {},
         dynamicFormValues: [],
+      };
+    }
+    case API_FAILURE: {
+      return {
+        ...state,
+        taskSaveError: {
+          status: false, 
+          message: 'Some issue while saving entry',
+        }
       };
     }
     default:

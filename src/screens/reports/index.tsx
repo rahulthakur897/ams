@@ -7,7 +7,6 @@ import {
   PermissionsAndroid,
   Alert,
   Linking,
-  Platform,
   NativeModules,
 } from 'react-native';
 import {APP_IMAGE, BASEURL} from '../../constants';
@@ -25,17 +24,22 @@ const { RequestStorageModule } = NativeModules;
 export default function Reports() {
   const dispatch = useDispatch();
 
-  const {userReport} = useSelector(state => state.reportReducer);
+  const {userReport} = useSelector((state: any) => state.reportReducer);
 
   const exportDataToExcel = async () => {
     const ws = XLSX.utils.json_to_sheet(userReport);
     let wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'UsersReport');
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    // Write generated excel to Storage
-    const path = `${RNFS.ExternalStorageDirectoryPath}/attendance_report.xlsx`;
-    await RNFS.writeFile(path, wbout, 'ascii');
+    XLSX.utils.book_append_sheet(wb, ws, 'attendance_report');
+    const excelBuffer = XLSX.writeXLSX(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+  });
+  if(_.size(excelBuffer) > 1){
+    const storageAccess = await RequestStorageModule.fileAccessPermission('attendance_report', excelBuffer);
+    const path = `${RNFS.DownloadDirectoryPath}/attendance_report.xlsx`;
+    // await RNFS.writeFile(path, wbout, 'ascii');
     Alert.alert('Success', `File saved to: ${path}`);
+  }
   };
 
   const handleClick = async () => {
@@ -66,10 +70,9 @@ export default function Reports() {
         } else {
           // Permission denied
           console.log('Permission denied');
-          const storageAccess = await RequestStorageModule.fileAccessPermission();
-          console.log(storageAccess);
+          exportDataToExcel();
           // if (Number(Platform.Version) >= 33) {
-          //   exportDataToExcel();
+          //
           //   return;
           // }
           Alert.alert(

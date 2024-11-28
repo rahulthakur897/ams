@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   FlatList,
@@ -32,9 +32,10 @@ import styles from './style';
 const _ = require('lodash');
 
 const RenderTaskRow = ({item, allTaskList, removeRow}) => {
-  const getTaskName = () => {
+
+  const getTaskName = (taskId: number) => {
     const selectedRow = allTaskList.find(
-      task => task.AirtelTaskID === item.TaskId,
+      (task: any) => task.AirtelTaskID === taskId,
     );
     if (_.size(selectedRow)) {
       return selectedRow.TaskName;
@@ -42,9 +43,9 @@ const RenderTaskRow = ({item, allTaskList, removeRow}) => {
     return '';
   };
 
-  const getSubTaskName = () => {
+  const getSubTaskName = (subTaskId:  number) => {
     const selectedRow = allTaskList.find(
-      task => task.AirtelTaskID === item.SubTaskId,
+      (task: any) => task.AirtelTaskID === subTaskId,
     );
     if (_.size(selectedRow)) {
       return selectedRow.TaskName;
@@ -88,9 +89,10 @@ export default function TaskList() {
   const navigation = useNavigation();
   const refRBSheet = useRef();
 
-  const {empAttID, allUserTasks, allTaskList} = useSelector(
-    state => state.attendanceReducer,
+  const {empAttID, allUserTasks, allTaskList, taskSaveError} = useSelector(
+    (state: any) => state.attendanceReducer,
   );
+  const [btnClicked, setBtnClicked] = useState(false);
 
   const getTaskNameList = async () => {
     const userData = await Storage.getAsyncItem('userData');
@@ -105,10 +107,16 @@ export default function TaskList() {
   };
 
   useEffect(() => {
+    if(_.size(taskSaveError)){
+      setBtnClicked(false);
+    }
+  }, [taskSaveError]);
+
+  useEffect(() => {
     getTaskNameList();
   }, []);
 
-  const removeUserTask = async taskGroupId => {
+  const removeUserTask = async (taskGroupId: number) => {
     const userData = await Storage.getAsyncItem('userData');
     const config = {
       method: 'POST',
@@ -140,6 +148,8 @@ export default function TaskList() {
   }, []);
 
   const punchAttendance = async () => {
+    if(btnClicked) {return;}
+    setBtnClicked(true);
     const userData = await Storage.getAsyncItem('userData');
     const selectedDealer = await Storage.getAsyncItem('selectedDealer');
     const latlong = await Storage.getAsyncItem('latlong');
@@ -149,8 +159,8 @@ export default function TaskList() {
       url: `${BASEURL}/api/Attendance/PunchInOut`,
       data: {
         EmployeeId: userData.EmployeeID,
-        Longitude: latlong.latitude,
-        Latitude: latlong.longitude,
+        Longitude: latlong?.latitude,
+        Latitude: latlong?.longitude,
         DealerID: selectedDealer?.value,
         EmpAttID: empAttID,
         DeviceIPAddress: '',
@@ -200,7 +210,7 @@ export default function TaskList() {
               contentContainerStyle={styles.listContainer}
             />
           ) : (
-            <ActivityIndicator size={'large'} color={COLOR.blue} />
+            <ActivityIndicator size={'large'} color={COLOR.gray} />
           )}
         </View>
         <Pressable
@@ -217,6 +227,7 @@ export default function TaskList() {
         <RBSheet
           ref={refRBSheet}
           useNativeDriver={false}
+          closeOnPressMask={false}
           height={280}
           customStyles={{
             wrapper: {

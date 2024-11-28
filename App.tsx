@@ -1,9 +1,21 @@
-import React, { useEffect } from 'react';
-import {PermissionsAndroid, Platform, BackHandler, Alert, Text} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {PermissionsAndroid, Platform, BackHandler, AppState, Alert, Text, NativeModules} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import NetInfo from '@react-native-community/netinfo';
+import Toast from 'react-native-simple-toast';
 import {MainStackNavigator} from './src/navigation/StackNavigator';
+import { Storage } from './src/utils';
+import { BASEURL } from './src/constants';
+import { doLogin } from './src/store/actions/user';
+const { RequestStorageModule } = NativeModules;
+const _ = require('lodash');
 
 function App() {
+  const dispatch = useDispatch();
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const { userData } = useSelector((state: any) => state.userReducer);
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -32,8 +44,15 @@ function App() {
     }
   };
 
+  const checkDevOption = async () => {
+    const devOption = await RequestStorageModule.checkDevOptionEnable();
+      console.log('checkDevOption', devOption);
+  };
+
   useEffect(() => {
     requestPermissions();
+
+    checkDevOption();
   }, []);
 
   useEffect(() => {
@@ -54,6 +73,68 @@ function App() {
       backAction,
     );
     return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
+    if(_.size(userData)){
+      Storage.setAsyncItem('userData', userData);
+    }
+  }, [userData]);
+
+  const checkInternetStatus = (isConnected: boolean) => {
+    if(isConnected){
+      Toast.show('You are back online', Toast.LONG);
+    } else {
+      Toast.show('You are offline', Toast.LONG);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state: any) => {
+      console.log('Connection type', state.type);
+      checkInternetStatus(state.isConnected);
+    });
+
+    // Cleanup the event listener on unmount
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const refreshToken = async () => {
+    const loginCreds = await Storage.getAsyncItem('loginCreds');
+    if (_.size(loginCreds)) {
+      //refersh token while app open
+      const base64Credentials = btoa(`${loginCreds.username}:${loginCreds.password}`);
+      const config = {
+        method: 'POST',
+        url: `${BASEURL}/api/Users/CreateToken`,
+        headers: {
+          'Authorization': `Basic ${base64Credentials}`,
+        },
+      };
+      dispatch(doLogin(config));
+    }
+  };
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+        refreshToken();
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      console.log('AppState', appState.current);
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   return (

@@ -64,7 +64,7 @@ const style = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     alignItems: ALIGN.center.justifyContent,
-    marginTop: 50,
+    marginTop: 20,
   },
   checkInButtonDisable: {
     backgroundColor: COLOR.lightBlack,
@@ -103,6 +103,15 @@ const style = StyleSheet.create({
   successImg: {
     width: 110,
     height: 110,
+  },
+  inputText: {
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: COLOR.hexgray,
+    marginTop: 10,
+    color: COLOR.black,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   successText: {
     color: COLOR.green,

@@ -1,8 +1,18 @@
-import React, {useEffect, useRef} from 'react';
-import {View, Text, ImageBackground, ScrollView, Pressable} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import {
+  Alert,
+  View,
+  Text,
+  ImageBackground,
+  ScrollView,
+  Pressable,
+  Image,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {APP_IMAGE, BASEURL, Screen} from '../../../constants';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
 import {Storage} from '../../../utils';
 import {
   fetchTaskNameList,
@@ -22,6 +32,9 @@ export default function SelectTask() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const renderDynamicRef = useRef();
+  const [taskPhotos, setTaskPhotos] = useState<any[]>(Array(5).fill(''));
+  const [isPhotoToUpload, setIsPhotoToUpload] = useState(false);
+  const [btnClicked, setBtnClicked] = useState(false);
 
   const {
     empAttID,
@@ -33,7 +46,14 @@ export default function SelectTask() {
     formDefaultValues,
     dynamicFormValues,
     airtelControlInputValues,
-  } = useSelector(state => state.attendanceReducer);
+    taskSaveError,
+  } = useSelector((state: any) => state.attendanceReducer);
+
+  useEffect(() => {
+    if(_.size(taskSaveError)){
+      setBtnClicked(false);
+    }
+  }, [taskSaveError]);
 
   const getTaskNameList = async () => {
     const userData = await Storage.getAsyncItem('userData');
@@ -52,7 +72,9 @@ export default function SelectTask() {
     return () => dispatch(resetDropdownTask());
   }, []);
 
-  const updateParentDropdownValue = item => {
+  const updateParentDropdownValue = (item: any) => {
+    setBtnClicked(false);
+    setIsPhotoToUpload(item.isPhotoToUpload);
     dispatch(selectTaskAndFilterSubTask(item));
   };
 
@@ -80,7 +102,7 @@ export default function SelectTask() {
     dispatch(renderDynamicForm(config));
   };
 
-  const updateChildDropdownValue = item => {
+  const updateChildDropdownValue = (item: any) => {
     dispatch(selectSubTask(item));
     getFormDefaultValues();
     callRenderFormData();
@@ -92,7 +114,22 @@ export default function SelectTask() {
     }
   }, [taskSaved]);
 
+  const checkTaskPhotos = () => {
+    function isEmpty(elem: string) {
+      return elem !== '';
+    }
+    let isPhotoAdded = taskPhotos.some(isEmpty);
+    return isPhotoAdded;
+  };
+
   const saveTask = async () => {
+    const isTaskPhotoAdded = checkTaskPhotos();
+    if (!isTaskPhotoAdded) {
+      Alert.alert('Warning', 'Please add atleast 1 task photo');
+      return;
+    }
+    if(btnClicked) {return;}
+    setBtnClicked(true);
     const userData = await Storage.getAsyncItem('userData');
     if (renderDynamicRef.current) {
       renderDynamicRef.current.sendFormData();
@@ -104,13 +141,32 @@ export default function SelectTask() {
         EmployeeId: userData.EmployeeID,
         EmpAttID: empAttID || 0,
         AirtelControlInputValues: airtelControlInputValues,
-        ImageBase64: [],
+        ImageBase64: taskPhotos,
       },
       headers: {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
     dispatch(saveTaskAsDraft(config));
+  };
+
+  const uploadPhoto = async (num: number) => {
+    const result: any = await launchImageLibrary({
+      mediaType: 'photo',
+      includeBase64: true,
+      quality: 1,
+    });
+    if (_.size(result) > 0) {
+      const imgBase64 = result.assets[0].base64 || '';
+      taskPhotos[num] = `data:image/jpeg;base64,${imgBase64}`;
+      setTaskPhotos([...taskPhotos]);
+    }
+  };
+
+  const deletePhoto = (num: number) => {
+    taskPhotos[num] = '';
+    setTaskPhotos([...taskPhotos]);
+    setBtnClicked(false);
   };
 
   return (
@@ -142,10 +198,46 @@ export default function SelectTask() {
               formValues={dynamicFormValues}
             />
           </View>
-          {_.size(dynamicFormValues) ? (
-            <Pressable style={styles.allowAccessButton} onPress={saveTask}>
-              <Text style={styles.allowAccessText}>Save Tasks</Text>
-            </Pressable>
+          {_.size(dynamicFormValues) && isPhotoToUpload ? (
+            <View>
+              <Text style={styles.mandatoryField}>
+                Note: Upload atleast 1 task photo
+              </Text>
+              {[0, 1, 2, 3, 4].map(num => (
+                <Pressable
+                  key={num}
+                  style={styles.uploadContainer}
+                  onPress={() => uploadPhoto(num)}>
+                  {_.size(taskPhotos[num]) ? (
+                    <View style={{position: 'relative'}}>
+                      <Pressable
+                        style={styles.trashContainer}
+                        onPress={() => deletePhoto(num)}>
+                        <FeatherIcon
+                          name="trash-2"
+                          size={18}
+                          color={COLOR.black}
+                        />
+                      </Pressable>
+                      <Image
+                        source={{uri: taskPhotos[num]}}
+                        style={styles.uploadedImg}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <FeatherIcon name="upload" size={55} color={COLOR.gray} />
+                      <Text style={styles.uploadText}>
+                        (Upload Photo from Gallery)
+                      </Text>
+                    </View>
+                  )}
+                </Pressable>
+              ))}
+              <Pressable style={styles.allowAccessButton} onPress={saveTask}>
+                <Text style={styles.allowAccessText}>Save Tasks</Text>
+              </Pressable>
+            </View>
           ) : null}
         </View>
       </ImageBackground>

@@ -52,7 +52,7 @@ export default function BottomTabNavigator() {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Reports"
         component={Reports}
         options={{
@@ -65,7 +65,7 @@ export default function BottomTabNavigator() {
             />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }

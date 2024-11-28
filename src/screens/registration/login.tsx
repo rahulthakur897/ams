@@ -32,7 +32,7 @@ export default function Login() {
   const passwordRef = useRef();
 
   const {userData, isLoginError, loginErrMsg} = useSelector(
-    state => state.userReducer,
+    (state: any) => state.userReducer,
   );
 
   const loginValidationSchema = yup.object().shape({
@@ -40,7 +40,7 @@ export default function Login() {
     password: yup.string().required('Password is required'),
   });
 
-  const login = (params, action) => {
+  const login = (params: any, action: any) => {
     if(!notRobot) {
       Alert.alert('', 'Invalid captcha');
       return;

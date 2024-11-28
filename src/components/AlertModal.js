@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     borderWidth: 1,
-    borderColor: COLOR.blue,
+    borderColor: COLOR.gray,
     backgroundColor: COLOR.white,
     borderRadius: 12,
     width: DIMENSIONS.width - 40,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontFamily: FONT.Medium,
-    color: COLOR.blue,
+    color: COLOR.gray,
   },
   title: {
     fontSize: 16,
