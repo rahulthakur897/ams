@@ -26,9 +26,9 @@ export default function Splash() {
     }
   }, [userData]);
 
-  const checkLoginAndNavigate = async () => {
-    const userData = await Storage.getAsyncItem('userData');
-    const loginCreds = await Storage.getAsyncItem('loginCreds');
+  const checkLoginAndNavigate = () => {
+    const userData = Storage.getAsyncItem('userData');
+    const loginCreds = Storage.getAsyncItem('loginCreds');
     if (_.size(userData)) {
       //refersh token while app open
       const base64Credentials = btoa(`${loginCreds.username}:${loginCreds.password}`);

@@ -99,10 +99,10 @@ export default function Reports() {
     handleClick();
   }, [userReport]);
 
-  const downloadReport = async () => {
+  const downloadReport = () => {
     const fromDate = moment().startOf('month').format('YYYY-MM-DD');
     const toDate = moment().endOf('month').format('YYYY-MM-DD');
-    const userData = await Storage.getAsyncItem('userData');
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/TeamDetailAttendanceCheck?EmployeeID=${userData.EmployeeID}&fromdate=${fromDate}&todate=${toDate}`,

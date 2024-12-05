@@ -1,4 +1,4 @@
-import React, {useState, useImperativeHandle, forwardRef} from 'react';
+import React, {useState, useImperativeHandle, forwardRef, useCallback} from 'react';
 import {
   StyleSheet,
   View,
@@ -26,11 +26,23 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
     checkForLocationEnabled
   }));
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      checkForLocationEnabled()
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
+
   const checkForLocationEnabled = async() => {
     if (Platform.OS === 'android') {
       try {
         const enableResult = await promptForEnableLocationIfNeeded();
         if(enableResult === 'already-enabled'){
+          console.log('inside checkForLocationEnabled');
           requestLocationPermission();
         }
         // The user has accepted to enable the location services
@@ -49,6 +61,8 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
           //  - ERR03 : Internal error
         }
       }
+    } else {
+      getUserLocation();
     }
   }
 
@@ -66,8 +80,9 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the location');
+        console.log('inside requestLocationPermission granted');
         if(!isLocLoading){
+          console.log('inside requestLocationPermission if condition');
           setIsLocLoading(true);
           getUserLocation();
         }
@@ -99,13 +114,17 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
     })
       .then(newLocation => {
         cbLocationReady(true);
-        dispatch(updateUserLatLong(newLocation));
         setIsLocLoading(false);
+        console.log('newLocation', newLocation);
+        dispatch(updateUserLatLong(newLocation));
       })
       .catch(ex => {
         if (isLocationError(ex)) {
           const {code, message} = ex;
           console.warn(code, message);
+          if(code === "TIMEOUT"){
+            getUserLocation();
+          }
         } else {
           console.warn(ex);
         }

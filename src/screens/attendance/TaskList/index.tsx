@@ -94,8 +94,8 @@ export default function TaskList() {
   );
   const [btnClicked, setBtnClicked] = useState(false);
 
-  const getTaskNameList = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getTaskNameList = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/AirtelTask/GetAirtelTasksDetail`,
@@ -116,8 +116,8 @@ export default function TaskList() {
     getTaskNameList();
   }, []);
 
-  const removeUserTask = async (taskGroupId: number) => {
-    const userData = await Storage.getAsyncItem('userData');
+  const removeUserTask = (taskGroupId: number) => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'POST',
       url: `${BASEURL}/api/Attendance/RemoveAirtelTaskAsDraft`,
@@ -131,8 +131,8 @@ export default function TaskList() {
     dispatch(removeTask(config));
   };
 
-  const getUserTask = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getUserTask = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${empAttID}`,
@@ -147,13 +147,13 @@ export default function TaskList() {
     getUserTask();
   }, []);
 
-  const punchAttendance = async () => {
+  const punchAttendance = () => {
     if(btnClicked) {return;}
     setBtnClicked(true);
-    const userData = await Storage.getAsyncItem('userData');
-    const selectedDealer = await Storage.getAsyncItem('selectedDealer');
-    const latlong = await Storage.getAsyncItem('latlong');
-    const imgBase64 = await Storage.getAsyncItem('imgBase64');
+    const userData = Storage.getAsyncItem('userData');
+    const selectedDealer = Storage.getAsyncItem('selectedDealer');
+    const latlong = Storage.getAsyncItem('latlong');
+    const imgBase64 = Storage.getAsyncItem('imgBase64');
     const config = {
       method: 'POST',
       url: `${BASEURL}/api/Attendance/PunchInOut`,

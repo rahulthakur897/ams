@@ -55,8 +55,8 @@ export default function MarkAttendance() {
   const [locationStatus, setIsLocationReady] = useState(false);
   const [btnClicked, setBtnClicked] = useState(false);
 
-  const getTaskList = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getTaskList = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/GetAirtelDraftedTasksSubTasks?EmpAttID=${empAttID}`,
@@ -81,14 +81,13 @@ export default function MarkAttendance() {
         setNewDealerName(attendanceData.Remarks);
         dispatch(updateDealer(selected));
         dispatch(updateAttFlag('ReadyForCheckOut'));
-        enableChildComponent();
       }
       getTaskList();
     }
   }, [attendanceData]);
 
-  const getDealer = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getDealer = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Employee/Employees?OrganizationID=${userData.OrganizationID}&EmployeeID=${userData.EmployeeID}`,
@@ -99,8 +98,8 @@ export default function MarkAttendance() {
     dispatch(getDealerList(config));
   };
 
-  const getAttendanceRecord = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getAttendanceRecord = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${
@@ -141,7 +140,7 @@ export default function MarkAttendance() {
 
   const closeDialog = () => {
     dispatch(resetUserLatLong());
-    dispatch(updateAttFlag('ReadyForCheckOut'));
+    setIsCameraReady(false);
     enableChildComponent();
     refRBSheet.current.close();
   };
@@ -156,7 +155,7 @@ export default function MarkAttendance() {
     }
     if(btnClicked) {return;}
     setBtnClicked(true);
-    const userData = await Storage.getAsyncItem('userData');
+    const userData = Storage.getAsyncItem('userData');
     const imageBase64Data = await callChildMethod();
     const config = {
       method: 'POST',
@@ -195,19 +194,23 @@ export default function MarkAttendance() {
     }
   };
 
-  const checkSelectedDealer = () => {
-    if (!_.size(selectedDealerHook)) {
-      Alert.alert('', 'Please select Dealer');
-      return;
-    }
-  };
+  // const checkSelectedDealer = () => {
+  //   if (!_.size(selectedDealerHook)) {
+  //     Alert.alert('', 'Please select Dealer');
+  //     return;
+  //   }
+  // };
 
-  const getLocationCurrentStatus = currentState => {
+  const getLocationCurrentStatus = (currentState: boolean) => {
+    console.log("getLocationCurrentStatus", currentState);
     setIsLocationReady(currentState);
+    checkBtnStatus();
   };
 
-  const getCameraCurrentStatus = currentState => {
+  const getCameraCurrentStatus = (currentState: boolean) => {
+    console.log("getCameraCurrentStatus", currentState);
     setIsCameraReady(currentState);
+    checkBtnStatus();
   };
 
   const checkBtnStatus = () => {
@@ -219,10 +222,7 @@ export default function MarkAttendance() {
     } else {
       btnStatus = false;
     }
-    if(!locationStatus){
-      btnStatus = false;
-    }
-    if(!cameraStatus){
+    if(!locationStatus || !(latitude && longitude)){
       btnStatus = false;
     }
     return btnStatus;
@@ -240,7 +240,7 @@ export default function MarkAttendance() {
             disable={attFlag === 'ReadyForCheckIn' ? false : true}
             callback={updateDropdownValue}
           />
-          {selectedDealerHook.label === 'Others' ? (
+          {selectedDealerHook?.label === 'Others' ? (
             <TextInput
               value={newDealerName}
               placeholderTextColor={COLOR.gray}
@@ -298,12 +298,12 @@ export default function MarkAttendance() {
           {attFlag === 'ReadyForCheckOut' ? (
             <Pressable
               style={
-                _.size(selectedDealerHook) && locationStatus && cameraStatus
+                checkBtnStatus()
                   ? styles.checkInButton
                   : styles.checkInButtonDisable
               }
               disabled={
-                _.size(selectedDealerHook) && locationStatus && cameraStatus
+                checkBtnStatus()
                   ? false
                   : true
               }

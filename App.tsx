@@ -45,41 +45,23 @@ function App() {
   };
 
   const checkDevOption = async () => {
-    const devOption = await RequestStorageModule.checkDevOptionEnable();
+    if (Platform.OS === 'android') {
+      const devOption = await RequestStorageModule.checkDevOptionEnable();
       console.log('checkDevOption', devOption);
+    }
   };
 
-  useEffect(() => {
-    requestPermissions();
-
-    checkDevOption();
-  }, []);
-
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        {text: 'YES', onPress: () => BackHandler.exitApp()},
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, []);
-
-  useEffect(() => {
-    if(_.size(userData)){
-      Storage.setAsyncItem('userData', userData);
-    }
-  }, [userData]);
+  const backAction = () => {
+    Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
+    ]);
+    return true;
+  };
 
   const checkInternetStatus = (isConnected: boolean) => {
     if(isConnected){
@@ -90,16 +72,46 @@ function App() {
   };
 
   useEffect(() => {
+    requestPermissions();
+
+    checkDevOption();
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
     const unsubscribe = NetInfo.addEventListener((state: any) => {
       console.log('Connection type', state.type);
       checkInternetStatus(state.isConnected);
     });
 
-    // Cleanup the event listener on unmount
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+        refreshToken();
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      console.log('AppState', appState.current);
+    });
+
     return () => {
+      backHandler.remove();
       unsubscribe();
+      subscription.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if(_.size(userData)){
+      Storage.setAsyncItem('userData', userData);
+    }
+  }, [userData]);
 
   const refreshToken = async () => {
     const loginCreds = await Storage.getAsyncItem('loginCreds');
@@ -116,26 +128,6 @@ function App() {
       dispatch(doLogin(config));
     }
   };
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        console.log('App has come to the foreground!');
-        refreshToken();
-      }
-
-      appState.current = nextAppState;
-      setAppStateVisible(appState.current);
-      console.log('AppState', appState.current);
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   return (
     <NavigationContainer fallback={<Text>Loading...</Text>}>

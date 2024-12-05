@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AttendanceStack from '../screens/attendance/AttendanceStack';
@@ -18,7 +18,7 @@ export default function BottomTabNavigator() {
         tabBarActiveTintColor: 'red', // Color of the selected tab
         tabBarInactiveTintColor: 'gray', // Color of unselected tabs
         tabBarStyle: {
-          height: 70, // Adjusts the height of the tab bar
+          height: Platform.OS === 'android' ? 70 : 100, // Adjusts the height of the tab bar
           paddingBottom: 10, // Adjusts the padding for content within the tab bar
           paddingTop: 5,
         },
@@ -69,22 +69,3 @@ export default function BottomTabNavigator() {
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  bottomNavigation: {
-    marginTop: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingTop: 10,
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navText: {
-    fontSize: 12,
-    color: '#777',
-    marginTop: 4,
-  },
-});

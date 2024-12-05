@@ -79,6 +79,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const parentTaskList = filterParentTasks(Data);
       return {
         ...state,
+        isLoading: false,
         allTaskList: Data,
         parentTaskList,
       };
@@ -125,6 +126,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const {Data} = action?.response;
       return {
         ...state,
+        isLoading: false,
         formDefaultValues: Data,
       };
     }
@@ -136,6 +138,7 @@ export const attendanceReducer = (state = initialState, action) => {
       );
       return {
         ...state,
+        isLoading: false,
         dynamicFormValues: selectedFormValues,
       };
     }

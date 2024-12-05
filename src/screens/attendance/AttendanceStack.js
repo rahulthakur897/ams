@@ -1,8 +1,8 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import { useDispatch } from 'react-redux';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useDispatch} from 'react-redux';
 import MarkAttendance from './MarkAttendance';
 import SelectTask from './SelectTask';
 import TaskListHeader from './TaskList/TaskListHeader';
@@ -24,10 +24,8 @@ const AttendanceStack = () => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [
-          { name: Screen.LOGIN },
-        ],
-      })
+        routes: [{name: Screen.LOGIN}],
+      }),
     );
   };
 
@@ -67,6 +65,7 @@ const AttendanceStack = () => {
       <Stack.Screen
         name="TaskList"
         options={{
+          headerLeft: () => null,
           headerTitle: () => <TaskListHeader />, // Set the custom header component
         }}
         component={TaskList}

@@ -1,5 +1,6 @@
 import {put, takeLatest} from 'redux-saga/effects';
 import {
+  API_LOADING,
   API_FAILURE,
   MARK_ATTENDANCE,
   MARK_ATTENDANCE_SUCCESS,
@@ -39,6 +40,7 @@ function* checkAttnStatus(configData) {
 }
 
 function* fetchTaskNameList(configData) {
+  yield put({type: API_LOADING});
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
     yield put({type: FETCH_TASK_NAME_SUCCESS, response});
@@ -48,6 +50,7 @@ function* fetchTaskNameList(configData) {
 }
 
 function* fetchDefaultValues(configData) {
+  yield put({type: API_LOADING});
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
     yield put({type: FETCH_FORM_DEFAULT_VALUES_SUCCESS, response});
@@ -57,6 +60,7 @@ function* fetchDefaultValues(configData) {
 }
 
 function* fetchFormValues(configData) {
+  yield put({type: API_LOADING});
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
     yield put({type: RENDER_DYNAMIC_FORM_SUCCESS, response});
@@ -84,7 +88,9 @@ function* fetchUserTask(configData) {
 }
 
 function* saveTaskAsDraft(configData) {
+  yield put({type: API_LOADING});
   const response = yield makeApiCall(configData.payload);
+  console.log('response', response);
   if (response !== undefined) {
     yield put({type: SAVE_TASK_SUCCESS, response});
   } else {

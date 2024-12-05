@@ -1,14 +1,17 @@
-import React, {
-  useRef,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import {StyleSheet, Linking, Alert, PermissionsAndroid, ActivityIndicator, Image} from 'react-native';
+import React, {useRef, useState, forwardRef, useImperativeHandle} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {
+  StyleSheet,
+  Linking,
+  Alert,
+  PermissionsAndroid,
+  ActivityIndicator,
+  Image,
+  Platform,
+} from 'react-native';
 import {useCameraDevice, Camera} from 'react-native-vision-camera';
 import {DIMENSIONS, COLOR} from '../constants';
-import {errorHandler, Storage} from "../utils";
+import {errorHandler, Storage} from '../utils';
 const RNFS = require('react-native-fs');
 
 export const GetCamera = forwardRef((props, ref) => {
@@ -19,6 +22,7 @@ export const GetCamera = forwardRef((props, ref) => {
   const [cameraPosition, setCameraPosition] = useState('front');
   const [imagePath, setImagePath] = useState('');
   let device = useCameraDevice(cameraPosition);
+  let granted = null;
 
   useImperativeHandle(ref, () => ({
     clearPhotoPath,
@@ -30,19 +34,23 @@ export const GetCamera = forwardRef((props, ref) => {
       // Do something when the screen is focused
       console.log('CameraScreen focus effect');
       setIsActive(true);
-      requestCameraPermission();
+      cbCameraReady(true);
+      if(Platform.OS === 'android'){
+        requestCameraPermission();
+      }
       return () => {
         // Do something when the screen is unfocused
         // Useful for cleanup functions
         console.log('CameraScreen focus effect cleanup');
         setIsActive(false);
+        cbCameraReady(false);
       };
-    }, [])
+    }, []),
   );
 
   const clearPhotoPath = () => {
     setImagePath('');
-  }
+  };
 
   const takePhoto = async () => {
     if (cameraRef != null) {
@@ -62,7 +70,7 @@ export const GetCamera = forwardRef((props, ref) => {
 
   const requestCameraPermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
+      granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
           title: 'AMS App Camera Permission',
@@ -116,5 +124,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: DIMENSIONS.width - 40,
     height: 300,
-  }
+  },
 });

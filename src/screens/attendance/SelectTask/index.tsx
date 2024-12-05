@@ -7,6 +7,7 @@ import {
   ScrollView,
   Pressable,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -37,6 +38,7 @@ export default function SelectTask() {
   const [btnClicked, setBtnClicked] = useState(false);
 
   const {
+    isLoading,
     empAttID,
     taskSaved,
     parentTaskList,
@@ -50,13 +52,14 @@ export default function SelectTask() {
   } = useSelector((state: any) => state.attendanceReducer);
 
   useEffect(() => {
-    if(_.size(taskSaveError)){
+    if (_.size(taskSaveError)) {
       setBtnClicked(false);
     }
   }, [taskSaveError]);
 
-  const getTaskNameList = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getTaskNameList = () => {
+    console.log('method called');
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/AirtelTask/GetAirtelTasksDetail`,
@@ -74,12 +77,13 @@ export default function SelectTask() {
 
   const updateParentDropdownValue = (item: any) => {
     setBtnClicked(false);
+    setTaskPhotos(Array(5).fill(''));
     setIsPhotoToUpload(item.isPhotoToUpload);
     dispatch(selectTaskAndFilterSubTask(item));
   };
 
-  const getFormDefaultValues = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const getFormDefaultValues = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/AirtelTask/GetAirtelTaskControlDefaultValues`,
@@ -90,8 +94,8 @@ export default function SelectTask() {
     dispatch(getFormValues(config));
   };
 
-  const callRenderFormData = async () => {
-    const userData = await Storage.getAsyncItem('userData');
+  const callRenderFormData = () => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/AirtelTask/GetAirtelTasksControlMapping`,
@@ -104,6 +108,7 @@ export default function SelectTask() {
 
   const updateChildDropdownValue = (item: any) => {
     dispatch(selectSubTask(item));
+    setTaskPhotos(Array(5).fill(''));
     getFormDefaultValues();
     callRenderFormData();
   };
@@ -122,15 +127,17 @@ export default function SelectTask() {
     return isPhotoAdded;
   };
 
-  const saveTask = async () => {
+  const saveTask = () => {
     const isTaskPhotoAdded = checkTaskPhotos();
-    if (!isTaskPhotoAdded) {
+    if (!isTaskPhotoAdded && isPhotoToUpload) {
       Alert.alert('Warning', 'Please add atleast 1 task photo');
       return;
     }
-    if(btnClicked) {return;}
+    if (btnClicked) {
+      return;
+    }
     setBtnClicked(true);
-    const userData = await Storage.getAsyncItem('userData');
+    const userData = Storage.getAsyncItem('userData');
     if (renderDynamicRef.current) {
       renderDynamicRef.current.sendFormData();
     }
@@ -147,6 +154,7 @@ export default function SelectTask() {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
+    console.log('config', config);
     dispatch(saveTaskAsDraft(config));
   };
 
@@ -188,6 +196,7 @@ export default function SelectTask() {
             placeholder="Select Sub Task"
             callback={updateChildDropdownValue}
           />
+          {isLoading ? <ActivityIndicator size={'large'} color={COLOR.darkGray} /> : null}
           {/* form fields */}
           <View>
             <RenderDynamicForm
@@ -198,42 +207,50 @@ export default function SelectTask() {
               formValues={dynamicFormValues}
             />
           </View>
-          {_.size(dynamicFormValues) && isPhotoToUpload ? (
+          {_.size(dynamicFormValues) ? (
             <View>
-              <Text style={styles.mandatoryField}>
-                Note: Upload atleast 1 task photo
-              </Text>
-              {[0, 1, 2, 3, 4].map(num => (
-                <Pressable
-                  key={num}
-                  style={styles.uploadContainer}
-                  onPress={() => uploadPhoto(num)}>
-                  {_.size(taskPhotos[num]) ? (
-                    <View style={{position: 'relative'}}>
-                      <Pressable
-                        style={styles.trashContainer}
-                        onPress={() => deletePhoto(num)}>
-                        <FeatherIcon
-                          name="trash-2"
-                          size={18}
-                          color={COLOR.black}
-                        />
-                      </Pressable>
-                      <Image
-                        source={{uri: taskPhotos[num]}}
-                        style={styles.uploadedImg}
-                      />
-                    </View>
-                  ) : (
-                    <View style={styles.emptyContainer}>
-                      <FeatherIcon name="upload" size={55} color={COLOR.gray} />
-                      <Text style={styles.uploadText}>
-                        (Upload Photo from Gallery)
-                      </Text>
-                    </View>
-                  )}
-                </Pressable>
-              ))}
+              {isPhotoToUpload ? (
+                <View>
+                  <Text style={styles.mandatoryField}>
+                    Note: Upload atleast 1 task photo
+                  </Text>
+                  {[0, 1, 2, 3, 4].map(num => (
+                    <Pressable
+                      key={num}
+                      style={styles.uploadContainer}
+                      onPress={() => uploadPhoto(num)}>
+                      {_.size(taskPhotos[num]) ? (
+                        <View style={{position: 'relative'}}>
+                          <Pressable
+                            style={styles.trashContainer}
+                            onPress={() => deletePhoto(num)}>
+                            <FeatherIcon
+                              name="trash-2"
+                              size={18}
+                              color={COLOR.black}
+                            />
+                          </Pressable>
+                          <Image
+                            source={{uri: taskPhotos[num]}}
+                            style={styles.uploadedImg}
+                          />
+                        </View>
+                      ) : (
+                        <View style={styles.emptyContainer}>
+                          <FeatherIcon
+                            name="upload"
+                            size={55}
+                            color={COLOR.gray}
+                          />
+                          <Text style={styles.uploadText}>
+                            (Upload Photo from Gallery)
+                          </Text>
+                        </View>
+                      )}
+                    </Pressable>
+                  ))}
+                </View>
+              ) : null}
               <Pressable style={styles.allowAccessButton} onPress={saveTask}>
                 <Text style={styles.allowAccessText}>Save Tasks</Text>
               </Pressable>

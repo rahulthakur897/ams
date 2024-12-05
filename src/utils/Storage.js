@@ -1,37 +1,35 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MMKV } from 'react-native-mmkv'
 import {errorHandler} from './ExceptionHandler';
 
+export const MMKVStorage = new MMKV();
+
 export const Storage = {
-  setAsyncItem: async (key, obj) => {
+  setAsyncItem: (key, obj) => {
     try {
-      await AsyncStorage.setItem(key, JSON.stringify(obj));
+      MMKVStorage.set(key, JSON.stringify(obj));
     } catch (error) {
       errorHandler(error, false);
     }
   },
-  getAsyncItem: async key => {
+  getAsyncItem: key => {
     try {
-      const obj = await AsyncStorage.getItem(key);
-      return obj !== null ? JSON.parse(obj) : null;
+      const obj = MMKVStorage.getString(key);
+      return obj !== undefined ? JSON.parse(obj) : null;
     } catch (error) {
       errorHandler(error, false);
     }
   },
-  clearAsyncItem: async key => {
+  clearAsyncItem: key => {
     try {
-      await AsyncStorage.removeItem(key);
+      MMKVStorage.delete(key);
     } catch (error) {
       errorHandler(error, false);
     }
   },
-  clearAppData: async (isDelAcc) => {
+  clearAppData: () => {
     try {
-      let keys = await AsyncStorage.getAllKeys();
-      // if(!isDelAcc){
-      //   const exludeKeys = [];
-      //   keys = keys.filter(item => !exludeKeys.includes(item));
-      // }
-      await AsyncStorage.multiRemove(keys);
+      MMKVStorage.clearAll();
     } catch (error) {
       errorHandler(error, false);
     }

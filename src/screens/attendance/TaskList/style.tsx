@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import {ALIGN, COLOR, DIMENSIONS, FONT} from '../../../constants';
 
 const style = StyleSheet.create({
@@ -10,7 +10,7 @@ const style = StyleSheet.create({
     margin: 10,
   },
   flatListContainer: {
-    height: DIMENSIONS.height - 200,
+    height: DIMENSIONS.height - (Platform.OS === 'android' ? 200 : 250),
     overflow: 'scroll',
     paddingBottom: 15,
   },

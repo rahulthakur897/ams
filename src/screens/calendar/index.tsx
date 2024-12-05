@@ -45,8 +45,8 @@ export default function MyCalendar() {
   const disabledDaysIndexes = [6, 7];
 
   // Fetch attendance data from the API
-  const fetchAttendance = async (fromDate: any, toDate: any) => {
-    const userData = await Storage.getAsyncItem('userData');
+  const fetchAttendance = (fromDate: any, toDate: any) => {
+    const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/GetEmpAttendanceCalender?EmployeeID=${userData.EmployeeID}&fromdate=${fromDate}&todate=${toDate}`,

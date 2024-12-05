@@ -34,11 +34,6 @@ export default function AddTasks() {
             </Text>
           </Pressable>
         </View>
-        <View style={styles.checkoutborder}>
-          <Pressable style={styles.checkoutbutton}>
-            <Text style={styles.checkoutbuttonText}>Check Out</Text>
-          </Pressable>
-        </View>
       </View>
     </ImageBackground>
   );

@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Pressable,
+  Platform,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -24,8 +25,8 @@ const TaskListHeader = () => {
   return (
     <View style={styles.headerContainer}>
       <Text style={styles.title}>Task List</Text>
-      <Pressable style={styles.addtaskButton}>
-        <Text onPress={addtaskNavigation} style={styles.addtaskText}>
+      <Pressable style={styles.addtaskButton} onPress={addtaskNavigation}>
+        <Text style={styles.addtaskText}>
           Add Tasks
         </Text>
       </Pressable>
@@ -35,25 +36,25 @@ const TaskListHeader = () => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: ALIGN.row.flexDirection,
-    alignItems: ALIGN.center.justifyContent,
-    justifyContent: ALIGN.contentSpaceEvenly.justifyContent,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   title: {
     fontSize: 20,
     fontFamily: FONT.Bold,
     color: COLOR.black,
-    marginRight: 2,
   },
   addtaskButton: {
-    backgroundColor: COLOR.orange,
+    backgroundColor: COLOR.red,
     paddingVertical: 12,
-    paddingHorizontal: 25,
     borderRadius: 20,
     alignItems: ALIGN.center.justifyContent,
     width: 120,
     height: 40,
-    marginLeft: 85,
+    marginTop: -10,
   },
   addtaskText: {
     color: COLOR.white,
