@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import {COLOR, FONT, DIMENSIONS} from '../../constants';
 
 const style = StyleSheet.create({
@@ -10,10 +10,11 @@ const style = StyleSheet.create({
     width: 234,
     height: 55,
     marginTop: 70,
-    marginLeft: 50,
+    marginLeft: Platform.isPad ? DIMENSIONS.width / 3 : 50,
   },
   title: {
     marginTop: 70,
+    marginBottom: 15,
     fontSize: 36,
     fontFamily: FONT.Bold,
     color: COLOR.black,

@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import {DIMENSIONS, COLOR, FONT, ALIGN} from '../../constants';
 
 const style = StyleSheet.create({
@@ -14,7 +14,7 @@ const style = StyleSheet.create({
     position: 'relative',
     borderRadius: 10,
     marginTop: 20,
-    height: 300,
+    height: Platform.isPad ? 600 : 300,
     shadowColor: COLOR.black,
     shadowOpacity: 0.1,
     shadowOffset: {width: 0, height: 5},

@@ -118,11 +118,11 @@ const styles = StyleSheet.create({
   cameraRoll: {
     position: 'absolute',
     width: DIMENSIONS.width - 40,
-    height: 300,
+    height: Platform.isPad ? 600 : 300,
   },
   photoContainer: {
     position: 'absolute',
     width: DIMENSIONS.width - 40,
-    height: 300,
+    height: Platform.isPad ? 600 : 300,
   },
 });
