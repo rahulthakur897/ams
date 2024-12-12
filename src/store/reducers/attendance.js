@@ -13,6 +13,7 @@ import {
   SELECTED_SUBTASK,
   REMOVE_USER_TASK_SUCCESS,
   RESET_TASK_DROPDOWN,
+  RESET_FORM_FIELDS,
   UPDATE_FORM_VALUE,
   SAVE_TASK_SUCCESS,
   RESET_SAVE_TASK,
@@ -34,6 +35,7 @@ const initialState = {
   selectedChildTask: {},
   formDefaultValues: [],
   dynamicFormValues: [],
+  dynamicReqFormValues: [],
   removeTask: {},
   taskSaveError: {},
 };
@@ -105,6 +107,7 @@ export const attendanceReducer = (state = initialState, action) => {
         selectedChildTask: {},
         formDefaultValues: [],
         dynamicFormValues: [],
+        dynamicReqFormValues: [],
         airtelControlInputValues: [],
       };
     }
@@ -136,10 +139,12 @@ export const attendanceReducer = (state = initialState, action) => {
       const selectedFormValues = Data.filter(
         d => d.AirtelTaskID === selectedChildAirtelTaskID,
       );
+      const requiredFormValues = selectedFormValues.filter(formValue => formValue.IsRequired || formValue.ControlHeader === 'Remarks');
       return {
         ...state,
         isLoading: false,
         dynamicFormValues: selectedFormValues,
+        dynamicReqFormValues: requiredFormValues,
       };
     }
     case REMOVE_USER_TASK_SUCCESS: {
@@ -154,20 +159,21 @@ export const attendanceReducer = (state = initialState, action) => {
     }
     case UPDATE_FORM_VALUE: {
       const formElemObj = action?.payload;
+      const filledFormValues = [];
       if (_.size(formElemObj)) {
         for (key in formElemObj) {
-          state.airtelControlInputValues.push({
+          filledFormValues.push({
             AirtelTaskControlID: formElemObj[key]['AirtelTaskControlID'],
             Info: formElemObj[key]['inputVal'],
             TaskId: formElemObj[key]['parentTaskId'],
-            SubTaskId: formElemObj[key]['AirtelTaskID'],
+            SubTaskId: formElemObj[key]['AirtelTaskID'] || formElemObj[key]['AirtelTaskDefaultValueID'],
             GroupID: null,
           });
         }
       }
       return {
         ...state,
-        airtelControlInputValues: [...state.airtelControlInputValues],
+        airtelControlInputValues: filledFormValues,
       };
     }
     case SAVE_TASK_SUCCESS: {
@@ -190,6 +196,13 @@ export const attendanceReducer = (state = initialState, action) => {
         childTaskList: [],
         selectedChildTask: {},
         dynamicFormValues: [],
+        dynamicReqFormValues: [],
+      };
+    }
+    case RESET_FORM_FIELDS: {
+      return {
+        ...state,
+        airtelControlInputValues: [],
       };
     }
     case API_FAILURE: {

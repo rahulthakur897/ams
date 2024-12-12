@@ -10,6 +10,7 @@ import {
   REMOVE_USER_TASK,
   FETCH_USER_TASK,
   RESET_TASK_DROPDOWN,
+  RESET_FORM_FIELDS,
   UPDATE_FORM_VALUE,
   SAVE_TASK,
   RESET_SAVE_TASK,
@@ -89,6 +90,12 @@ export function resetDropdownTask() {
   return {
     type: RESET_TASK_DROPDOWN,
   };
+}
+
+export function resetFormFields(){
+  return {
+    type: RESET_FORM_FIELDS,
+  }
 }
 
 export function updateFormValues(formElemObj) {

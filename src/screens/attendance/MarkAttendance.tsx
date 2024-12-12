@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../constants';
-import {Storage, transformDealerData} from '../../utils';
+import {Storage, transformDealerData, validateAttendanceTiming} from '../../utils';
 import {
   getDealerList,
   fetchTaskList,
@@ -146,6 +146,12 @@ export default function MarkAttendance() {
   };
 
   const punchAttendance = async () => {
+    //validate time check
+    // const isPunchTimeValid = validateAttendanceTiming();
+    // if(!isPunchTimeValid){
+    //   Alert.alert('Warning', 'Attendance can be marked between 8 AM and 8 PM');
+    //   return;
+    // }
     //check for other selection
     if(selectedDealerHook?.value === 'Others'){
       if(!newDealerName){
@@ -162,8 +168,8 @@ export default function MarkAttendance() {
       url: `${BASEURL}/api/Attendance/PunchInOut`,
       data: {
         EmployeeId: userData.EmployeeID,
-        Longitude: latitude,
-        Latitude: longitude,
+        Longitude: longitude,
+        Latitude: latitude,
         DealerID: selectedDealerHook?.value,
         EmpAttID: 0,
         DeviceIPAddress: '',

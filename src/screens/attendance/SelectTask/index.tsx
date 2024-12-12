@@ -36,6 +36,7 @@ export default function SelectTask() {
   const [taskPhotos, setTaskPhotos] = useState<any[]>(Array(5).fill(''));
   const [isPhotoToUpload, setIsPhotoToUpload] = useState(false);
   const [btnClicked, setBtnClicked] = useState(false);
+  const [remarkValid, setRemarkValid] = useState(false);
 
   const {
     isLoading,
@@ -47,6 +48,7 @@ export default function SelectTask() {
     selectedChildTask,
     formDefaultValues,
     dynamicFormValues,
+    dynamicReqFormValues,
     airtelControlInputValues,
     taskSaveError,
   } = useSelector((state: any) => state.attendanceReducer);
@@ -58,7 +60,6 @@ export default function SelectTask() {
   }, [taskSaveError]);
 
   const getTaskNameList = () => {
-    console.log('method called');
     const userData = Storage.getAsyncItem('userData');
     const config = {
       method: 'GET',
@@ -78,7 +79,6 @@ export default function SelectTask() {
   const updateParentDropdownValue = (item: any) => {
     setBtnClicked(false);
     setTaskPhotos(Array(5).fill(''));
-    setIsPhotoToUpload(item.isPhotoToUpload);
     dispatch(selectTaskAndFilterSubTask(item));
   };
 
@@ -109,6 +109,7 @@ export default function SelectTask() {
   const updateChildDropdownValue = (item: any) => {
     dispatch(selectSubTask(item));
     setTaskPhotos(Array(5).fill(''));
+    setIsPhotoToUpload(item.isPhotoToUpload);
     getFormDefaultValues();
     callRenderFormData();
   };
@@ -127,7 +128,55 @@ export default function SelectTask() {
     return isPhotoAdded;
   };
 
+  const sendOnlyImgArr = (imgArr: any[]) => {
+    const resultArr = imgArr.filter(img => _.size(img));
+    return resultArr;
+  };
+
+  const checkForReqFields = () => {
+    let isReqFilled = true;
+    if(!_.size(airtelControlInputValues)){
+      isReqFilled = false;
+    }
+    const validCheckArr: any[] = [];
+    dynamicReqFormValues.forEach((formElem: any) => {
+      const isElemExist = airtelControlInputValues.filter((obj: any) => {
+        if(obj.AirtelTaskControlID === formElem.AirtelTaskControlID){
+          if(formElem.ControlHeader === 'Remarks' && _.size(obj.Info)){
+            if(_.size(obj.Info) <= 50){
+              setRemarkValid(true);
+            } else {
+              setRemarkValid(false);
+              return formElem;
+            }
+          } else {
+            return formElem;
+          }
+        }
+      });
+      if(_.size(isElemExist)){
+        validCheckArr.push(true);
+      }
+    });
+    isReqFilled = _.size(validCheckArr) === _.size(dynamicReqFormValues) ? true : false;
+    return isReqFilled;
+  };
+
   const saveTask = () => {
+    if (renderDynamicRef.current) {
+      renderDynamicRef.current.sendFormData();
+    }
+    //validate for required form fields
+    const isRequiredFilled = checkForReqFields();
+    if(!isRequiredFilled){
+      if(remarkValid){
+        Alert.alert('Warning', 'Remarks should be more than 50 characters');
+        return;
+      }
+      Alert.alert('Warning', 'Please fill required fields');
+      return;
+    }
+    //validate for photo upload check
     const isTaskPhotoAdded = checkTaskPhotos();
     if (!isTaskPhotoAdded && isPhotoToUpload) {
       Alert.alert('Warning', 'Please add atleast 1 task photo');
@@ -138,9 +187,6 @@ export default function SelectTask() {
     }
     setBtnClicked(true);
     const userData = Storage.getAsyncItem('userData');
-    if (renderDynamicRef.current) {
-      renderDynamicRef.current.sendFormData();
-    }
     const config = {
       method: 'POST',
       url: `${BASEURL}/api/Attendance/SaveTaskAsDraft`,
@@ -148,13 +194,12 @@ export default function SelectTask() {
         EmployeeId: userData.EmployeeID,
         EmpAttID: empAttID || 0,
         AirtelControlInputValues: airtelControlInputValues,
-        ImageBase64: taskPhotos,
+        ImageBase64: sendOnlyImgArr(taskPhotos),
       },
       headers: {
         Authorization: `Bearer ${userData.Token}`,
       },
     };
-    console.log('config', config);
     dispatch(saveTaskAsDraft(config));
   };
 

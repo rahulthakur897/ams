@@ -121,7 +121,7 @@ export const GetUserCurrentLocation = forwardRef(({cbLocationReady, currentAttSt
       .catch(ex => {
         if (isLocationError(ex)) {
           const {code, message} = ex;
-          console.warn(code, message);
+          //console.warn(code, message);
           if(code === "TIMEOUT"){
             getUserLocation();
           }

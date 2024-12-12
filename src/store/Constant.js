@@ -36,6 +36,7 @@ export const REMOVE_USER_TASK_SUCCESS = 'remove_user_task_success';
 export const FETCH_USER_TASK = 'fetch_user_task';
 export const FETCH_USER_TASK_SUCCESS = 'fetch_user_task_success';
 export const RESET_TASK_DROPDOWN = 'reset_task_dropdown';
+export const RESET_FORM_FIELDS = 'reset_form_fields';
 export const UPDATE_FORM_VALUE = 'update_form_value';
 export const SAVE_TASK = 'save_task';
 export const SAVE_TASK_SUCCESS = 'save_task_success';

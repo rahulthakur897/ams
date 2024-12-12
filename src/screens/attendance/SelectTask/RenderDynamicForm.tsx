@@ -1,8 +1,9 @@
-import React, {useState, forwardRef, useImperativeHandle} from 'react';
+import React, {forwardRef, useImperativeHandle} from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
 import {COLOR, FONT} from '../../../constants';
-import {updateFormValues} from '../../../store/actions/attendance';
+import {resetFormFields, updateFormValues} from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
+import {useStateCallback} from '../../../components/useStateCallback';
 const _ = require('lodash');
 
 type Dropdown = {
@@ -12,7 +13,7 @@ type Dropdown = {
 
 export const RenderDynamicForm = forwardRef((props, ref) => {
   const {dispatch, parentTaskObj, defaultValues, formValues} = props;
-  const [val, setVal] = useState('');
+  const [val, setVal] = useStateCallback('');
 
   useImperativeHandle(ref, () => ({
     sendFormData,
@@ -26,7 +27,8 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
         inputVal: text,
         parentTaskId: parentTaskObj.value,
       },
-    }));
+    }), (updated: any) => dispatch(updateFormValues(updated))
+    );
   };
 
   const handleDropdown = (item: any, placeholder: string) => {
@@ -37,10 +39,11 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
         inputVal: item.value,
         parentTaskId: parentTaskObj.value,
       },
-    }));
+    }), (updated: any) => dispatch(updateFormValues(updated)));
   };
 
   const sendFormData = () => {
+    dispatch(resetFormFields());
     dispatch(updateFormValues(val));
   };
 

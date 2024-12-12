@@ -27,7 +27,7 @@ import {
   updateAttFlag,
   clearSelectedDealer,
 } from '../../../store/actions/user';
-import {Storage} from '../../../utils';
+import {Storage, validateAttendanceTiming} from '../../../utils';
 import styles from './style';
 const _ = require('lodash');
 
@@ -148,6 +148,12 @@ export default function TaskList() {
   }, []);
 
   const punchAttendance = () => {
+    //validate time check
+    // const isPunchTimeValid = validateAttendanceTiming();
+    // if(!isPunchTimeValid){
+    //   Alert.alert('Warning', 'Attendance can be marked between 8 AM and 8 PM');
+    //   return;
+    // }
     if(btnClicked) {return;}
     setBtnClicked(true);
     const userData = Storage.getAsyncItem('userData');
@@ -159,8 +165,8 @@ export default function TaskList() {
       url: `${BASEURL}/api/Attendance/PunchInOut`,
       data: {
         EmployeeId: userData.EmployeeID,
-        Longitude: latlong?.latitude,
-        Latitude: latlong?.longitude,
+        Longitude: latlong?.longitude,
+        Latitude: latlong?.latitude,
         DealerID: selectedDealer?.value,
         EmpAttID: empAttID,
         DeviceIPAddress: '',
