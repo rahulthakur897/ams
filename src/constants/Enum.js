@@ -6,16 +6,17 @@ Object.freeze(AppLink);
 
 export const Screen = {
     SPLASH: 'Splash',
-
     LOGIN: 'Login',
 
     DASHBOARD: 'Dashboard',
-    CALENDAR: 'Calendar',
-    REPORTS: 'Reports',
     
-    MARKATTENDANCE: 'MarkAttendance',
+    MARKINATTENDANCE: 'MarkInAttendance',
+    MARKOUTATTENDANCE: 'MarkOutAttendance',
     ADDTASKS: 'AddTasks',
     SELECTTASK: 'SelectTask',
     TASKLIST: 'TaskList',
+
+    CALENDAR: 'Calendar',
+    REPORTS: 'Reports',
 }
 Object.freeze(Screen);

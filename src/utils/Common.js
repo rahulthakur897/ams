@@ -1,5 +1,7 @@
 import Toast from "react-native-simple-toast";
+import ImageResizer from '@bam.tech/react-native-image-resizer';
 import moment from "moment";
+const RNFS = require('react-native-fs');
 
 export const Common = {
    isHTML: (str) => /<[a-z][\s\S]*>/i.test(str)
@@ -44,4 +46,19 @@ export const validateAttendanceTiming = () => {
       return false;
    }
    return true;
+}
+
+export const resizeImageAndConvertInBase64 = async (imageUri) => {
+   const resizedImageUri = await ImageResizer.createResizedImage(
+      imageUri,
+      400, // Width
+      350, // Height
+      'JPEG',
+      70, // Quality percentage
+      0 // No rotation
+    );
+
+    // Step 3: Convert to Base64
+    const base64String = await RNFS.readFile(resizedImageUri.uri, 'base64');
+    return base64String;
 }

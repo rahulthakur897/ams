@@ -149,7 +149,7 @@ export default function MyCalendar() {
           }}
         />
       ) : (
-        <ActivityIndicator size={'large'} color={COLOR.gray} />
+        <ActivityIndicator style={{marginVertical: 50}} size={'large'} color={COLOR.gray} />
       )}
       <View style={[ALIGN.contentSpaceEvenly, ALIGN.row, { marginTop: 20 }]}>
         <View style={[styles.legend, { backgroundColor: '#00b300' }]} />

@@ -14,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
-import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
+import {APP_IMAGE, BASEURL, COLOR} from '../../../constants';
 import {
   fetchUserTask,
   fetchTaskNameList,
@@ -23,16 +23,14 @@ import {
 } from '../../../store/actions/attendance';
 import {
   clearTaskList,
-  resetUserLatLong,
   updateAttFlag,
   clearSelectedDealer,
 } from '../../../store/actions/user';
-import {Storage, validateAttendanceTiming} from '../../../utils';
+import {Storage} from '../../../utils';
 import styles from './style';
 const _ = require('lodash');
 
 const RenderTaskRow = ({item, allTaskList, removeRow}) => {
-
   const getTaskName = (taskId: number) => {
     const selectedRow = allTaskList.find(
       (task: any) => task.AirtelTaskID === taskId,
@@ -43,7 +41,7 @@ const RenderTaskRow = ({item, allTaskList, removeRow}) => {
     return '';
   };
 
-  const getSubTaskName = (subTaskId:  number) => {
+  const getSubTaskName = (subTaskId: number) => {
     const selectedRow = allTaskList.find(
       (task: any) => task.AirtelTaskID === subTaskId,
     );
@@ -107,7 +105,7 @@ export default function TaskList() {
   };
 
   useEffect(() => {
-    if(_.size(taskSaveError)){
+    if (_.size(taskSaveError)) {
       setBtnClicked(false);
     }
   }, [taskSaveError]);
@@ -148,13 +146,9 @@ export default function TaskList() {
   }, []);
 
   const punchAttendance = () => {
-    //validate time check
-    // const isPunchTimeValid = validateAttendanceTiming();
-    // if(!isPunchTimeValid){
-    //   Alert.alert('Warning', 'Attendance can be marked between 8 AM and 8 PM');
-    //   return;
-    // }
-    if(btnClicked) {return;}
+    if (btnClicked) {
+      return;
+    }
     setBtnClicked(true);
     const userData = Storage.getAsyncItem('userData');
     const selectedDealer = Storage.getAsyncItem('selectedDealer');
@@ -189,12 +183,11 @@ export default function TaskList() {
   };
 
   const closeDialog = () => {
-    dispatch(resetUserLatLong());
     dispatch(clearTaskList());
     dispatch(clearSelectedDealer());
     dispatch(updateAttFlag('ReadyForCheckIn'));
     refRBSheet.current.close();
-    navigation.navigate(Screen.MARKATTENDANCE);
+    navigation.navigate('AttendanceDashboard');
   };
 
   return (

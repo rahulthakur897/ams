@@ -17,16 +17,17 @@ import {
   UPDATE_FORM_VALUE,
   SAVE_TASK_SUCCESS,
   RESET_SAVE_TASK,
+  REMARK_VALID,
 } from '../Constant';
 import {transformTaskListData} from '../../utils';
 const _ = require('lodash');
 
 const initialState = {
-  isLoading: false,
+  isAttnLoading: false,
   attendanceData: [],
   empAttID: null,
   attnStatus: null,
-  taskSaved: false,
+  taskSaved: null,
   allTaskList: [],
   allUserTasks: [],
   parentTaskList: [],
@@ -38,6 +39,7 @@ const initialState = {
   dynamicReqFormValues: [],
   removeTask: {},
   taskSaveError: {},
+  remarkValid: false,
 };
 
 export const attendanceReducer = (state = initialState, action) => {
@@ -45,7 +47,7 @@ export const attendanceReducer = (state = initialState, action) => {
     case API_LOADING: {
       return {
         ...state,
-        isLoading: true,
+        isAttnLoading: true,
       };
     }
     case CHECK_ATTENDANCE_STATUS_SUCCESS: {
@@ -55,6 +57,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const empAttID = _.size(latestAttnInfo) ? latestAttnInfo[0]['EmpAttID'] : 0;
       return {
         ...state,
+        isAttnLoading: false,
         attendanceData: latestAttnInfo[0],
         empAttID,
       };
@@ -74,6 +77,7 @@ export const attendanceReducer = (state = initialState, action) => {
         ...state,
         empAttID,
         attendanceData,
+        isAttnLoading: false,
       };
     }
     case FETCH_TASK_NAME_SUCCESS: {
@@ -81,7 +85,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const parentTaskList = filterParentTasks(Data);
       return {
         ...state,
-        isLoading: false,
+        isAttnLoading: false,
         allTaskList: Data,
         parentTaskList,
       };
@@ -90,6 +94,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const selectedSubTask = action?.payload;
       return {
         ...state,
+        isAttnLoading: false,
         selectedChildTask: selectedSubTask,
       };
     }
@@ -109,6 +114,7 @@ export const attendanceReducer = (state = initialState, action) => {
         dynamicFormValues: [],
         dynamicReqFormValues: [],
         airtelControlInputValues: [],
+        isAttnLoading: false,
       };
     }
     case SELECTED_SUBTASK: {
@@ -116,12 +122,14 @@ export const attendanceReducer = (state = initialState, action) => {
       return {
         ...state,
         selectedChildTask: selectedSubTask,
+        isAttnLoading: false,
       };
     }
     case FETCH_USER_TASK_SUCCESS: {
       const {Data} = action?.response;
       return {
         ...state,
+        isAttnLoading: false,
         allUserTasks: Data,
       }
     }
@@ -129,7 +137,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const {Data} = action?.response;
       return {
         ...state,
-        isLoading: false,
+        isAttnLoading: false,
         formDefaultValues: Data,
       };
     }
@@ -142,7 +150,7 @@ export const attendanceReducer = (state = initialState, action) => {
       const requiredFormValues = selectedFormValues.filter(formValue => formValue.IsRequired || formValue.ControlHeader === 'Remarks');
       return {
         ...state,
-        isLoading: false,
+        isAttnLoading: false,
         dynamicFormValues: selectedFormValues,
         dynamicReqFormValues: requiredFormValues,
       };
@@ -154,6 +162,7 @@ export const attendanceReducer = (state = initialState, action) => {
       );
       return {
         ...state,
+        isAttnLoading: false,
         allUserTasks: updatedUserTask,
       };
     }
@@ -173,19 +182,22 @@ export const attendanceReducer = (state = initialState, action) => {
       }
       return {
         ...state,
+        isAttnLoading: false,
         airtelControlInputValues: filledFormValues,
       };
     }
     case SAVE_TASK_SUCCESS: {
+      const {Message} = action?.response;
       return {
         ...state,
-        taskSaved: true,
+        isAttnLoading: false,
+        taskSaved: Message === 'Success' ? 'true' : 'false',
       };
     }
     case RESET_SAVE_TASK: {
       return {
         ...state,
-        taskSaved: false,
+        taskSaved: null,
       };
     }
     case RESET_TASK_DROPDOWN: {

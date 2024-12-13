@@ -5,6 +5,6 @@ export const APP_IMAGE = {
     photoAndLoc : require('../../assets/images/photo-loc.png'),
     success : require('../../assets/images/success.png'),
     user : require('../../assets/images/user.png'),
-    checkIn : require('../../assets/images/layer_right.png'),
-    checkOut : require('../../assets/images/layer_left.png'),
+    checkIn : require('../../assets/images/checkin.png'),
+    checkOut : require('../../assets/images/checkout.png'),
 }

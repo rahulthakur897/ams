@@ -14,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
-import {Storage} from '../../../utils';
+import {Storage, resizeImageAndConvertInBase64} from '../../../utils';
 import {
   fetchTaskNameList,
   selectTaskAndFilterSubTask,
@@ -28,6 +28,7 @@ import {RenderDynamicForm} from './RenderDynamicForm';
 import {MyDropdown} from '../../../components/MyDropdown';
 import styles from './style';
 const _ = require('lodash');
+let remarkValid = false;
 
 export default function SelectTask() {
   const dispatch = useDispatch();
@@ -36,7 +37,6 @@ export default function SelectTask() {
   const [taskPhotos, setTaskPhotos] = useState<any[]>(Array(5).fill(''));
   const [isPhotoToUpload, setIsPhotoToUpload] = useState(false);
   const [btnClicked, setBtnClicked] = useState(false);
-  const [remarkValid, setRemarkValid] = useState(false);
 
   const {
     isLoading,
@@ -115,8 +115,15 @@ export default function SelectTask() {
   };
 
   useEffect(() => {
-    if (taskSaved) {
+    if (taskSaved === 'true') {
       navigation.navigate(Screen.TASKLIST);
+    } else if (taskSaved === 'false') {
+      Alert.alert(
+        'Error',
+        'Some issue occurred while saving task. Please refill form.',
+        [{text: 'Ok', onPress: () => navigation.navigate(Screen.ADDTASKS)}],
+      );
+      return;
     }
   }, [taskSaved]);
 
@@ -135,30 +142,37 @@ export default function SelectTask() {
 
   const checkForReqFields = () => {
     let isReqFilled = true;
-    if(!_.size(airtelControlInputValues)){
+    if (!_.size(airtelControlInputValues)) {
       isReqFilled = false;
     }
     const validCheckArr: any[] = [];
     dynamicReqFormValues.forEach((formElem: any) => {
       const isElemExist = airtelControlInputValues.filter((obj: any) => {
-        if(obj.AirtelTaskControlID === formElem.AirtelTaskControlID){
-          if(formElem.ControlHeader === 'Remarks' && _.size(obj.Info)){
-            if(_.size(obj.Info) <= 50){
-              setRemarkValid(true);
+        if (obj.AirtelTaskControlID === formElem.AirtelTaskControlID) {
+          if (formElem.ControlHeader === 'Remarks') {
+            if (_.size(obj.Info) === 0) {
+              remarkValid = false;
+              return formElem;
+            } else if (_.size(obj.Info) <= 50) {
+              validCheckArr.pop();
+              remarkValid = true;
             } else {
-              setRemarkValid(false);
+              remarkValid = false;
               return formElem;
             }
           } else {
             return formElem;
           }
+        } else {
+          return formElem;
         }
       });
-      if(_.size(isElemExist)){
+      if (_.size(isElemExist)) {
         validCheckArr.push(true);
       }
     });
-    isReqFilled = _.size(validCheckArr) === _.size(dynamicReqFormValues) ? true : false;
+    isReqFilled =
+      _.size(validCheckArr) === _.size(dynamicReqFormValues) ? true : false;
     return isReqFilled;
   };
 
@@ -168,8 +182,14 @@ export default function SelectTask() {
     }
     //validate for required form fields
     const isRequiredFilled = checkForReqFields();
-    if(!isRequiredFilled){
-      if(remarkValid){
+    console.log(
+      'isRequiredFilled',
+      isRequiredFilled,
+      'remarkValid',
+      remarkValid,
+    );
+    if (!isRequiredFilled) {
+      if (remarkValid) {
         Alert.alert('Warning', 'Remarks should be more than 50 characters');
         return;
       }
@@ -204,14 +224,14 @@ export default function SelectTask() {
   };
 
   const uploadPhoto = async (num: number) => {
+    // Step 1: Select an image
     const result: any = await launchImageLibrary({
       mediaType: 'photo',
-      includeBase64: true,
-      quality: 1,
     });
     if (_.size(result) > 0) {
-      const imgBase64 = result.assets[0].base64 || '';
-      taskPhotos[num] = `data:image/jpeg;base64,${imgBase64}`;
+      const originalUri = result.assets[0].uri;
+      const base64String = await resizeImageAndConvertInBase64(originalUri);
+      taskPhotos[num] = `data:image/jpeg;base64,${base64String}`;
       setTaskPhotos([...taskPhotos]);
     }
   };
@@ -241,7 +261,9 @@ export default function SelectTask() {
             placeholder="Select Sub Task"
             callback={updateChildDropdownValue}
           />
-          {isLoading ? <ActivityIndicator size={'large'} color={COLOR.darkGray} /> : null}
+          {isLoading ? (
+            <ActivityIndicator size={'large'} color={COLOR.darkGray} />
+          ) : null}
           {/* form fields */}
           <View>
             <RenderDynamicForm

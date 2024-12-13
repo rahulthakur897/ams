@@ -15,31 +15,16 @@ export default function Splash() {
     state => state.userReducer,
   );
 
-  useEffect(() => {
-    if(_.size(userData)){
+  const checkLoginAndNavigate = () => {
+    const userData = Storage.getAsyncItem('userData');
+    const loginCreds = Storage.getAsyncItem('loginCreds');
+    if (_.size(userData)) {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
           routes: [{name: Screen.DASHBOARD}],
         }),
       );
-    }
-  }, [userData]);
-
-  const checkLoginAndNavigate = () => {
-    const userData = Storage.getAsyncItem('userData');
-    const loginCreds = Storage.getAsyncItem('loginCreds');
-    if (_.size(userData)) {
-      //refersh token while app open
-      const base64Credentials = btoa(`${loginCreds.username}:${loginCreds.password}`);
-      const config = {
-        method: 'POST',
-        url: `${BASEURL}/api/Users/CreateToken`,
-        headers: {
-          'Authorization': `Basic ${base64Credentials}`,
-        },
-      };
-      dispatch(doLogin(config));
     } else {
       navigation.navigate(Screen.LOGIN);
     }

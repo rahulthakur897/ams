@@ -3,11 +3,14 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch} from 'react-redux';
-import MarkAttendance from './MarkAttendance';
-import SelectTask from './SelectTask';
-import TaskListHeader from './TaskList/TaskListHeader';
-import TaskList from './TaskList';
+import AttendanceDashboard from './Dashboard';
+import {NameHeader} from './Dashboard/NameHeader';
+import MarkInAttendance from './CheckInOut/MarkInAttendance';
+import MarkOutAttendance from './CheckInOut/MarkOutAttendance';
 import AddTasks from './AddTasks';
+import SelectTask from './SelectTask';
+import TaskList from './TaskList';
+import {TaskListHeader} from './TaskList/TaskListHeader';
 import {Storage} from '../../utils';
 import {Screen, COLOR} from '../../constants';
 import {doLogoutAction} from '../../store/actions/user';
@@ -32,9 +35,9 @@ const AttendanceStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="MarkAttendance"
+        name="AttendanceDashboard"
         options={{
-          title: 'Apply Attendance',
+          title: <NameHeader />,
           headerLeft: () => null,
           headerRight: () => (
             <Icon
@@ -46,7 +49,21 @@ const AttendanceStack = () => {
             />
           ),
         }}
-        component={MarkAttendance}
+        component={AttendanceDashboard}
+      />
+      <Stack.Screen
+        name="MarkInAttendance"
+        options={{
+          title: 'Apply Attendance',
+        }}
+        component={MarkInAttendance}
+      />
+      <Stack.Screen
+        name="MarkOutAttendance"
+        options={{
+          title: 'Apply Attendance',
+        }}
+        component={MarkOutAttendance}
       />
       <Stack.Screen
         name="AddTasks"

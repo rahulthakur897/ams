@@ -4,14 +4,13 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  Platform,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {clearSavedTaskFlag, resetDropdownTask} from '../../../store/actions/attendance';
 import {ALIGN, COLOR, FONT, Screen} from '../../../constants';
 
-const TaskListHeader = () => {
+export const TaskListHeader = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -62,5 +61,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-export default TaskListHeader;

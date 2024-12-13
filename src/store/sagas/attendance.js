@@ -90,7 +90,6 @@ function* fetchUserTask(configData) {
 function* saveTaskAsDraft(configData) {
   yield put({type: API_LOADING});
   const response = yield makeApiCall(configData.payload);
-  console.log('response', response);
   if (response !== undefined) {
     yield put({type: SAVE_TASK_SUCCESS, response});
   } else {

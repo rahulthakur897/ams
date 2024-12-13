@@ -14,6 +14,7 @@ import {
   UPDATE_FORM_VALUE,
   SAVE_TASK,
   RESET_SAVE_TASK,
+  REMARK_VALID,
 } from '../Constant';
 
 export function markAttn(configData) {

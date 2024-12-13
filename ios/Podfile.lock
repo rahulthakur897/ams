@@ -1263,6 +1263,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-image-resizer (3.0.11):
+    - React-Core
   - react-native-mmkv (2.12.2):
     - DoubleConversion
     - glog
@@ -1672,6 +1674,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-image-resizer (from `../node_modules/@bam.tech/react-native-image-resizer`)"
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1794,6 +1797,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-image-resizer:
+    :path: "../node_modules/@bam.tech/react-native-image-resizer"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
   react-native-netinfo:
@@ -1911,6 +1916,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: b982d5bba94a8bc073bda48f0d27c9b28417fae3
   React-microtasksnativemodule: 2b73e68f0462f3175f98782db08896f8501afd20
   react-native-image-picker: 2fbbafdae7a7c6db9d25df2f2b1db4442d2ca2ad
+  react-native-image-resizer: 6260ba497fb8d1a593c1c92ccd593f570df6f5b7
   react-native-mmkv: 7d0b6c2a79e73100b933f2947a9c8741d664e18b
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-safe-area-context: 4532f1a0c5d34a46b9324ccaaedcb5582a302b7d
