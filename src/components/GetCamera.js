@@ -1,4 +1,4 @@
-import React, {useRef, useState, forwardRef, useImperativeHandle} from 'react';
+import React, {useRef, useState, forwardRef, useCallback, useImperativeHandle} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {
   StyleSheet,
@@ -27,7 +27,7 @@ export const GetCamera = forwardRef(({cbCameraReady}, ref) => {
   }));
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       console.log('CameraScreen focus effect');
       if (Platform.OS === 'android') {
         checkCameraPermission();

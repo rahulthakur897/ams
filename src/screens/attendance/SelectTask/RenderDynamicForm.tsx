@@ -95,7 +95,7 @@ export const RenderDynamicForm = forwardRef((props, ref) => {
                 return (
                   <View key={formElem.AirtelTaskControlID} style={{marginBottom: 15}}>
                     <Text style={[styles.inputLabel, {paddingBottom: 0, marginBottom: -15}]}>
-                      {formElem.ControlHeader}
+                      {formElem.ControlHeader} {formElem.IsRequired ? <Text style={styles.mandatoryField}>*</Text> : null}
                     </Text>
                     <MyDropdown
                       dropdownList={appendDropdownValues(

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import {useFocusEffect} from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { ALIGN, BASEURL, COLOR, FONT } from '../../constants';
@@ -112,12 +113,13 @@ export default function MyCalendar() {
     }
   }, [monthlyAttendance]);
 
-  // Fetch initial month's attendance on component mount
-  useEffect(() => {
-    const initialStart = moment().startOf('month').format('YYYY-MM-DD');
-    const initialEnd = moment().endOf('month').format('YYYY-MM-DD');
-    fetchAttendance(initialStart, initialEnd);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const initialStart = moment().startOf('month').format('YYYY-MM-DD');
+      const initialEnd = moment().endOf('month').format('YYYY-MM-DD');
+      fetchAttendance(initialStart, initialEnd);
+    }, []),
+  );
 
   return (
     <View>

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Alert,
   ScrollView,
@@ -9,7 +9,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateAttFlag} from '../../../store/actions/user';
@@ -53,9 +53,11 @@ export default function AttendanceDashboard() {
     dispatch(checkAttnStatus(config));
   };
 
-  useEffect(() => {
-    getAttendanceRecord();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getAttendanceRecord();
+    }, []),
+  );
 
   const navigateScreen = (btnType: string) => {
     const {DealerID, DealerName, Remarks} = attendanceData || {};
@@ -67,11 +69,7 @@ export default function AttendanceDashboard() {
     }
     if (btnType === 'CheckIn') {
       if (attFlag === 'ReadyForCheckIn') {
-        navigation.navigate(Screen.MARKINATTENDANCE, {
-          DealerID: DealerID || 0,
-          DealerName: DealerName || '',
-          Remarks: Remarks || '',
-        });
+        navigation.navigate(Screen.MARKINATTENDANCE);
       } else {
         showToast('You proceed with Check Out');
       }

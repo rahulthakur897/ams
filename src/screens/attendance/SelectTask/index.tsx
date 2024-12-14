@@ -171,6 +171,10 @@ export default function SelectTask() {
         validCheckArr.push(true);
       }
     });
+    //added this check to handle only remark in dynamicReqFormValues
+    // if(_.size(dynamicReqFormValues) === 1){
+    //   validCheckArr.push(true);
+    // }
     isReqFilled =
       _.size(validCheckArr) === _.size(dynamicReqFormValues) ? true : false;
     return isReqFilled;
@@ -182,12 +186,6 @@ export default function SelectTask() {
     }
     //validate for required form fields
     const isRequiredFilled = checkForReqFields();
-    console.log(
-      'isRequiredFilled',
-      isRequiredFilled,
-      'remarkValid',
-      remarkValid,
-    );
     if (!isRequiredFilled) {
       if (remarkValid) {
         Alert.alert('Warning', 'Remarks should be more than 50 characters');

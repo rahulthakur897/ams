@@ -21,7 +21,7 @@ const initialState = {
   loginErrMsg: '',
   userData: {},
   dealerList: [],
-  selectedDealer: {},
+  selectedDealer: null,
   latitude: null,
   longitude: null,
   taskList: [],
@@ -66,7 +66,7 @@ export const userReducer = (state = initialState, action) => {
       };
     }
     case UPDATE_DEALER: {
-      const selectedDealer = action.payload;
+      const selectedDealer = action?.payload;
       Storage.setAsyncItem('selectedDealer', selectedDealer);
       return {
         ...state,
@@ -77,7 +77,7 @@ export const userReducer = (state = initialState, action) => {
       Storage.clearAsyncItem('selectedDealer');
       return {
         ...state,
-        selectedDealer: {},
+        selectedDealer: null,
       };
     }
     case UPDATE_ATT_STATUS: {
