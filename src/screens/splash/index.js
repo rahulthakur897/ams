@@ -17,7 +17,6 @@ export default function Splash() {
 
   const checkLoginAndNavigate = () => {
     const userData = Storage.getAsyncItem('userData');
-    const loginCreds = Storage.getAsyncItem('loginCreds');
     if (_.size(userData)) {
       navigation.dispatch(
         CommonActions.reset({

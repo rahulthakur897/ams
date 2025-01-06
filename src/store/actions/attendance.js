@@ -31,7 +31,7 @@ export function checkAttnStatus(configData) {
   };
 }
 
-export function updateUserAttnCurrentStatus(attnStatus){
+export function updateAttFlag(attnStatus){
   return {
     type: UPDATE_ATTENDANCE_STATUS,
     payload: attnStatus

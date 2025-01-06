@@ -3,7 +3,6 @@ import {
     USER_LOGOUT_INITIATED,
     GET_DEALER_LIST,
     UPDATE_USER_LOCATION,
-    UPDATE_ATT_STATUS,
     RESET_USER_LOCATION,
     FETCH_TASK_LIST,
     UPDATE_DEALER,
@@ -48,13 +47,6 @@ export function updateDealer(dealer){
 export function clearSelectedDealer(){
     return {
         type: CLEAR_SELECTED_DEALER,
-    }
-}
-
-export function updateAttFlag(currStatus){
-    return {
-        type: UPDATE_ATT_STATUS,
-        payload: currStatus,
     }
 }
 

@@ -1558,6 +1558,8 @@ PODS:
     - React-Core
   - ReactNativeGetLocation (5.0.0):
     - React-Core
+  - RNDeviceInfo (14.0.2):
+    - React-Core
   - RNFS (2.20.0):
     - React-Core
   - RNGestureHandler (2.20.2):
@@ -1707,6 +1709,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler`)
   - ReactNativeGetLocation (from `../node_modules/react-native-get-location`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -1863,6 +1866,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-exception-handler"
   ReactNativeGetLocation:
     :path: "../node_modules/react-native-get-location"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFS:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
@@ -1949,6 +1954,7 @@ SPEC CHECKSUMS:
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
   ReactNativeExceptionHandler: b11ff67c78802b2f62eed0e10e75cb1ef7947c60
   ReactNativeGetLocation: 7e019e0a10ccc3fe082cd9b02b28899512c1b2a5
+  RNDeviceInfo: 3f2e5fcca3637f75c6d30ba287293c2f97206781
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 511250b190a284388f9dd0d2e56c1df76f14cfb8
   RNScreens: c7ceced6a8384cb9be5e7a5e88e9e714401fd958

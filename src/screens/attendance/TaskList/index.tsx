@@ -18,12 +18,12 @@ import {APP_IMAGE, BASEURL, COLOR} from '../../../constants';
 import {
   fetchUserTask,
   fetchTaskNameList,
+  updateAttFlag,
   removeTask,
   markAttn,
 } from '../../../store/actions/attendance';
 import {
   clearTaskList,
-  updateAttFlag,
   clearSelectedDealer,
 } from '../../../store/actions/user';
 import {Storage} from '../../../utils';

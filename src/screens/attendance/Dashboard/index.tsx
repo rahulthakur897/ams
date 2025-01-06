@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {
   Alert,
   ScrollView,
@@ -12,7 +12,6 @@ import {
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateAttFlag} from '../../../store/actions/user';
 import {checkAttnStatus} from '../../../store/actions/attendance';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
 import {Storage, showToast, validateAttendanceTiming} from '../../../utils';
@@ -23,21 +22,9 @@ export default function AttendanceDashboard() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const {attFlag} = useSelector((state: any) => state.userReducer);
-  const {isAttnLoading, attendanceData} = useSelector(
+  const {isAttnLoading, attendanceData, attFlag} = useSelector(
     (state: any) => state.attendanceReducer,
   );
-
-  useEffect(() => {
-    if (_.size(attendanceData)) {
-      if (
-        attendanceData.TimeOut === null &&
-        attendanceData.ApprovedOrRejected === 'P'
-      ) {
-        dispatch(updateAttFlag('ReadyForCheckOut'));
-      }
-    }
-  }, [attendanceData]);
 
   const getAttendanceRecord = () => {
     const userData = Storage.getAsyncItem('userData');
@@ -89,7 +76,7 @@ export default function AttendanceDashboard() {
   return (
     <ScrollView>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
-        {isAttnLoading ? (
+        {isAttnLoading || attFlag === null ? (
           <ActivityIndicator
             style={{marginVertical: 50}}
             size={'large'}

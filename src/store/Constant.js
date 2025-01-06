@@ -14,7 +14,6 @@ export const GET_DEALER_LIST_SUCCESS = 'get_dealer_list_success';
 export const UPDATE_DEALER = 'update_dealer';
 export const CLEAR_SELECTED_DEALER = 'clear_selected_dealer';
 export const UPDATE_USER_LOCATION = 'update_user_location';
-export const UPDATE_ATT_STATUS = 'update_att_status';
 export const RESET_USER_LOCATION = 'reset_user_location';
 
 export const MARK_ATTENDANCE = 'mark_attendance';

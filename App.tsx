@@ -1,22 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {PermissionsAndroid, Platform, BackHandler, AppState, Alert, Text, NativeModules} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  PermissionsAndroid,
+  Linking,
+  Platform,
+  BackHandler,
+  Alert,
+  Text,
+  NativeModules,
+} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-simple-toast';
+import {getBuildId, getVersion} from 'react-native-device-info';
+import { checkVersion } from 'react-native-check-version';
 import {MainStackNavigator} from './src/navigation/StackNavigator';
 import { Storage } from './src/utils';
-import { BASEURL } from './src/constants';
-import { doLogin } from './src/store/actions/user';
-const { RequestStorageModule } = NativeModules;
-const _ = require('lodash');
+const {CheckPermissionModule} = NativeModules;
 
 function App() {
-  const dispatch = useDispatch();
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const { userData } = useSelector((state: any) => state.userReducer);
-
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
       const permissions = [
@@ -31,7 +32,10 @@ function App() {
         const granted = await PermissionsAndroid.requestMultiple(permissions);
 
         // Check if all permissions are granted
-        const allGranted = permissions.every(permission => granted[permission] === PermissionsAndroid.RESULTS.GRANTED);
+        const allGranted = permissions.every(
+          permission =>
+            granted[permission] === PermissionsAndroid.RESULTS.GRANTED,
+        );
 
         if (allGranted) {
           console.log('All permissions granted');
@@ -44,10 +48,55 @@ function App() {
     }
   };
 
+  const checkUpdateNeeded = async () => {
+    const bundleId = await getBuildId();
+    const appVersion = getVersion();
+    let updateNeeded: any = await checkVersion({
+      platform: Platform.OS,
+      country: 'us',
+      bundleId: bundleId,
+      currentVersion: appVersion,
+    });
+    if (updateNeeded?.isNeeded) {
+      //Alert the user and direct to the app url
+      Alert.alert('Please Update', 'Update app now to access the latest version to continue using it.',
+      [{
+        text: 'Update',
+        onPress: () => {
+          Storage.clearAppData();
+          BackHandler.exitApp();
+          Linking.openURL(updateNeeded?.url);
+        },
+      }],
+      {cancelable: false});
+    }
+  };
+
   const checkDevOption = async () => {
     if (Platform.OS === 'android') {
-      const devOption = await RequestStorageModule.checkDevOptionEnable();
-      console.log('checkDevOption', devOption);
+      const devOption = await CheckPermissionModule.checkDevOptionEnable();
+      if (devOption) {
+        Alert.alert(
+          'Attention!',
+          'We have detected "Developer option enabled". Kindly disable to continue',
+          [{text: 'Open Settings', onPress: () => Linking.openSettings()}],
+          {cancelable: false}
+        );
+      }
+    }
+  };
+
+  const checkAutoDateTime = async () => {
+    if (Platform.OS === 'android') {
+      const autoDateTime = await CheckPermissionModule.checkAutomaticDateTimeSet();
+      if (!autoDateTime) {
+        Alert.alert(
+          'Attention!',
+          'We have detected "Automatic Date & Time not set". Kindly set to automatic',
+          [{text: 'Open Settings', onPress: () => Linking.openSettings()}],
+          {cancelable: false}
+        );
+      }
     }
   };
 
@@ -64,7 +113,7 @@ function App() {
   };
 
   const checkInternetStatus = (isConnected: boolean) => {
-    if(isConnected){
+    if (isConnected) {
       Toast.show('You are back online', Toast.LONG);
     } else {
       Toast.show('You are offline', Toast.LONG);
@@ -72,9 +121,13 @@ function App() {
   };
 
   useEffect(() => {
+    checkUpdateNeeded();
+
     requestPermissions();
 
     checkDevOption();
+
+    checkAutoDateTime();
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -86,48 +139,11 @@ function App() {
       checkInternetStatus(state.isConnected);
     });
 
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        console.log('App has come to the foreground!');
-        refreshToken();
-      }
-
-      appState.current = nextAppState;
-      setAppStateVisible(appState.current);
-      console.log('AppState', appState.current);
-    });
-
     return () => {
       backHandler.remove();
       unsubscribe();
-      subscription.remove();
     };
   }, []);
-
-  useEffect(() => {
-    if(_.size(userData)){
-      Storage.setAsyncItem('userData', userData);
-    }
-  }, [userData]);
-
-  const refreshToken = async () => {
-    const loginCreds = await Storage.getAsyncItem('loginCreds');
-    if (_.size(loginCreds)) {
-      //refersh token while app open
-      const base64Credentials = btoa(`${loginCreds.username}:${loginCreds.password}`);
-      const config = {
-        method: 'POST',
-        url: `${BASEURL}/api/Users/CreateToken`,
-        headers: {
-          'Authorization': `Basic ${base64Credentials}`,
-        },
-      };
-      dispatch(doLogin(config));
-    }
-  };
 
   return (
     <NavigationContainer fallback={<Text>Loading...</Text>}>

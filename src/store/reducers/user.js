@@ -7,7 +7,6 @@ import {
   UPDATE_DEALER,
   CLEAR_SELECTED_DEALER,
   UPDATE_USER_LOCATION,
-  UPDATE_ATT_STATUS,
   RESET_USER_LOCATION,
   FETCH_TASK_LIST_SUCCESS,
   CLEAR_TASK_LIST,
@@ -25,7 +24,6 @@ const initialState = {
   latitude: null,
   longitude: null,
   taskList: [],
-  attFlag: 'ReadyForCheckIn',
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -78,13 +76,6 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         selectedDealer: null,
-      };
-    }
-    case UPDATE_ATT_STATUS: {
-      const updatedStatus = action.payload;
-      return {
-        ...state,
-        attFlag: updatedStatus,
       };
     }
     case UPDATE_USER_LOCATION: {

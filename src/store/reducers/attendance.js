@@ -17,7 +17,6 @@ import {
   UPDATE_FORM_VALUE,
   SAVE_TASK_SUCCESS,
   RESET_SAVE_TASK,
-  REMARK_VALID,
 } from '../Constant';
 import {transformTaskListData} from '../../utils';
 const _ = require('lodash');
@@ -26,7 +25,7 @@ const initialState = {
   isAttnLoading: false,
   attendanceData: [],
   empAttID: null,
-  attnStatus: null,
+  attFlag: null,
   taskSaved: null,
   allTaskList: [],
   allUserTasks: [],
@@ -59,14 +58,15 @@ export const attendanceReducer = (state = initialState, action) => {
         ...state,
         isAttnLoading: false,
         attendanceData: latestAttnInfo[0],
+        attFlag: getCurrrentAttendanceStatus(latestAttnInfo[0]),
         empAttID,
       };
     }
     case UPDATE_ATTENDANCE_STATUS: {
-      const attnStatus = action?.payload;
+      const attFlag = action?.payload;
       return {
         ...state,
-        attnStatus,
+        attFlag,
       };
     }
     case MARK_ATTENDANCE_SUCCESS: {
@@ -230,6 +230,14 @@ export const attendanceReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+function getCurrrentAttendanceStatus(attendanceData){
+  if (attendanceData?.TimeOut === null && attendanceData?.ApprovedOrRejected === 'P') {
+    return 'ReadyForCheckOut';
+  } else {
+    return 'ReadyForCheckIn';
+  }
+}
 
 function filterParentTasks(arr) {
   const result = arr.filter(item => item.ParentTaskID === 0);

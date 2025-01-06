@@ -1,6 +1,5 @@
 import React, {
   useState,
-  useImperativeHandle,
   forwardRef,
   useCallback,
 } from 'react';
@@ -103,7 +102,6 @@ export const GetUserCurrentLocation = forwardRef(
         .then(newLocation => {
           cbLocationReady(true);
           setIsLocLoading(false);
-          console.log('newLocation', newLocation);
           dispatch(updateUserLatLong(newLocation));
         })
         .catch(ex => {
