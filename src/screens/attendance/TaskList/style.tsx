@@ -10,8 +10,7 @@ const style = StyleSheet.create({
     margin: 10,
   },
   flatListContainer: {
-    height: DIMENSIONS.height - (Platform.OS === 'android' ? 200 : 250),
-    overflow: 'scroll',
+    height: DIMENSIONS.height - (Platform.OS === 'android' ? DIMENSIONS.height/3.5 : 250),
     paddingBottom: 15,
   },
   taskCard: {

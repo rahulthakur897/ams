@@ -13,7 +13,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import GetLocation, {isLocationError} from 'react-native-get-location';
+import Geolocation from '@react-native-community/geolocation';
 import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
@@ -90,31 +90,17 @@ export const GetUserCurrentLocation = forwardRef(
     };
 
     const getUserLocation = () => {
-      GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 6000,
-        rationale: {
-          title: 'Location permission',
-          message: 'The app needs the permission to request your location.',
-          buttonPositive: 'Ok',
-        },
-      })
-        .then(newLocation => {
-          cbLocationReady(true);
-          setIsLocLoading(false);
-          dispatch(updateUserLatLong(newLocation));
-        })
-        .catch(ex => {
-          if (isLocationError(ex)) {
-            const {code, message} = ex;
-            //console.warn(code, message);
-            if (code === 'TIMEOUT') {
-              getUserLocation();
-            }
-          } else {
-            console.warn(ex);
-          }
-        });
+      Geolocation.getCurrentPosition((position) => {
+        const {coords} = position;
+        cbLocationReady(true);
+        setIsLocLoading(false);
+        dispatch(updateUserLatLong(coords));
+      },
+      (error) => {
+        console.log('Location error', JSON.stringify(error));
+        getUserLocation();
+      },
+      { enableHighAccuracy: true });
     };
 
     return (

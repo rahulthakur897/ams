@@ -11,19 +11,24 @@ import {
   FETCH_TASK_LIST,
   FETCH_TASK_LIST_SUCCESS,
 } from '../Constant';
+const _ = require('lodash');
 
 function* doLogin(data) {
   yield put({type: API_LOADING});
   const response = yield makeApiCall(data.payload.configData);
   if (response !== undefined) {
     if(!response?.status && response?.status !== undefined){
-      data?.payload?.action?.setSubmitting(false);
+      if(_.size(data.payload?.action)){
+        data.payload?.action?.setSubmitting(false);
+      }
       yield put({type: USER_LOGIN_FAILED, response});
     } else {
       yield put({type: USER_LOGIN_SUCCESS, response});
     }
   } else {
-    data?.payload?.action?.setSubmitting(false);
+    if(_.size(data.payload?.action)){
+      data.payload?.action?.setSubmitting(false);
+    }
     yield put({type: API_FAILURE});
   }
 }

@@ -32,11 +32,13 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs access to your Camera</string>
+	<string>For the users to capture their photograph to apply attendance</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We will be taking access to the location while applying attendance only</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs to get your location</string>
+	<string>For the users to capture current location of workplace for attendance</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>For users to upload their picture</string>
+	<string>For the users to upload photos of tasks performed</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
