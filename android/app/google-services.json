@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "200754666421",
+    "project_id": "upgrad-ams",
+    "storage_bucket": "upgrad-ams.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200754666421:android:fd5c47857925152ad857fc",
+        "android_client_info": {
+          "package_name": "com.upgradenterprise.ams"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzvxp2DxgVDyQhGqAKwAWnwQSi370D5M0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

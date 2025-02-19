@@ -35,7 +35,6 @@ const initialState = {
   selectedChildTask: {},
   formDefaultValues: [],
   dynamicFormValues: [],
-  dynamicReqFormValues: [],
   removeTask: {},
   taskSaveError: {},
   remarkValid: false,
@@ -112,7 +111,6 @@ export const attendanceReducer = (state = initialState, action) => {
         selectedChildTask: {},
         formDefaultValues: [],
         dynamicFormValues: [],
-        dynamicReqFormValues: [],
         airtelControlInputValues: [],
         isAttnLoading: false,
       };
@@ -147,12 +145,10 @@ export const attendanceReducer = (state = initialState, action) => {
       const selectedFormValues = Data.filter(
         d => d.AirtelTaskID === selectedChildAirtelTaskID,
       );
-      const requiredFormValues = selectedFormValues.filter(formValue => formValue.IsRequired || formValue.ControlHeader === 'Remarks');
       return {
         ...state,
         isAttnLoading: false,
         dynamicFormValues: selectedFormValues,
-        dynamicReqFormValues: requiredFormValues,
       };
     }
     case REMOVE_USER_TASK_SUCCESS: {
@@ -208,7 +204,6 @@ export const attendanceReducer = (state = initialState, action) => {
         childTaskList: [],
         selectedChildTask: {},
         dynamicFormValues: [],
-        dynamicReqFormValues: [],
       };
     }
     case RESET_FORM_FIELDS: {

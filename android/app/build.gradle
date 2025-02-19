@@ -100,6 +100,9 @@ android {
             keyPassword 'upgrad'
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -128,3 +131,5 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

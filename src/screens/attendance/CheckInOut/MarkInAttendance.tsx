@@ -24,7 +24,7 @@ import {GetUserCurrentLocation} from '../../../components/GetLocation';
 import styles from '../style';
 const _ = require('lodash');
 
-export default function MarkInAttendance({route}) {
+export default function MarkInAttendance() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const refRBSheet = useRef();

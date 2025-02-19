@@ -2,7 +2,7 @@ import {Alert} from 'react-native';
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export const errorHandler = (err, isFatal) => {
-  console.log(JSON.stringify(err));
+  console.log('errorHandler', JSON.stringify(err));
   if(err && err.name){
     Alert.alert(
       'Ok',

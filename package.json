@@ -1,6 +1,6 @@
 {
   "name": "upgradenterprise.ams",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "private": true,
   "rnpm": {
     "assets": [
@@ -20,7 +20,7 @@
   "dependencies": {
     "@bam.tech/react-native-image-resizer": "^3.0.11",
     "@react-native-community/cli": "^14.1.1",
-    "@react-native-community/cli-platform-android": "^14.1.1",
+    "@react-native-community/cli-platform-android": "^14.1.2",
     "@react-native-community/cli-platform-ios": "^14.1.1",
     "@react-native-community/geolocation": "^3.4.0",
     "@react-native-community/netinfo": "^11.4.1",

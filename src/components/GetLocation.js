@@ -40,7 +40,6 @@ export const GetUserCurrentLocation = forwardRef(
         try {
           const enableResult = await promptForEnableLocationIfNeeded();
           if (enableResult === 'already-enabled') {
-            console.log('inside checkForLocationEnabled');
             requestLocationPermission();
           }
         } catch (error) {
@@ -67,14 +66,11 @@ export const GetUserCurrentLocation = forwardRef(
           },
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('inside requestLocationPermission granted');
           if (!isLocLoading) {
-            console.log('inside requestLocationPermission if condition');
             setIsLocLoading(true);
             getUserLocation();
           }
         } else {
-          console.log('location permission denied');
           Alert.alert(
             'Location Permission Required',
             'Please enable Location services in settings.',

@@ -16,25 +16,27 @@ import {checkAttnStatus} from '../../../store/actions/attendance';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
 import {Storage, showToast, validateAttendanceTiming} from '../../../utils';
 import styles from './style';
-const _ = require('lodash');
 
 export default function AttendanceDashboard() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const {userData} = useSelector((state: any) => state.userReducer);
 
   const {isAttnLoading, attendanceData, attFlag} = useSelector(
     (state: any) => state.attendanceReducer,
   );
 
   const getAttendanceRecord = () => {
-    const userData = Storage.getAsyncItem('userData');
+    const userDetail = Storage.getAsyncItem('userData') || userData;
+    Storage.setAsyncItem('userData', userDetail);
     const config = {
       method: 'GET',
       url: `${BASEURL}/api/Attendance/PendingApprovalAttendanceCheck?EmployeeID=${
-        userData.EmployeeID
+        userDetail.EmployeeID
       }&AppliedOn=${moment().format('MM-DD-YYYY')}`,
       headers: {
-        Authorization: `Bearer ${userData.Token}`,
+        Authorization: `Bearer ${userDetail.Token}`,
       },
     };
     dispatch(checkAttnStatus(config));

@@ -28,7 +28,6 @@ import {RenderDynamicForm} from './RenderDynamicForm';
 import {MyDropdown} from '../../../components/MyDropdown';
 import styles from './style';
 const _ = require('lodash');
-let remarkValid = false;
 
 export default function SelectTask() {
   const dispatch = useDispatch();
@@ -48,7 +47,6 @@ export default function SelectTask() {
     selectedChildTask,
     formDefaultValues,
     dynamicFormValues,
-    dynamicReqFormValues,
     airtelControlInputValues,
     taskSaveError,
   } = useSelector((state: any) => state.attendanceReducer);
@@ -141,43 +139,49 @@ export default function SelectTask() {
   };
 
   const checkForReqFields = () => {
-    let isReqFilled = true;
-    if (!_.size(airtelControlInputValues)) {
-      isReqFilled = false;
+    if (_.size(airtelControlInputValues) !== _.size(dynamicFormValues)) {
+      Alert.alert('Warning', 'Please fill all fields');
+      return false;
     }
-    const validCheckArr: any[] = [];
-    dynamicReqFormValues.forEach((formElem: any) => {
-      const isElemExist = airtelControlInputValues.filter((obj: any) => {
-        if (obj.AirtelTaskControlID === formElem.AirtelTaskControlID) {
-          if (formElem.ControlHeader === 'Remarks') {
-            if (_.size(obj.Info) === 0) {
-              remarkValid = false;
-              return formElem;
-            } else if (_.size(obj.Info) <= 50) {
-              validCheckArr.pop();
-              remarkValid = true;
-            } else {
-              remarkValid = false;
-              return formElem;
-            }
-          } else {
-            return formElem;
-          }
+    let isValidRemark = true;
+    let isValidMobNo = true;
+    let isNumberChk = true;
+    airtelControlInputValues.filter((obj: any) => {
+      const selectedFormInput = _.find(dynamicFormValues, { 'AirtelTaskControlID': obj.AirtelTaskControlID });
+      if (selectedFormInput.ControlHeader === 'Lapu Number') {
+        const regex = /^\d+$/;
+        if(regex.test(obj.Info)) {
+          isNumberChk = true;
         } else {
-          return formElem;
+          isNumberChk = false;
         }
-      });
-      if (_.size(isElemExist)) {
-        validCheckArr.push(true);
+        if (_.size(obj.Info) === 10) {
+          isValidMobNo = true;
+        } else {
+          isValidMobNo = false;
+        }
+      }
+      if (selectedFormInput.ControlHeader === 'Remarks') {
+        if (_.size(obj.Info) <= 49) {
+          isValidRemark = false;
+        } else {
+          isValidRemark = true;
+        }
       }
     });
-    //added this check to handle only remark in dynamicReqFormValues
-    // if(_.size(dynamicReqFormValues) === 1){
-    //   validCheckArr.push(true);
-    // }
-    isReqFilled =
-      _.size(validCheckArr) === _.size(dynamicReqFormValues) ? true : false;
-    return isReqFilled;
+    if(!isNumberChk){
+      Alert.alert('Warning', 'Lapu Number contains only number');
+      return false;
+    }
+    if(!isValidMobNo){
+      Alert.alert('Warning', 'Lapu Number should be of 10 digits');
+      return false;
+    }
+    if(!isValidRemark){
+      Alert.alert('Warning', 'Remarks should be more than 50 characters');
+      return false;
+    }
+    return true;
   };
 
   const saveTask = () => {
@@ -187,11 +191,6 @@ export default function SelectTask() {
     //validate for required form fields
     const isRequiredFilled = checkForReqFields();
     if (!isRequiredFilled) {
-      if (remarkValid) {
-        Alert.alert('Warning', 'Remarks should be more than 50 characters');
-        return;
-      }
-      Alert.alert('Warning', 'Please fill required fields');
       return;
     }
     //validate for photo upload check

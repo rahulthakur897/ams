@@ -4,6 +4,7 @@ import { Storage } from './Storage';
 import { errorHandler } from './ExceptionHandler';
 const _ = require("lodash");
 const axiosApiInstance = axios.create();
+let IsMethodExecuted = false;
 
 // Request interceptor for API calls
 // axiosApiInstance.interceptors.request.use(
@@ -22,28 +23,22 @@ const axiosApiInstance = axios.create();
 // });
 
 // Response interceptor for API calls
-axiosApiInstance.interceptors.response.use((response) => {
+const axiosInterceptor = axiosApiInstance.interceptors.response.use((response) => {
   return response
 }, async function (error) {
-  let originalRequest = error?.config;
-  if (error && error.response && (error.response.status === 403 || error.response.status === 401) && !originalRequest._retry) {
-    originalRequest._retry = true;
-    const {method, url, headers, data} = originalRequest || {};
-    const access_token = await refreshAccessToken();
-    let config = {
-      method: method,
-      url: url,
-      headers: {
-        ...headers,
-        Authorization: `Bearer ${access_token}`,
-      },
-    };
-    if(data){
-      config = {...config, data: data};
-    }
-    return axiosApiInstance(config);
+  if(error.status !== 401){
+    return Promise.reject(error);
   }
-  return Promise.reject(error);
+  axiosApiInstance.interceptors.response.eject(axiosInterceptor);
+  try{
+    delete axiosApiInstance.defaults.headers.Authorization;
+    const access_token = await refreshAccessToken();
+    let originalRequest = error?.config;
+    originalRequest.headers.Authorization = axiosApiInstance.defaults.headers.Authorization = `Bearer ${access_token}`;
+    return axiosApiInstance(originalRequest);
+  } catch(err){
+    return Promise.reject(error);
+  }
 });
 
 const refreshAccessToken = async () => {  
@@ -57,16 +52,19 @@ const refreshAccessToken = async () => {
       'Authorization': `Basic ${base64Credentials}`,
     },
   };
-  const {data} = await axiosApiInstance.request(config);
-  if(_.size(data)){
-    return data.Data.Token;
-  } 
+  const newAxiosInstance = axios.create();
+  try {
+    const {data} = await newAxiosInstance(config);
+    return data?.Data?.Token || "";
+  } catch(err) {
+    return Promise.reject(err);
+  }
 }
 
 export const makeApiCall = async (config) => {
   try{
     console.log("url -> ", config.url);
-    const response = await axiosApiInstance.request(config);
+    const response = await axiosApiInstance(config);
     if(_.size(response)>0){
       if(response.status === 200){
         return response.data;
