@@ -4,18 +4,26 @@ import {
   ScrollView,
   Text,
   ImageBackground,
+  Image,
   Pressable,
   TextInput,
 } from 'react-native';
+import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
+import RBSheet from 'react-native-raw-bottom-sheet';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
 import {Storage, transformDealerData} from '../../../utils';
 import {
   getDealerList,
   fetchTaskList,
   updateDealer,
+  clearSelectedDealer,
 } from '../../../store/actions/user';
+import {
+  updateAttFlag,
+  markAttn,
+} from '../../../store/actions/attendance';
 import {MyDropdown} from '../../../components/MyDropdown';
 import {GetCamera} from '../../../components/GetCamera';
 import {useStateCallback} from '../../../components/useStateCallback';
@@ -28,9 +36,10 @@ export default function MarkOutAttendance({route}) {
   const dispatch = useDispatch();
   const {DealerID, DealerName, Remarks} = route.params;
   const cameraRef = useRef();
+  const refRBSheet = useRef();
   const locRef = useRef();
 
-  const {dealerList, selectedDealer, taskList, attFlag} = useSelector(
+  const {dealerList, selectedDealer, userData, taskList, attFlag} = useSelector(
     (state: any) => state.userReducer,
   );
   const {empAttID} = useSelector((state: any) => state.attendanceReducer);
@@ -38,6 +47,7 @@ export default function MarkOutAttendance({route}) {
   const [newDealerName, setNewDealerName] = useState(Remarks);
   const [cameraStatus, setIsCameraReady] = useStateCallback(false);
   const [locationStatus, setIsLocationReady] = useStateCallback(false);
+  const [btnClicked, setBtnClicked] = useState(false);
 
   const getTaskList = () => {
     const userData = Storage.getAsyncItem('userData');
@@ -112,6 +122,59 @@ export default function MarkOutAttendance({route}) {
     return btnStatus;
   };
 
+  const punchAttendance = () => {
+      if (btnClicked) {
+        return;
+      }
+      setBtnClicked(true);
+      const userDetail = Storage.getAsyncItem('userData') || userData;
+      const selectedDealer = Storage.getAsyncItem('selectedDealer');
+      const latlong = Storage.getAsyncItem('latlong');
+      const imgBase64 = Storage.getAsyncItem('imgBase64');
+      const config = {
+        method: 'POST',
+        url: `${BASEURL}/api/Attendance/PunchInOut`,
+        data: {
+          EmployeeId: userDetail.EmployeeID,
+          Longitude: latlong?.longitude,
+          Latitude: latlong?.latitude,
+          DealerID: selectedDealer?.value,
+          EmpAttID: empAttID,
+          DeviceIPAddress: '',
+          Browser: 'MobileApp',
+          Operatingsystems: 'Mobile',
+          Hardwaretypes: 'Mobile',
+          DeviceID: '',
+          UserAgent: '',
+          GeolocationMsg: '',
+          Remarks: '',
+          ImageSavefullPath: imgBase64,
+          IsImageBase64: true,
+        },
+        headers: {
+          Authorization: `Bearer ${userData.Token}`,
+        },
+      };
+      dispatch(markAttn(config));
+      refRBSheet.current.open();
+    };
+
+  const checkForOrgId = () => {
+    const userDetail = Storage.getAsyncItem('userData') || userData;
+    if(userDetail?.OrganizationID === 6){
+      getTaskListCount();
+    } else {
+      punchAttendance();
+    }
+  };
+
+  const closeDialog = () => {
+      dispatch(clearSelectedDealer());
+      dispatch(updateAttFlag('ReadyForCheckIn'));
+      refRBSheet.current.close();
+      navigation.navigate('AttendanceDashboard');
+    };
+
   return (
     <ScrollView>
       <ImageBackground style={styles.bgImg} source={APP_IMAGE.background}>
@@ -154,11 +217,50 @@ export default function MarkOutAttendance({route}) {
                 : styles.checkInButtonDisable
             }
             disabled={checkBtnStatus() ? false : true}
-            onPress={() => getTaskListCount()}>
+            onPress={() => checkForOrgId()}>
             <Text style={styles.checkInText}>Proceed Next for Check Out</Text>
           </Pressable>
         </View>
       </ImageBackground>
+      {/* success msg bottom sheet */}
+      <RBSheet
+          ref={refRBSheet}
+          useNativeDriver={false}
+          closeOnPressMask={false}
+          height={280}
+          customStyles={{
+            wrapper: {
+              backgroundColor: COLOR.lightBlack,
+            },
+            container: {
+              borderTopLeftRadius: 32,
+              borderTopRightRadius: 32,
+            },
+            draggableIcon: {
+              backgroundColor: COLOR.black,
+            },
+          }}
+          customModalProps={{
+            animationType: 'slide',
+            statusBarTranslucent: true,
+          }}
+          customAvoidingViewProps={{
+            enabled: true,
+          }}>
+          <View style={{margin: 20, alignItems: 'center'}}>
+            <Image source={APP_IMAGE.success} style={styles.successImg} />
+            <Text style={styles.successText}>Success</Text>
+            <Text style={styles.successAddText}>
+              Your Check Out has been marked at
+            </Text>
+            <Text style={styles.successAddText}>
+              {moment().format('DD/MM/YYYY')} {moment().format('LTS')}
+            </Text>
+            <Pressable style={styles.popupButton} onPress={() => closeDialog()}>
+              <Text style={styles.popupButtonText}>Close</Text>
+            </Pressable>
+          </View>
+        </RBSheet>
     </ScrollView>
   );
 }

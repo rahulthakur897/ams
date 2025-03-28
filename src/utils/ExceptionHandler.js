@@ -3,7 +3,17 @@ import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-e
 
 export const errorHandler = (err, isFatal) => {
   console.log('errorHandler', JSON.stringify(err));
-  if(err && err.name){
+  if(err.message === "Network Error"){
+    Alert.alert(
+      'No Internet Connection',
+      `
+      It looks like you’re not connected to the internet. Please check your Wi-Fi or mobile data settings and try again.
+      `,
+      [{
+      text: 'Close'
+      }]
+    );
+  } else if(err && err.name){
     Alert.alert(
       'Ok',
       `

@@ -30,13 +30,13 @@ const axiosInterceptor = axiosApiInstance.interceptors.response.use((response) =
     return Promise.reject(error);
   }
   axiosApiInstance.interceptors.response.eject(axiosInterceptor);
-  try{
+  try {
     delete axiosApiInstance.defaults.headers.Authorization;
     const access_token = await refreshAccessToken();
     let originalRequest = error?.config;
     originalRequest.headers.Authorization = axiosApiInstance.defaults.headers.Authorization = `Bearer ${access_token}`;
     return axiosApiInstance(originalRequest);
-  } catch(err){
+  } catch(err) {
     return Promise.reject(error);
   }
 });

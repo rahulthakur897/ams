@@ -40,6 +40,15 @@ const style = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: 42,
   },
+  versionText: {
+    position: 'absolute',
+    bottom: 150,
+    fontSize: 12,
+    fontFamily: FONT.Medium,
+    marginLeft: DIMENSIONS.width/2.5,
+    color: COLOR.black,
+    textAlign: 'center',
+  },
 });
 
 export default style;
