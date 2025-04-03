@@ -26,8 +26,8 @@ function* doLogin(data) {
       yield put({type: USER_LOGIN_SUCCESS, response});
     }
   } else {
-    if(_.size(data.payload?.action)){
-      data.payload?.action?.setSubmitting(false);
+    if(_.size(data?.payload?.action)){
+      data?.payload?.action?.setSubmitting(false);
     }
     yield put({type: API_FAILURE});
   }

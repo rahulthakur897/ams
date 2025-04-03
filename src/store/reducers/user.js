@@ -12,6 +12,7 @@ import {
   CLEAR_TASK_LIST,
   USER_LOGOUT_INITIATED,
 } from '../Constant';
+import moment from 'moment';
 import {Storage} from '../../utils';
 
 const initialState = {
@@ -36,10 +37,11 @@ export const userReducer = (state = initialState, action) => {
     }
     case USER_LOGIN_SUCCESS: {
       const {Data} = action.response;
-      Storage.setAsyncItem('userData', Data);
+      const updatedData = {...Data, LoginTime: moment.unix(moment())};
+      Storage.setAsyncItem('userData', updatedData);
       return {
         ...state,
-        userData: Data,
+        userData: updatedData,
         loginErrMsg: '',
         isLoading: false,
         isLoginError: false,

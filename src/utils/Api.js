@@ -2,30 +2,32 @@ import axios from 'axios';
 import { BASEURL } from '../constants';
 import { Storage } from './Storage';
 import { errorHandler } from './ExceptionHandler';
+import moment from 'moment';
 const _ = require("lodash");
 const axiosApiInstance = axios.create();
-let IsMethodExecuted = false;
 
 // Request interceptor for API calls
-// axiosApiInstance.interceptors.request.use(
-//   async config => {
-//     const value = await redisClient.get(rediskey)
-//     const keys = JSON.parse(value)
-//     config.headers = { 
-//       'Authorization': `Bearer ${keys.access_token}`,
-//       'Accept': 'application/json',
-//       'Content-Type': 'application/x-www-form-urlencoded'
-//     }
-//     return config;
-//   },
-//   error => {
-//     Promise.reject(error)
-// });
+axiosApiInstance.interceptors.request.use(async (config) => {
+  let userDetail = Storage.getAsyncItem('userData');
+  if(_.size(userDetail)) {
+    const now = moment.unix(moment());
+    const then = userDetail.LoginTime;
+    const diffInHours = now.diff(then, 'hours');
+    if(diffInHours >= 12){
+      const access_token = await refreshAccessToken();
+      config.headers.Authorization = `Bearer ${access_token}`;
+    }
+  }
+  return config;
+});
 
+/***
 // Response interceptor for API calls
-const axiosInterceptor = axiosApiInstance.interceptors.response.use((response) => {
+axiosApiInstance.interceptors.response.use((response) => {
+  //console.log("axiosInterceptor response", response);
   return response
 }, async function (error) {
+  //console.log('in error block', JSON.stringify(error));
   if(error.status !== 401){
     return Promise.reject(error);
   }
@@ -33,13 +35,16 @@ const axiosInterceptor = axiosApiInstance.interceptors.response.use((response) =
   try {
     delete axiosApiInstance.defaults.headers.Authorization;
     const access_token = await refreshAccessToken();
+    //console.log("access_token", access_token);
     let originalRequest = error?.config;
     originalRequest.headers.Authorization = axiosApiInstance.defaults.headers.Authorization = `Bearer ${access_token}`;
+    //console.log('originalRequest ->', originalRequest);
     return axiosApiInstance(originalRequest);
   } catch(err) {
     return Promise.reject(error);
   }
 });
+***/
 
 const refreshAccessToken = async () => {  
   // Implementation for refreshing the token
@@ -65,6 +70,7 @@ export const makeApiCall = async (config) => {
   try{
     console.log("url -> ", config.url);
     const response = await axiosApiInstance(config);
+    //console.log('makeApiCall response', response);
     if(_.size(response)>0){
       if(response.status === 200){
         return response.data;
@@ -73,6 +79,7 @@ export const makeApiCall = async (config) => {
       }
     }
   }catch(err){
+    //console.log('makeApiCall catch', JSON.stringify(err));
     if(err.status === 400){
       return {status: false, message: "Incorrect Username or Password"}
     }

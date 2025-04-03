@@ -5,7 +5,6 @@ import {
   Image,
   Alert,
   ImageBackground,
-  Pressable,
 } from 'react-native';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -15,6 +14,7 @@ import * as yup from 'yup';
 import {APP_IMAGE, COLOR, ALIGN, BASEURL, Screen} from '../../constants';
 import { doLogin } from '../../store/actions/user';
 import { Storage } from '../../utils';
+import packageJson from '../../../package.json';
 import {
   CustomButton,
   CustomCheckbox,
@@ -153,6 +153,9 @@ export default function Login() {
             )}
           </Formik>
         </View>
+        <Text style={styles.versionText}>
+            Version - {packageJson.version}
+          </Text>
       </ImageBackground>
     </View>
   );

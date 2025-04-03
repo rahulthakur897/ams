@@ -55,6 +55,15 @@ const style = StyleSheet.create({
     textAlign: 'center',
     marginTop: 5,
   },
+  versionText: {
+    position: 'absolute',
+    bottom: 20,
+    fontSize: 12,
+    fontFamily: FONT.Medium,
+    marginLeft: DIMENSIONS.width/2.5,
+    color: COLOR.black,
+    textAlign: 'center',
+  },
 });
 
 export default style;

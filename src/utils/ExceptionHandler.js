@@ -2,7 +2,6 @@ import {Alert} from 'react-native';
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export const errorHandler = (err, isFatal) => {
-  console.log('errorHandler', JSON.stringify(err));
   if(err.message === "Network Error"){
     Alert.alert(
       'No Internet Connection',

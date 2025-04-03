@@ -125,9 +125,9 @@ function App() {
 
     requestPermissions();
 
-    checkDevOption();
+    //checkDevOption();
 
-    checkAutoDateTime();
+    //checkAutoDateTime();
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',

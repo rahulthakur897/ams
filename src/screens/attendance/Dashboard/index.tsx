@@ -15,7 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {checkAttnStatus} from '../../../store/actions/attendance';
 import {APP_IMAGE, BASEURL, COLOR, Screen} from '../../../constants';
 import {Storage, showToast, validateAttendanceTiming} from '../../../utils';
-import packageJson from "../../../../package.json";
+import packageJson from '../../../../package.json';
 import styles from './style';
 
 export default function AttendanceDashboard() {
@@ -116,7 +116,7 @@ export default function AttendanceDashboard() {
           * Attendance can be marked between 8 AM and 8 PM
         </Text>
         <Text style={styles.versionText}>
-            Ver - {packageJson.version}
+            Version - {packageJson.version}
           </Text>
       </ImageBackground>
     </ScrollView>
