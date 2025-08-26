@@ -6,7 +6,7 @@ import {
   GET_DEALER_LIST_SUCCESS,
   UPDATE_DEALER,
   CLEAR_SELECTED_DEALER,
-  UPDATE_USER_LOCATION,
+  UPDATE_USER_LOCATION_SUCCESS,
   RESET_USER_LOCATION,
   FETCH_TASK_LIST_SUCCESS,
   CLEAR_TASK_LIST,
@@ -14,6 +14,7 @@ import {
 } from '../Constant';
 import moment from 'moment';
 import {Storage} from '../../utils';
+const _ = require("lodash");
 
 const initialState = {
   isLoading: false,
@@ -22,6 +23,7 @@ const initialState = {
   userData: {},
   dealerList: [],
   selectedDealer: null,
+  address: null,
   latitude: null,
   longitude: null,
   taskList: [],
@@ -80,13 +82,15 @@ export const userReducer = (state = initialState, action) => {
         selectedDealer: null,
       };
     }
-    case UPDATE_USER_LOCATION: {
-      const {latitude, longitude} = action.payload;
-      Storage.setAsyncItem('latlong', {latitude, longitude});
+    case UPDATE_USER_LOCATION_SUCCESS: {
+      const {latitude, longitude, address} = action.response;
+      const finalAddress = getStreetAddress(address);
+      Storage.setAsyncItem('latlong', {latitude, longitude, address: finalAddress});
       return {
         ...state,
         latitude,
         longitude,
+        address: finalAddress,
       };
     }
     case RESET_USER_LOCATION: {
@@ -95,6 +99,7 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         latitude: null,
         longitude: null,
+        address: null,
       };
     }
     case FETCH_TASK_LIST_SUCCESS: {
@@ -126,3 +131,21 @@ export const userReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+function getStreetAddress(addressArr){
+  if(_.size(addressArr)){
+    const premise = addressArr.filter((arr) => arr.types.includes("premise"));
+    if(_.size(premise)){
+      return premise[0]['formatted_address'];
+    }
+    const streetAddress = addressArr.filter((arr) => arr.types.includes("street_address"));
+    if(_.size(streetAddress)){
+      return streetAddress[0]['formatted_address'];
+    }
+    const sublocality = addressArr.filter((arr) => arr.types.includes("sublocality"));
+    if(_.size(sublocality)){
+      return sublocality[0]['formatted_address'];
+    }
+  }
+  return "Error while capturing location";
+}

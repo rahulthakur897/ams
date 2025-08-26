@@ -64,7 +64,7 @@ const style = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     alignItems: ALIGN.center.justifyContent,
-    marginTop: 20,
+    marginTop: 10,
   },
   checkInButtonDisable: {
     backgroundColor: COLOR.lightBlack,
@@ -72,7 +72,7 @@ const style = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     alignItems: ALIGN.center.justifyContent,
-    marginTop: 50,
+    marginTop: 30,
   },
   checkInText: {
     color: COLOR.white,

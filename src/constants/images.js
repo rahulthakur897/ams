@@ -7,4 +7,5 @@ export const APP_IMAGE = {
     user : require('../../assets/images/user.png'),
     checkIn : require('../../assets/images/checkin.png'),
     checkOut : require('../../assets/images/checkout.png'),
+    gps : require('../../assets/images/gps.png'),
 }

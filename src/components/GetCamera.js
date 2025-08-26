@@ -84,6 +84,7 @@ export const GetCamera = forwardRef(({cbCameraReady}, ref) => {
       try {
         const photo = await cameraRef.current.takePhoto();
         const photoPath = `file://${photo?.path}`;
+        console.log("photoPath", photoPath);
         const base64Str = await resizeImageAndConvertInBase64(photoPath);
         const fullImage = `data:image/jpeg;base64,${base64Str}`;
         Storage.setAsyncItem('imgBase64', fullImage);

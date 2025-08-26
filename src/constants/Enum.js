@@ -1,6 +1,6 @@
 export const AppLink = {
-    android: "#",
-    ios: "#",
+    android: "https://play.google.com/store/apps/details?id=com.upgradenterprise.ams/",
+    ios: "https://apps.apple.com/ne/app/upgrad-ams/id6738986039/",
 }
 Object.freeze(AppLink);
 

@@ -1,5 +1,5 @@
 import {put, takeLatest} from 'redux-saga/effects';
-import {makeApiCall} from '../../utils';
+import {makeApiCall, Storage} from '../../utils';
 import {
   API_LOADING,
   API_FAILURE,
@@ -10,8 +10,11 @@ import {
   GET_DEALER_LIST_SUCCESS,
   FETCH_TASK_LIST,
   FETCH_TASK_LIST_SUCCESS,
+  UPDATE_USER_LOCATION,
+  UPDATE_USER_LOCATION_SUCCESS,
 } from '../Constant';
 const _ = require('lodash');
+const GOOGLE_API_KEY = `AIzaSyDbsitEZe_1xzroBjAXxI_oC9xal_9qW-M`;
 
 function* doLogin(data) {
   yield put({type: API_LOADING});
@@ -42,6 +45,34 @@ function* getDealerList(configData) {
   }
 }
 
+function* getAddressDetail(configData){
+  const {latitude, longitude} =  configData.payload;
+  const latlong = Storage.getAsyncItem('latlong');
+  if(latitude == latlong.latitude && longitude == latlong.longitude){
+    yield put({type: UPDATE_USER_LOCATION_SUCCESS, response: {
+      address: latlong.address,
+      latitude: latitude, 
+      longitude: longitude 
+    }});
+  } else {
+    const googleLocURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_API_KEY}`;
+    const response = yield makeApiCall({
+      method: 'GET',
+      url: googleLocURL,
+    });
+    const {plus_code, results} = response;
+    if (_.size(results)) {
+      yield put({type: UPDATE_USER_LOCATION_SUCCESS, response: {
+        address: results,
+        latitude: latitude, 
+        longitude: longitude 
+      }});
+    } else {
+      yield put({type: API_FAILURE});
+    }
+  }
+}
+
 function* fetchTaskList(configData){
   const response = yield makeApiCall(configData.payload);
   if (response !== undefined) {
@@ -54,5 +85,6 @@ function* fetchTaskList(configData){
 export function* getUserSaga() {
   yield takeLatest(USER_LOGIN_INITIATED, doLogin);
   yield takeLatest(GET_DEALER_LIST, getDealerList);
+  yield takeLatest(UPDATE_USER_LOCATION, getAddressDetail);
   yield takeLatest(FETCH_TASK_LIST, fetchTaskList);
 }
